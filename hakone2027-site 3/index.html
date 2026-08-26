@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b376d" />
+  <meta name="description" content="箱根駅伝2027のデータ・大学情報・過去大会・予想をまとめるファン向けデータサイト" />
+  <title>箱根駅伝 2027 予想サイト</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#home" aria-label="箱根駅伝2027予想サイト ホーム">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 92 46" role="img">
+            <path class="runner-line" d="M6 36c10-1 17-5 23-11l7 3 9-11 7 4-4 8 10 6" />
+            <circle class="runner-head" cx="43" cy="9" r="4" />
+            <path class="mountain" d="M44 40 62 20 72 30 78 25 90 40Z" />
+            <path class="snow" d="m62 20 4 6 3-2 3 6" />
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>箱根駅伝</strong>
+          <small>2027 予想サイト</small>
+        </span>
+      </a>
+
+      <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="mainNav">☰</button>
+
+      <nav class="nav" id="mainNav" aria-label="メインナビゲーション">
+        <button data-route="home" class="nav-link active"><span>⌂</span> ホーム</button>
+        <button data-route="teams" class="nav-link"><span>▦</span> 大学データ</button>
+        <button data-route="history" class="nav-link"><span>▥</span> 過去大会</button>
+        <button data-route="prediction" class="nav-link"><span>🏆</span> 2027予想</button>
+        <button data-route="about" class="nav-link"><span>ⓘ</span> このサイトについて</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>箱根駅伝 2027 予想サイト</strong>
+        <p>データに基づいた予想と分析で、箱根駅伝をもっと楽しむ。</p>
+      </div>
+      <div class="footer-links">
+        <button data-route="home">ホーム</button>
+        <button data-route="teams">大学データ</button>
+        <button data-route="history">過去大会</button>
+        <button data-route="prediction">2027予想</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
