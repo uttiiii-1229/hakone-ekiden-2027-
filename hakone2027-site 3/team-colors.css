@@ -2,13 +2,14 @@
 .team-card[data-team="青山学院大学"] .crest { background:#1b8f68; }
 /* 國學院大學公式ブランドカラー「赤紫」 */
 .team-card[data-team="國學院大學"] .crest { background:#ae0079; }
-.team-card[data-team="中央大学"] .crest { background:#233f8f; }
+/* 中央大学は箱根でおなじみの「真紅の襷」「朱色のC」を基準に赤系 */
+.team-card[data-team="中央大学"] .crest { background:#c1122f; }
 /* 駒澤大学のスクールカラー／駅伝で親しまれる「藤色・紫」 */
 .team-card[data-team="駒澤大学"] .crest { background:#8267a8; }
 .team-card[data-team="早稲田大学"] .crest { background:#8b1e3f; }
 
 .team-card[data-team="青山学院大学"] .tag { background:#e7f7f1; color:#18775b; }
 .team-card[data-team="國學院大學"] .tag { background:#f8e5f2; color:#9a006c; }
-.team-card[data-team="中央大学"] .tag { background:#e9eefb; color:#233f8f; }
+.team-card[data-team="中央大学"] .tag { background:#fde9ed; color:#a30f27; }
 .team-card[data-team="駒澤大学"] .tag { background:#f0ebf7; color:#6e5593; }
 .team-card[data-team="早稲田大学"] .tag { background:#f8e8ed; color:#8b1e3f; }
