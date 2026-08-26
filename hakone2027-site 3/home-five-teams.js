@@ -8,7 +8,7 @@
     const crests = ['A', 'K', 'C', 'K', 'W'];
 
     const pickupMarkup = fiveTeams.map((t, i) => `
-      <div class="team-card">
+      <div class="team-card" data-team="${t.name}">
         <div class="team-row">
           <div class="crest">${crests[i]}</div>
           <div>
@@ -24,13 +24,10 @@
       .replace(/<div class="panel-body pickup-grid">[\s\S]*?<\/div><\/article><aside class="sidebar">/, `<div class="panel-body pickup-grid">${pickupMarkup}</div></article><aside class="sidebar">`);
   };
 
-  // app.js の templates オブジェクトは最初の homeTemplate 参照を保持しているため、
-  // こちらも差し替えないと render('home') で古い4校表示に戻ってしまう。
   if (typeof templates !== 'undefined') {
     templates.home = homeTemplate;
   }
 
-  // 現在ホームを表示している場合は即時反映
   if ((location.hash.replace('#', '') || 'home') === 'home' && typeof render === 'function') {
     render('home');
   }
