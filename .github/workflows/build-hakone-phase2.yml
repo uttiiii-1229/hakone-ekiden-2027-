@@ -1,0 +1,34 @@
+name: Build Hakone Phase2 Static DB
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build-hakone-phase2.mjs'
+      - '.github/workflows/build-hakone-phase2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build static database
+        run: node scripts/build-hakone-phase2.mjs
+      - name: Commit generated database
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "hakone2027-site 3/hakone-phase2-static-db.js"
+          if git diff --cached --quiet; then
+            echo "No DB changes"
+            exit 0
+          fi
+          git commit -m "Generate 2017-2025 Hakone section static DB"
+          git push
