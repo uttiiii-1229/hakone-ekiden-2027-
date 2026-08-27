@@ -1,56 +1,78 @@
-// 箱根駅伝 2017〜2026 区間記録ナビゲーション
-// 東京箱根間往復大学駅伝競走公式サイトの過去記録を基準に確認。
-// 全選手データを誤転記しないため、各年・各区間から公式の全選手順位へ直接遷移できる構成。
+// 箱根駅伝 2007〜2026 区間記録ナビゲーション
+// 10年ごとに整理し、年→区間の順で閲覧できる構成。
 
-const hakoneMeets = {
-  2026:{edition:'第102回',tn:106},
-  2025:{edition:'第101回',tn:104},
-  2024:{edition:'第100回',tn:103},
-  2023:{edition:'第99回',tn:102},
-  2022:{edition:'第98回',tn:101},
-  2021:{edition:'第97回',tn:99},
-  2020:{edition:'第96回',tn:96},
-  2019:{edition:'第95回',tn:95},
-  2018:{edition:'第94回',tn:94},
-  2017:{edition:'第93回',tn:93}
+const hakoneMeets = {};
+for(let year=2007; year<=2026; year++){
+  const edition = year - 1924;
+  let tn = edition;
+  if(year===2021) tn=99;
+  if(year===2022) tn=101;
+  if(year===2023) tn=102;
+  if(year===2024) tn=103;
+  if(year===2025) tn=104;
+  if(year===2026) tn=106;
+  hakoneMeets[year] = {edition:`第${edition}回`,tn};
+}
+
+const hakoneDecades = {
+  recent:{label:'2017–2026', years:[2026,2025,2024,2023,2022,2021,2020,2019,2018,2017]},
+  previous:{label:'2007–2016', years:[2016,2015,2014,2013,2012,2011,2010,2009,2008,2007]}
 };
+
+let activeHakoneDecade = 'recent';
+let activeHakoneYear = 2026;
 
 function officialSectionUrl(year, section){
   const meet=hakoneMeets[year];
   return meet ? `https://www.hakone-ekiden.jp/record/record04.php?sec=${section}&tn=${meet.tn}` : '#';
 }
 
+// 後続のDBビューアがこの関数を上書きする。
 function hakoneDetailedHistory(year){
   const meet=hakoneMeets[year];
   if(!meet) return '';
-  return `<div class="section-results">
-    <h2>${meet.edition} ${year}年 箱根駅伝 区間成績</h2>
-    <p class="muted">1〜10区を選ぶと、箱根駅伝公式の全出走選手について区間順位・大学・選手名・区間タイムを確認できます。</p>
-    <div class="tabs section-tabs">${Array.from({length:10},(_,i)=>`<a class="tab section-tab" href="${officialSectionUrl(year,i+1)}" target="_blank" rel="noopener">${i+1}区</a>`).join('')}</div>
-    <div class="notice"><strong>データ精度優先:</strong> 2017〜2026年の全10大会を大会番号まで照合し、各区間の公式記録へ接続しています。大量データの転記ミスを避けるため、全選手の順位・タイムは公式記録を直接表示します。</div>
-  </div>`;
+  return `<div class="section-results"><h2>${meet.edition} ${year}年 箱根駅伝</h2><p class="muted">区間データを読み込んでいます。</p></div>`;
 }
 
-// 過去大会ページに2017〜2026の箱根区間成績ナビを追加
+function hakoneYearTabs(decadeKey){
+  const group=hakoneDecades[decadeKey]||hakoneDecades.recent;
+  return group.years.map(y=>`<button class="tab ${y===activeHakoneYear?'active':''}" data-hakone-year-v3="${y}">${y}年</button>`).join('');
+}
+
 const originalHistoryTemplateForSections = historyTemplate;
 historyTemplate = function(){
   const base=originalHistoryTemplateForSections();
-  const years=Object.keys(hakoneMeets).map(Number).sort((a,b)=>b-a);
   return base + `<section class="container page" style="padding-top:0">
-    <div class="page-header"><h1>箱根駅伝・全選手区間成績</h1><p>2017〜2026年の10大会を収録。年を選択し、1〜10区から全選手の区間順位・区間タイムを確認できます。</p></div>
-    <div class="tabs">${years.map((y,i)=>`<button class="tab ${i===0?'active':''}" data-hakone-year="${y}">${y}年</button>`).join('')}</div>
-    <div id="hakoneDetailedHistory">${hakoneDetailedHistory(2026)}</div>
+    <div class="page-header"><h1>箱根駅伝・全選手区間成績</h1><p>2007〜2026年の20大会を収録。10年ごとのタブから年を選び、1〜10区の区間順位・通過順位・区間タイムを確認できます。</p></div>
+    <div class="tabs hakone-decade-tabs">
+      ${Object.entries(hakoneDecades).map(([key,g])=>`<button class="tab ${key===activeHakoneDecade?'active':''}" data-hakone-decade="${key}">${g.label}</button>`).join('')}
+    </div>
+    <div class="tabs" id="hakoneYearTabs">${hakoneYearTabs(activeHakoneDecade)}</div>
+    <div id="hakoneDetailedHistory">${hakoneDetailedHistory(activeHakoneYear)}</div>
   </section>`;
 };
 
 if(typeof templates!=='undefined') templates.history=historyTemplate;
 
 document.addEventListener('click',e=>{
-  const btn=e.target.closest('[data-hakone-year]');
-  if(!btn)return;
-  document.querySelectorAll('[data-hakone-year]').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  const year=Number(btn.dataset.hakoneYear);
-  const target=document.querySelector('#hakoneDetailedHistory');
-  if(target) target.innerHTML=hakoneDetailedHistory(year);
+  const decadeBtn=e.target.closest('[data-hakone-decade]');
+  if(decadeBtn){
+    activeHakoneDecade=decadeBtn.dataset.hakoneDecade;
+    const group=hakoneDecades[activeHakoneDecade]||hakoneDecades.recent;
+    activeHakoneYear=group.years[0];
+    document.querySelectorAll('[data-hakone-decade]').forEach(x=>x.classList.toggle('active',x===decadeBtn));
+    const yearHost=document.querySelector('#hakoneYearTabs');
+    if(yearHost) yearHost.innerHTML=hakoneYearTabs(activeHakoneDecade);
+    const target=document.querySelector('#hakoneDetailedHistory');
+    if(target) target.innerHTML=hakoneDetailedHistory(activeHakoneYear);
+    return;
+  }
+
+  const yearBtn=e.target.closest('[data-hakone-year-v3]');
+  if(yearBtn){
+    activeHakoneYear=Number(yearBtn.dataset.hakoneYearV3);
+    document.querySelectorAll('[data-hakone-year-v3]').forEach(x=>x.classList.toggle('active',x===yearBtn));
+    const target=document.querySelector('#hakoneDetailedHistory');
+    if(target) target.innerHTML=hakoneDetailedHistory(activeHakoneYear);
+  }
 });
