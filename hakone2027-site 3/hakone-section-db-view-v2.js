@@ -26,8 +26,8 @@
   }
   function timeSeconds(time=''){
     const p=String(time).split(':').map(Number);
-    if(p.length===3) return p[0]*3600+p[1]*60+p[2];
-    if(p.length===2) return p[0]*60+p[1];
+    if(p.length===3 && p.every(Number.isFinite)) return p[0]*3600+p[1]*60+p[2];
+    if(p.length===2 && p.every(Number.isFinite)) return p[0]*60+p[1];
     return Number.POSITIVE_INFINITY;
   }
   function rawRows(year, section){
@@ -37,6 +37,9 @@
   }
   function sortedRows(year, section){
     return [...rawRows(year,section)].sort((a,b)=>timeSeconds(a[4])-timeSeconds(b[4]));
+  }
+  function isStudentSelection(row){
+    return /関東.*(?:学生)?(?:連合|選抜)/.test(String(row?.[2]||''));
   }
   function recordCard(section){
     const r=sectionRecords[section];
@@ -52,13 +55,13 @@
     const rows=sortedRows(year,section);
     return `<div class="section-results">
       <div class="section-db-head">
-        <div><h2>第${edition(year)}回 ${year}年 箱根駅伝 ${section}区</h2><p class="muted">関東学生連合を含めて区間タイム順に表示。区間順位と、その区間終了時点の通過順位を掲載しています。</p></div>
+        <div><h2>第${edition(year)}回 ${year}年 箱根駅伝 ${section}区</h2><p class="muted">関東学生連合・関東学連選抜も含めて区間タイム順に表示。区間順位と、その区間終了時点の通過順位を掲載しています。</p></div>
         <a class="primary-button" href="${officialUrl(year,section)}" target="_blank" rel="noopener">公式記録を確認</a>
       </div>
       <div class="tabs section-tabs">${Array.from({length:10},(_,i)=>`<button class="tab ${i+1===section?'active':''}" data-hakone-unified-section="${i+1}">${i+1}区</button>`).join('')}</div>
       ${recordCard(section)}
-      ${rows.length?`<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r[0]==='参考'?'reference-row':''}"><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td><td>${r[4]}</td></tr>`).join('')}</tbody></table></div>`:`<div class="notice">この区間のデータが見つかりません。公式記録をご確認ください。</div>`}
-      <div class="notice"><strong>表示ルール:</strong> 関東学生連合を含め区間タイム順に並べています。学生連合は公式順位の対象外なので、区間順位・通過順位とも「参考」です。</div>
+      ${rows.length?`<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>{const ref=isStudentSelection(r)||r[0]==='参考';const rank=ref?'参考':r[0];const pass=ref?'参考':r[1];return `<tr class="${ref?'reference-row':''}"><td><strong>${rank}</strong></td><td>${pass}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td><td>${r[4]}</td></tr>`;}).join('')}</tbody></table></div>`:`<div class="notice">この区間のデータが見つかりません。公式記録をご確認ください。</div>`}
+      <div class="notice"><strong>表示ルール:</strong> 表は学生連合・学連選抜も含む区間タイム順です。これらのチームは順位にカウントせず、区間順位・通過順位を「参考」と表示します。</div>
     </div>`;
   }
 
