@@ -1,0 +1,33 @@
+.hero {
+  min-height: 300px;
+  background:
+    linear-gradient(90deg, rgba(4,31,68,.34) 0%, rgba(4,31,68,.12) 48%, rgba(4,31,68,.02) 100%),
+    url('hakone-home-hero-2027.jpg') center center / cover no-repeat;
+}
+.hero::before,
+.hero::after { display: none; }
+.hero-inner { min-height: 300px; }
+.hero-copy { max-width: 600px; padding: 34px 0; text-shadow: 0 2px 16px rgba(0,0,0,.28); }
+.hero h1 { font-size: clamp(40px, 5vw, 64px); }
+.hero p { margin-top: 17px; max-width: 545px; }
+.hero-runner { display: none; }
+
+@media (max-width: 980px) {
+  .hero { min-height: 320px; background-position: 63% center; }
+  .hero-inner { min-height: 320px; }
+  .hero-copy { max-width: 560px; padding: 34px 0; }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 345px;
+    background:
+      linear-gradient(90deg, rgba(4,31,68,.96) 0%, rgba(4,31,68,.85) 54%, rgba(4,31,68,.35) 100%),
+      url('hakone-home-hero-2027.jpg') 68% center / auto 100% no-repeat;
+  }
+  .hero-inner { min-height: 345px; }
+  .hero-copy { max-width: 92%; padding: 36px 0; }
+  .hero h1 { font-size: clamp(38px, 12vw, 54px); }
+  .hero h2 { font-size: 19px; }
+  .hero p { font-size: 14px; line-height: 1.75; }
+}
