@@ -65,7 +65,10 @@ for(const [yearStr, tn] of Object.entries(meets)) {
     if(!res.ok) throw new Error(`${url} -> ${res.status}`);
     const html = await res.text();
     const rows = parsePage(html);
-    if(rows.length < 20) throw new Error(`${year} ${section}区 parsed only ${rows.length} rows`);
+    // Some historical sections have fewer than 20 classified finishers in the official table.
+    // Treat 15+ parsed rows as valid and preserve exactly what the official page lists.
+    if(rows.length < 15) throw new Error(`${year} ${section}区 parsed only ${rows.length} rows`);
+    if(rows.length < 20) console.warn(`${year} ${section}区: official table contains ${rows.length} parsed rows`);
     db[year][section] = rows;
     await new Promise(r=>setTimeout(r,120));
   }
