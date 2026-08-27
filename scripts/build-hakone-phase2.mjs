@@ -29,9 +29,15 @@ function cleanCell(html='') {
 }
 
 function normalizeTime(text='') {
-  const m = text.match(/(?:(\d+)時間)?(?:(\d+)分)?(?:(\d+)秒)?/);
-  if(!m || (!m[1] && !m[2] && !m[3])) return text;
-  return `${Number(m[1]||0)}:${String(Number(m[2]||0)).padStart(2,'0')}:${String(Number(m[3]||0)).padStart(2,'0')}`;
+  const raw=String(text).trim();
+  if(/^\d+:\d{2}:\d{2}$/.test(raw)) return raw;
+  // Older official pages sometimes use "時間55分30秒" (no hour numeral).
+  const m = raw.match(/^(?:(\d*)時間)?(?:(\d+)分)?(?:(\d+)秒)?$/);
+  if(!m || (!m[1] && !m[2] && !m[3] && !raw.includes('時間'))) return raw;
+  const h=Number(m[1]||0);
+  const min=Number(m[2]||0);
+  const sec=Number(m[3]||0);
+  return `${h}:${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
 }
 
 function parsePage(html) {
@@ -63,12 +69,10 @@ for(const [yearStr, tn] of Object.entries(meets)) {
   for(let section=1; section<=10; section++) {
     const url = `https://www.hakone-ekiden.jp/record/record04.php?sec=${section}&tn=${tn}`;
     console.log(`fetch ${year} ${section}区`);
-    const res = await fetch(url, {headers:{'user-agent':'Hakone2027StaticDBBuilder/1.1'}});
+    const res = await fetch(url, {headers:{'user-agent':'Hakone2027StaticDBBuilder/1.2'}});
     if(!res.ok) throw new Error(`${url} -> ${res.status}`);
     const html = await res.text();
     const rows = parsePage(html);
-    // Some historical sections have fewer than 20 classified finishers in the official table.
-    // Preserve exactly what the official page lists, while rejecting obviously broken parsing.
     if(rows.length < 10) throw new Error(`${year} ${section}区 parsed only ${rows.length} rows`);
     if(rows.length < 20) console.warn(`${year} ${section}区: official table contains ${rows.length} parsed rows`);
     db[year][section] = rows;
