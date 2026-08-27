@@ -1,6 +1,7 @@
-// 2026-08-27 襷カラー対応 + 2026箱根「継続選手のみ」評価モデル
+// 2026-08-27 襷カラー対応 + 継続選手評価 + 新1年生高校駅伝補正
 // 2026箱根の生の総合順位は予想点に直接入れない。
 // 第103回（2027年1月）に出走可能な2026箱根出走者だけを抽出し、その区間順位を評価する。
+// さらに現1年生について、2025全国高校駅伝の確認済み区間実績を小さく加味する。
 
 const teamVisuals2027 = {
   '青山学院大学': { sash:'フレッシュグリーン', gauge:'#25a56a', icon:'青', iconBg:'#25a56a', iconFg:'#fff' },
@@ -8,8 +9,10 @@ const teamVisuals2027 = {
   '中央大学': { sash:'真紅', gauge:'#c8102e', icon:'C', iconBg:'#c8102e', iconFg:'#fff' },
   '早稲田大学': { sash:'臙脂', gauge:'#8b1e3f', icon:'早', iconBg:'#8b1e3f', iconFg:'#fff' },
   '駒澤大学': { sash:'藤色', gauge:'#8f82bc', icon:'駒', iconBg:'#8f82bc', iconFg:'#fff' },
-  '順天堂大学': { sash:'白地に赤ライン', gauge:'linear-gradient(90deg,#ffffff 0 40%,#d71920 40% 60%,#ffffff 60% 100%)', icon:'順', iconBg:'linear-gradient(135deg,#fff 0 43%,#d71920 43% 57%,#fff 57%)', iconFg:'#173250', iconBorder:'#d71920' },
-  '創価大学': { sash:'赤・青ストライプ', gauge:'linear-gradient(90deg,#d71920 0 50%,#174ea6 50% 100%)', icon:'創', iconBg:'linear-gradient(135deg,#d71920 0 50%,#174ea6 50% 100%)', iconFg:'#fff' },
+  // 順天堂はユーザー指定により襷色ではなく「茄子紺」を採用
+  '順天堂大学': { sash:'茄子紺', gauge:'#342b4f', icon:'順', iconBg:'#342b4f', iconFg:'#fff' },
+  // 創価は赤青襷だが、ゲージ視認性を優先して単色の青を採用
+  '創価大学': { sash:'赤・青襷（表示色:青）', gauge:'#174ea6', icon:'創', iconBg:'#174ea6', iconFg:'#fff' },
   '帝京大学': { sash:'ファイアーレッド', gauge:'#e43d30', icon:'帝', iconBg:'#e43d30', iconFg:'#fff' },
   '城西大学': { sash:'黄色', gauge:'#f1c40f', icon:'城', iconBg:'#f1c40f', iconFg:'#173250' }
 };
@@ -66,6 +69,25 @@ const programRaceScore2025 = {
   '創価大学':73,'帝京大学':70,'順天堂大学':66,'城西大学':63
 };
 
+// 現1年生（2026年度入学）の2025全国高校駅伝実績を補助評価。
+// 区間上位ほど高評価。全国高校駅伝に出走していない/確認未了の選手がいるため、
+// チーム全体を過度に下げないよう50点を中立値として、確認済み実績を中心に手動補正している。
+// 特に確認できた例:
+// 早稲田: 増子陽太 1区1位、新妻遼己 1区2位、本田桜二郎 1区3位、上杉敦史 1区14位。
+// 中央: 栗村凌 3区1位、末田唯久海 5区3位、簡子傑 2区4位など。
+// 青学: 斎藤晴樹 5区1位、大竹実吹 6区4位など。
+const freshmanHighSchoolEkidenScore2025 = {
+  '早稲田大学':100,
+  '中央大学':95,
+  '青山学院大学':88,
+  '國學院大學':79,
+  '駒澤大学':76,
+  '順天堂大学':72,
+  '創価大学':70,
+  '城西大学':67,
+  '帝京大学':65
+};
+
 function minMaxScore(value, min, max, lowerIsBetter=true){
   if (value===null || !Number.isFinite(value) || min===max) return 50;
   const t=(value-min)/(max-min);
@@ -80,7 +102,8 @@ function recalcPrediction2027(){
       m5:averagePB(name,2,'track'),
       m10:averagePB(name,3,'track'),
       half:averagePB(name,4,'half'),
-      retained:hakone2026RetainedMetrics(name)
+      retained:hakone2026RetainedMetrics(name),
+      freshman:freshmanHighSchoolEkidenScore2025[name] || 50
     };
   });
   const ranges={};
@@ -93,8 +116,14 @@ function recalcPrediction2027(){
     const s5=minMaxScore(p.m5,...ranges.m5);
     const s10=minMaxScore(p.m10,...ranges.m10);
     const sh=minMaxScore(p.half,...ranges.half);
-    // 2026箱根は「総合5位なら○点」のようには使わず、2027にも残る実走者の区間成績だけを35%評価。
-    const total=p.retained.score*0.35 + (programRaceScore2025[name]||50)*0.15 + s5*0.10 + s10*0.18 + sh*0.22;
+    // v0.7: 新1年生の高校駅伝を8%追加。その分、前年箱根・チーム実績・PBの比率を少しずつ調整。
+    const total=
+      p.retained.score*0.32 +
+      (programRaceScore2025[name]||50)*0.13 +
+      s5*0.09 +
+      s10*0.17 +
+      sh*0.21 +
+      p.freshman*0.08;
     return {name,total,metrics:p};
   }).sort((a,b)=>b.total-a.total);
   const exp=computed.map(x=>Math.exp((x.total-80)/10));
@@ -112,18 +141,17 @@ teams.splice(0,teams.length,...retainedModel2027.map((x,i)=>{
     name:x.name,
     chance:Number(x.chance.toFixed(1)),
     score:Math.round(x.total),
-    note:`2026箱根の継続出走者 ${x.metrics.retained.retained}/${x.metrics.retained.total}名を個人区間成績として評価。卒業・離籍選手の区間実績は2027予想点から除外。`,
-    tags:[`継続${x.metrics.retained.retained}名`,`襷:${teamVisuals2027[x.name].sash}`,i<3?'優勝候補':'上位候補']
+    note:`2026箱根の継続出走者 ${x.metrics.retained.retained}/${x.metrics.retained.total}名の区間成績に加え、現1年生の2025全国高校駅伝実績も8%反映。`,
+    tags:[`継続${x.metrics.retained.retained}名`,`新1年:${x.metrics.freshman}点`,i<3?'優勝候補':'上位候補']
   };
 }));
 
 function teamIconHtml(name){
   const v=teamVisuals2027[name]||{icon:name.slice(0,1),iconBg:'#49657f',iconFg:'#fff'};
-  const border=v.iconBorder?`border:2px solid ${v.iconBorder};`:'';
-  return `<span class="rank-team-icon" style="background:${v.iconBg};color:${v.iconFg};${border}">${v.icon}</span>`;
+  return `<span class="rank-team-icon" style="background:${v.iconBg};color:${v.iconFg};">${v.icon}</span>`;
 }
 
-// 全ランキング画面で襷色ゲージとオリジナル識別アイコンを使う。
+// 全ランキング画面で単色ゲージとオリジナル識別アイコンを使う。
 rankList = function(limit=teams.length){
   const rows=teams.slice(0,limit);
   return rows.map((t,i)=>{
@@ -132,7 +160,7 @@ rankList = function(limit=teams.length){
       <div class="rank-number">${i+1}</div>
       <div>
         <div class="team-name-with-icon">${teamIconHtml(t.name)}<span class="team-name">${t.name}</span></div>
-        <div class="bar"><span style="width:${Math.max(8,t.score)}%;background:${v.gauge}"></span></div>
+        <div class="bar"><span style="width:${Math.max(8,t.score)}%;background-color:${v.gauge};background-image:none;"></span></div>
       </div>
       <div class="percent">${t.chance.toFixed(1)}%</div>
     </div>`;
@@ -146,29 +174,28 @@ rankList = function(limit=teams.length){
     .team-name-with-icon .team-name{margin:0}
     .rank-team-icon{width:25px;height:25px;flex:0 0 25px;border-radius:8px;display:inline-grid;place-items:center;font-size:12px;font-weight:900;box-shadow:0 2px 7px rgba(20,45,70,.13)}
     .rank-item .bar{background:#edf2f6;border:1px solid rgba(30,60,90,.06)}
-    .rank-item .bar>span{box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+    .rank-item .bar>span{box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);background-image:none!important}
   `;
   document.head.appendChild(style);
 })();
 
-// 予想ページも新モデル説明へ更新。
 function retainedPredictionTemplate(){
   return `<section class="container page">
-    <div class="page-header"><h1>2027 箱根駅伝予想</h1><p>2026年8月27日時点。2026箱根は「2027にも残る実走者の区間成績」に分解し、卒業・離籍選手の実績を除外して再計算しています。</p></div>
+    <div class="page-header"><h1>2027 箱根駅伝予想</h1><p>2026年8月27日時点。2026箱根は2027にも残る実走者だけを評価し、新1年生には2025全国高校駅伝の実績を補助要素として追加しています。</p></div>
     <div class="prediction-layout">
-      <article class="panel"><div class="panel-title dark"><h3>優勝確率 試算 v0.6</h3></div><div class="panel-body"><div class="rank-list">${rankList()}</div></div></article>
+      <article class="panel"><div class="panel-title dark"><h3>優勝確率 試算 v0.7</h3></div><div class="panel-body"><div class="rank-list">${rankList()}</div></div></article>
       <article class="data-card"><h3>評価軸</h3><div class="weight-list">
-        <div><span>2026箱根・継続選手の区間実績</span><strong>35%</strong></div>
-        <div><span>2025出雲＋全日本（プログラム力）</span><strong>15%</strong></div>
-        <div><span>5000m PB層</span><strong>10%</strong></div>
-        <div><span>10000m PB層</span><strong>18%</strong></div>
-        <div><span>ハーフPB層</span><strong>22%</strong></div>
+        <div><span>2026箱根・継続選手の区間実績</span><strong>32%</strong></div>
+        <div><span>2025出雲＋全日本（プログラム力）</span><strong>13%</strong></div>
+        <div><span>5000m PB層</span><strong>9%</strong></div>
+        <div><span>10000m PB層</span><strong>17%</strong></div>
+        <div><span>ハーフPB層</span><strong>21%</strong></div>
+        <div><span>現1年生・2025全国高校駅伝</span><strong>8%</strong></div>
       </div></article>
     </div>
-    <div class="notice"><strong>卒業選手の扱い:</strong> 2026箱根を走っていても、2026年度の現役名簿にいない選手は「継続選手の区間実績」35%には一切加点しません。したがって2026箱根の生の総合順位そのものは予想点に直接使用していません。</div>
+    <div class="notice"><strong>新1年生の扱い:</strong> 2026箱根にはまだ大学生として出ていないため、2025全国高校駅伝で確認できた区間順位を8%の補助評価として追加しました。高校駅伝の出走確認がない選手を理由に大学全体を大きく減点しないよう、中立値を設けています。<br><br><strong>卒業選手の扱い:</strong> 2026箱根を走っていても、2026年度の現役名簿にいない選手は「継続選手の区間実績」には一切加点しません。</div>
   </section>`;
 }
 if (typeof templates!=='undefined') templates.prediction=retainedPredictionTemplate;
 
-// 最終スクリプトとして読み込まれた時点の画面を再描画。
 render(location.hash.replace('#','')||'home');
