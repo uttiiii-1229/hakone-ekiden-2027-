@@ -1,12 +1,14 @@
 // Final, render-safe homepage hero replacement.
-// Loaded last so later model/page scripts cannot restore the generated SVG artwork.
+// Use an absolute GitHub raw URL so the image does not depend on Vercel static asset resolution.
 (() => {
-  const HERO_SRC = 'home-hero-sketch.webp?v=20260827-3';
+  const HERO_SRC = 'https://raw.githubusercontent.com/uttiiii-1229/hakone-ekiden-2027-/main/hakone2027-site%203/home-hero-sketch.webp?v=20260827-4';
+  const HERO_FALLBACK = 'https://raw.githubusercontent.com/uttiiii-1229/hakone-ekiden-2027-/main/hakone2027-site%203/hakone-home-hero-2027.jpg?v=20260827-4';
   const HERO_ALT = '東京箱根間往復大学駅伝競走のスタートを描いたスケッチ風イラスト';
 
   function applyHomeHero(){
     const art = document.querySelector('.home-v2-art');
     if (!art) return;
+
     let img = art.querySelector('.uploaded-home-hero');
     if (!img) {
       art.innerHTML = '';
@@ -15,17 +17,26 @@
       img.alt = HERO_ALT;
       img.loading = 'eager';
       img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
       art.appendChild(img);
     }
-    if (img.getAttribute('src') !== HERO_SRC) img.setAttribute('src', HERO_SRC);
+
+    if (!img.dataset.heroErrorBound) {
+      img.dataset.heroErrorBound = '1';
+      img.addEventListener('error', () => {
+        if (img.src !== HERO_FALLBACK) img.src = HERO_FALLBACK;
+      });
+    }
+
+    if (img.getAttribute('src') !== HERO_SRC && img.getAttribute('src') !== HERO_FALLBACK) {
+      img.setAttribute('src', HERO_SRC);
+    }
   }
 
-  // Apply after all current scripts have completed their initial rendering.
   queueMicrotask(applyHomeHero);
   requestAnimationFrame(applyHomeHero);
   window.addEventListener('load', applyHomeHero, {once:true});
 
-  // Any SPA re-render should immediately restore the uploaded image.
   if (typeof render === 'function' && !render.__homeHeroWrapped) {
     const baseRender = render;
     const wrappedRender = function(route='home') {
