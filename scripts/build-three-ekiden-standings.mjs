@@ -30,7 +30,7 @@ function looksLikeTime(s=''){
   return /^\d+:\d{2}(?::\d{2})?$/.test(t);
 }
 async function fetchDecoded(url,legacy=false){
-  const res=await fetch(url,{headers:{'user-agent':'Hakone2027StandingsBuilder/1.1'}});
+  const res=await fetch(url,{headers:{'user-agent':'Hakone2027StandingsBuilder/1.2'}});
   if(!res.ok) return null;
   const buf=await res.arrayBuffer();
   if(legacy){
@@ -50,6 +50,7 @@ async function buildIzumo(){
       {url:`https://www.izumo-ekiden.jp/${edition}/record/record.html`,legacy:false},
       {url:`https://www.izumo-ekiden.jp/${edition}/record/record_all.html`,legacy:false},
       {url:`https://www.izumo-ekiden.jp/${edition}/m/record_all.html`,legacy:false},
+      {url:`https://www.izumo-ekiden.jp/${edition}/ke_all.html`,legacy:true},
       {url:`https://www.izumo-ekiden.jp/${yy}/ke_all.html`,legacy:true}
     ];
     let html='',used='',legacy=false;
@@ -80,7 +81,7 @@ async function buildIzumo(){
 }
 
 async function buildZennihon(){
-  const res=await fetch('https://daigaku-ekiden.com/datafile/',{headers:{'user-agent':'Hakone2027StandingsBuilder/1.1'}});
+  const res=await fetch('https://daigaku-ekiden.com/datafile/',{headers:{'user-agent':'Hakone2027StandingsBuilder/1.2'}});
   if(!res.ok) throw new Error(`Zennihon datafile -> ${res.status}`);
   const html=await res.text(); const headings=[...html.matchAll(/<h3\b[^>]*>([\s\S]*?)<\/h3>/gi)]; const out={};
   for(let year=2007;year<=2026;year++){
