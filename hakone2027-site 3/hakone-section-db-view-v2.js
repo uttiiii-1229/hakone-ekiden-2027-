@@ -1,10 +1,9 @@
-// Unified Hakone section DB viewer v3
-// 2007-2025: generated static DB / 2026: internal Phase1 DB
+// Unified Hakone section DB viewer v4
+// 2007-2026: generated static DB with recalculated passing ranks
 (() => {
   const YEARS = new Set(Array.from({length:20},(_,i)=>2007+i));
   let currentYear = 2026;
 
-  // 現行コースの区間記録（第102回大会終了時点）
   const sectionRecords = {
     1:{time:'1:00:28', athlete:'青木 瑠郁', university:'國學院大學', edition:'第102回', year:2026},
     2:{time:'1:05:09', athlete:'キムタイ', university:'城西大学', edition:'第102回', year:2026},
@@ -31,54 +30,24 @@
     return Number.POSITIVE_INFINITY;
   }
   function rawRows(year, section){
-    if(year===2026 && typeof hakone2026SectionDB!=='undefined') return hakone2026SectionDB[section]||[];
     const db=window.hakonePhase2StaticDB||{};
-    return db?.[year]?.[section]||[];
+    const generated=db?.[year]?.[section]||[];
+    if(generated.length) return generated;
+    if(year===2026 && typeof hakone2026SectionDB!=='undefined') return hakone2026SectionDB[section]||[];
+    return [];
   }
-  function sortedRows(year, section){
-    return [...rawRows(year,section)].sort((a,b)=>timeSeconds(a[4])-timeSeconds(b[4]));
-  }
-  function isStudentSelection(row){
-    return /関東.*(?:学生)?(?:連合|選抜)/.test(String(row?.[2]||''));
-  }
+  function sortedRows(year, section){ return [...rawRows(year,section)].sort((a,b)=>timeSeconds(a[4])-timeSeconds(b[4])); }
+  function isStudentSelection(row){ return /関東.*(?:学連|学生連合)|学生連合|学連選抜/.test(String(row?.[2]||'')); }
   function recordCard(section){
     const r=sectionRecords[section];
     if(!r) return '';
-    return `<div class="section-record-card" style="margin:14px 0 16px;padding:14px 16px;border:1px solid #d8e5f1;border-radius:12px;background:#f6fbff;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-      <strong style="color:#0b376d">🏅 ${section}区 区間記録</strong>
-      <span style="font-size:20px;font-weight:900;color:#0b376d">${r.time}</span>
-      <span>${r.athlete}（${r.university}）</span>
-      <small style="color:#6f8196">${r.edition}・${r.year}年 / 現行コース基準</small>
-    </div>`;
+    return `<div class="section-record-card" style="margin:14px 0 16px;padding:14px 16px;border:1px solid #d8e5f1;border-radius:12px;background:#f6fbff;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><strong style="color:#0b376d">🏅 ${section}区 区間記録</strong><span style="font-size:20px;font-weight:900;color:#0b376d">${r.time}</span><span>${r.athlete}（${r.university}）</span><small style="color:#6f8196">${r.edition}・${r.year}年 / 現行コース基準</small></div>`;
   }
   function renderSection(year, section){
     const rows=sortedRows(year,section);
-    return `<div class="section-results">
-      <div class="section-db-head">
-        <div><h2>第${edition(year)}回 ${year}年 箱根駅伝 ${section}区</h2><p class="muted">関東学生連合・関東学連選抜も含めて区間タイム順に表示。区間順位と、その区間終了時点の通過順位を掲載しています。</p></div>
-        <a class="primary-button" href="${officialUrl(year,section)}" target="_blank" rel="noopener">公式記録を確認</a>
-      </div>
-      <div class="tabs section-tabs">${Array.from({length:10},(_,i)=>`<button class="tab ${i+1===section?'active':''}" data-hakone-unified-section="${i+1}">${i+1}区</button>`).join('')}</div>
-      ${recordCard(section)}
-      ${rows.length?`<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>{const ref=isStudentSelection(r)||r[0]==='参考';const rank=ref?'参考':r[0];const pass=ref?'参考':r[1];return `<tr class="${ref?'reference-row':''}"><td><strong>${rank}</strong></td><td>${pass}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td><td>${r[4]}</td></tr>`;}).join('')}</tbody></table></div>`:`<div class="notice">この区間のデータが見つかりません。公式記録をご確認ください。</div>`}
-      <div class="notice"><strong>表示ルール:</strong> 表は学生連合・学連選抜も含む区間タイム順です。これらのチームは順位にカウントせず、区間順位・通過順位を「参考」と表示します。</div>
-    </div>`;
+    return `<div class="section-results"><div class="section-db-head"><div><h2>第${edition(year)}回 ${year}年 箱根駅伝 ${section}区</h2><p class="muted">区間順位と、1区から当該区間までの累積タイムから再計算した通過順位を掲載しています。</p></div><a class="primary-button" href="${officialUrl(year,section)}" target="_blank" rel="noopener">公式記録を確認</a></div><div class="tabs section-tabs">${Array.from({length:10},(_,i)=>`<button class="tab ${i+1===section?'active':''}" data-hakone-unified-section="${i+1}">${i+1}区</button>`).join('')}</div>${recordCard(section)}${rows.length?`<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>{const ref=isStudentSelection(r)||r[0]==='参考';return `<tr class="${ref?'reference-row':''}"><td><strong>${ref?'参考':r[0]}</strong></td><td>${ref?'参考':r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td><td>${r[4]}</td></tr>`;}).join('')}</tbody></table></div>`:`<div class="notice">この区間のデータが見つかりません。</div>`}<div class="notice"><strong>通過順位:</strong> 最終総合順位の流用ではなく、その区間までの区間タイム累積値で順位を再計算しています。学生連合・学連選抜は順位対象外のため「参考」です。</div></div>`;
   }
 
-  hakoneDetailedHistory = function(year){
-    year=Number(year);
-    if(YEARS.has(year)){
-      currentYear=year;
-      return renderSection(year,1);
-    }
-    return '';
-  };
-
-  document.addEventListener('click',e=>{
-    const btn=e.target.closest('[data-hakone-unified-section]');
-    if(!btn)return;
-    const section=Number(btn.dataset.hakoneUnifiedSection);
-    const host=document.querySelector('#hakoneDetailedHistory');
-    if(host) host.innerHTML=renderSection(currentYear,section);
-  });
+  hakoneDetailedHistory=function(year){ year=Number(year); if(YEARS.has(year)){currentYear=year; return renderSection(year,1);} return ''; };
+  document.addEventListener('click',e=>{const btn=e.target.closest('[data-hakone-unified-section]'); if(!btn)return; const section=Number(btn.dataset.hakoneUnifiedSection); const host=document.querySelector('#hakoneDetailedHistory'); if(host)host.innerHTML=renderSection(currentYear,section);});
 })();
