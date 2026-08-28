@@ -25,7 +25,7 @@ function normalizeTime(text=''){
   if(!raw) return '';
   if(/^\d+:\d{2}:\d{2}$/.test(raw)) return raw;
   const m=raw.match(/^(?:(\d*)時間)?(?:(\d+)分)?(?:(\d+)秒)?$/);
-  if(!m || (!m[1]&&!m[2]&&!m[3]&&!raw.includes('時間'))) return String(text).trim();
+  if(!m || (!m[1]&&!m[2]&&!m[3]&&!raw.includes('時間'))) return '';
   return `${Number(m[1]||0)}:${String(Number(m[2]||0)).padStart(2,'0')}:${String(Number(m[3]||0)).padStart(2,'0')}`;
 }
 function timeSeconds(time=''){
@@ -54,8 +54,18 @@ function parsePage(html){
   return rows;
 }
 
-// 公式「大会詳細」ページの総合順位をそのまま取り込む。
-// 区間タイムの合算から総合順位を再計算しないことで、棄権・参考扱い・公式補正も忠実に反映する。
+function parseRankTime(text=''){
+  const value=String(text).trim();
+  if(!value) return {rank:'',time:''};
+  const m=value.match(/^(\d+|参考|棄権|失格|OPN)\s*(.*)$/);
+  if(!m) return {rank:'',time:normalizeTime(value)};
+  return {
+    rank:/^\d+$/.test(m[1])?Number(m[1]):m[1],
+    time:normalizeTime(m[2]||'')
+  };
+}
+
+// 公式「大会詳細」ページから総合・往路・復路の順位と記録を直接取り込む。
 function parseOverallPage(html){
   const results=[];
   const seenTeams=new Set();
@@ -67,13 +77,16 @@ function parseOverallPage(html){
     let rankRaw=cells[0]||'';
     let teamRaw=cells[1]||'';
     let timeRaw=cells[2]||'';
+    let outwardRaw=cells[3]||'';
+    let returnRaw=cells[4]||'';
 
-    // 一部大会で順位と大学名が同一セルに入る場合にも対応。
     const combined=rankRaw.match(/^(\d+|棄権|失格|参考|OPN)\s+(.+)$/);
     if(combined){
       rankRaw=combined[1];
       teamRaw=combined[2];
       timeRaw=cells[1]||'';
+      outwardRaw=cells[2]||'';
+      returnRaw=cells[3]||'';
     }
 
     if(!/^\d+$/.test(rankRaw) && !/^(棄権|失格|参考|OPN)$/.test(rankRaw)) continue;
@@ -83,7 +96,17 @@ function parseOverallPage(html){
     seenTeams.add(team);
 
     const rank=/^\d+$/.test(rankRaw)?Number(rankRaw):rankRaw;
-    results.push({rank,team,time:normalizeTime(timeRaw)});
+    const outward=parseRankTime(outwardRaw);
+    const returnLeg=parseRankTime(returnRaw);
+    results.push({
+      rank,
+      team,
+      time:normalizeTime(timeRaw),
+      outwardRank:outward.rank,
+      outwardTime:outward.time,
+      returnRank:returnLeg.rank,
+      returnTime:returnLeg.time
+    });
   }
   return results;
 }
@@ -117,8 +140,8 @@ for(const [yearStr,tn] of Object.entries(meets)){
   const year=Number(yearStr); db[year]={};
 
   const overallUrl=`https://www.hakone-ekiden.jp/record/record02.php?tn=${tn}`;
-  console.log(`fetch ${year} 総合成績`);
-  const overallRes=await fetch(overallUrl,{headers:{'user-agent':'Hakone2027StaticDBBuilder/3.0'}});
+  console.log(`fetch ${year} 総合・往路・復路成績`);
+  const overallRes=await fetch(overallUrl,{headers:{'user-agent':'Hakone2027StaticDBBuilder/4.0'}});
   if(!overallRes.ok) throw new Error(`${overallUrl} -> ${overallRes.status}`);
   const overallRows=parseOverallPage(await overallRes.text());
   if(overallRows.length<10) throw new Error(`${year} overall parsed only ${overallRows.length} rows`);
@@ -128,7 +151,7 @@ for(const [yearStr,tn] of Object.entries(meets)){
   for(let section=1;section<=10;section++){
     const url=`https://www.hakone-ekiden.jp/record/record04.php?sec=${section}&tn=${tn}`;
     console.log(`fetch ${year} ${section}区`);
-    const res=await fetch(url,{headers:{'user-agent':'Hakone2027StaticDBBuilder/3.0'}});
+    const res=await fetch(url,{headers:{'user-agent':'Hakone2027StaticDBBuilder/4.0'}});
     if(!res.ok) throw new Error(`${url} -> ${res.status}`);
     const rows=parsePage(await res.text());
     if(rows.length<10) throw new Error(`${year} ${section}区 parsed only ${rows.length} rows`);
@@ -138,6 +161,6 @@ for(const [yearStr,tn] of Object.entries(meets)){
   applyPassingRanks(db[year]);
 }
 
-const out=`// AUTO-GENERATED from 東京箱根間往復大学駅伝競走 公式「過去の記録」\n// 2007-2026 / Generated: ${new Date().toISOString()}\n// section row = [区間順位, 通過順位, 大学, 選手, 区間タイム]\nwindow.hakonePhase2StaticDB = ${JSON.stringify(db)};\n// 総合成績は公式「大会詳細」の総合順位・総合記録を直接使用\nwindow.hakoneOfficialOverallDB = ${JSON.stringify(overallDb)};\n`;
+const out=`// AUTO-GENERATED from 東京箱根間往復大学駅伝競走 公式「過去の記録」\n// 2007-2026 / Generated: ${new Date().toISOString()}\n// section row = [区間順位, 通過順位, 大学, 選手, 区間タイム]\nwindow.hakonePhase2StaticDB = ${JSON.stringify(db)};\n// 公式大会詳細の総合・往路・復路順位／記録を直接使用\nwindow.hakoneOfficialOverallDB = ${JSON.stringify(overallDb)};\n`;
 await fs.writeFile('hakone2027-site 3/hakone-phase2-static-db.js',out,'utf8');
 console.log('wrote hakone2027-site 3/hakone-phase2-static-db.js');
