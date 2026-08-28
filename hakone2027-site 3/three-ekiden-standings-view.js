@@ -16,7 +16,7 @@
     const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;
     return h?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`;
   }
-  function hakoneResults(year){
+  function fallbackHakoneResults(year){
     const db=window.hakonePhase2StaticDB||{};
     const yearDb=db?.[year];
     if(!yearDb) return [];
@@ -34,6 +34,11 @@
     for(const team of refs) rows.push({rank:'参考',team,time:fmt(totals.get(team))});
     return rows;
   }
+  function hakoneResults(year){
+    const official=window.hakoneOfficialOverallDB?.[year];
+    if(official?.results?.length) return official.results;
+    return fallbackHakoneResults(year);
+  }
   function externalResults(race,year){
     return window.threeEkidenStandingsDB?.[race]?.[year]||null;
   }
@@ -49,16 +54,22 @@
   function resultBlock(race,year){
     const ed=edition(race,year);
     let status='開催',results=[];
-    if(race==='hakone') results=hakoneResults(year);
-    else {
+    if(race==='hakone') {
+      const d=window.hakoneOfficialOverallDB?.[year];
+      if(d){status=d.status||'開催';results=d.results||[];}
+      else results=hakoneResults(year);
+    } else {
       const d=externalResults(race,year);
       if(d){status=d.status; results=d.results||[];}
       else if(year===2026){status='未開催';}
     }
     if(status!=='開催') return `<div class="notice"><strong>${raceNames[race]} 第${ed}回（${year}年）:</strong> ${status}</div>`;
     if(!results.length) return `<div class="notice">${year}年の総合成績DBを読み込めませんでした。</div>`;
-    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${raceNames[race]} 第${ed}回（${year}年）総合成績</h2><p class="muted">優勝校だけでなく、公式記録に掲載された全出場校を表示しています。</p></div></div>
-      <div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${r.team}</strong></td><td>${r.time}</td></tr>`).join('')}</tbody></table></div>`;
+    const sourceText=race==='hakone'&&window.hakoneOfficialOverallDB?.[year]
+      ? '箱根駅伝公式「大会詳細」の総合順位・総合記録を使用しています。'
+      : '公式記録に掲載された全出場校を表示しています。';
+    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${raceNames[race]} 第${ed}回（${year}年）総合成績</h2><p class="muted">${sourceText}</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'||r.rank==='棄権'||r.rank==='失格'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${r.team}</strong></td><td>${r.time||'—'}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function shell(){
     const years=yearsFor(currentDecade);
