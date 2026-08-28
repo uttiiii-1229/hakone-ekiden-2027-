@@ -1,19 +1,19 @@
-// Stable homepage hero replacement using a normal local JPEG asset.
+// Stable homepage hero replacement using a verified full JPEG asset.
 (() => {
-  const HERO_SRC = 'home-hero-stable.jpg?v=20260828-1';
+  const HERO_SRC = 'home-hero-stable.jpg?v=20260828-2';
 
   function applyHero() {
     document.querySelectorAll('.home-v2-art').forEach((art) => {
-      const current = art.querySelector('img.home-hero-stable');
-      if (current) return;
-
-      const img = document.createElement('img');
-      img.className = 'uploaded-home-hero home-hero-stable';
-      img.src = HERO_SRC;
-      img.alt = '東京箱根間往復大学駅伝競走のスタートを描いたスケッチ風イラスト';
-      img.loading = 'eager';
-      img.decoding = 'async';
-      art.replaceChildren(img);
+      let img = art.querySelector('img.home-hero-stable');
+      if (!img) {
+        img = document.createElement('img');
+        img.className = 'uploaded-home-hero home-hero-stable';
+        img.alt = '東京箱根間往復大学駅伝競走のスタートを描いたスケッチ風イラスト';
+        img.loading = 'eager';
+        img.decoding = 'async';
+        art.replaceChildren(img);
+      }
+      if (img.getAttribute('src') !== HERO_SRC) img.src = HERO_SRC;
     });
   }
 
