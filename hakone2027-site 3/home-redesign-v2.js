@@ -54,13 +54,14 @@
   }
 
   function rankingRows(){
-    return teams.map((t,i)=>{
+    return teams.slice().sort((a,b)=>(b.score||0)-(a.score||0)).map((t,i)=>{
       const meta=teamMeta[t.name] || {cls:'other',mark:'•'};
+      const score=Number.isFinite(Number(t.score)) ? Number(t.score) : 0;
       return `<div class="home-rank-row ${meta.cls}">
         <div class="home-rank-no">${i+1}</div>
         <div class="home-rank-team"><span class="home-rank-mark">${meta.mark}</span><strong>${t.name}</strong></div>
-        <div class="home-rank-meter"><span style="width:${Math.max(12,t.chance*3.2)}%"></span></div>
-        <div class="home-rank-pct">${t.chance}%</div>
+        <div class="home-rank-meter"><span style="width:${Math.max(8,Math.min(100,score))}%"></span></div>
+        <div class="home-rank-pct">${score.toFixed(1)}点</div>
       </div>`;
     }).join('');
   }
@@ -101,24 +102,24 @@
             <div class="status-card"><span>👤</span><div><small>選手データ</small><strong>現役5校を精査中</strong><em>10000m・ハーフPB</em></div></div>
             <div class="status-card"><span>🏆</span><div><small>大会データ</small><strong>過去10年分</strong><em>箱根・出雲・全日本</em></div></div>
             <div class="status-card"><span>〽</span><div><small>区間データ</small><strong>2017–2026</strong><em>サイト内DB化を順次進行</em></div></div>
-            <div class="status-card next-update"><span>▣</span><div><small>予想モデル</small><strong>v0.4</strong><em>秋駅伝後に再計算予定</em></div></div>
+            <div class="status-card next-update"><span>▣</span><div><small>予想モデル</small><strong>v0.9</strong><em>100点満点の総合戦力点</em></div></div>
           </div>
         </section>
       </div>
 
       <aside class="home-v2-side">
         <section class="prediction-card">
-          <div class="prediction-head"><h2>🏆 優勝予想ランキング</h2><span>予想モデル v0.4</span></div>
+          <div class="prediction-head"><h2>🏆 総合戦力ランキング</h2><span>予想モデル v0.9</span></div>
           <div class="prediction-body">${rankingRows()}</div>
-          <button class="prediction-more" data-route="prediction">詳細な予想データを見る →</button>
+          <button class="prediction-more" data-route="prediction">詳細な戦力データを見る →</button>
         </section>
 
         <section class="home-news-card">
           <div class="section-heading compact"><div><span>▣</span><h2>最新アップデート</h2></div></div>
           <div class="home-news-list">
+            <div><time>2026.08.28</time><span>NEW</span><strong>優勝予想表示を総合戦力点へ修正</strong></div>
             <div><time>2026.08.27</time><span>NEW</span><strong>ホームデザインを刷新</strong></div>
-            <div><time>2026.08.27</time><span>NEW</span><strong>注目5校の大学カラーを調整</strong></div>
-            <div><time>2026.08.26</time><span>NEW</span><strong>2027優勝予想を更新（v0.4）</strong></div>
+            <div><time>2026.08.27</time><span>NEW</span><strong>予想モデルをv0.9へ更新</strong></div>
             <div><time>2026.08</time><span>DATA</span><strong>現役選手PBデータを更新</strong></div>
           </div>
         </section>
