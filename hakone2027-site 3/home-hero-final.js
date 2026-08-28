@@ -1,6 +1,6 @@
-// Stable homepage hero replacement using a verified full JPEG asset.
+// Stable homepage hero replacement using a verified complete JPEG asset.
 (() => {
-  const HERO_SRC = 'home-hero-stable.jpg?v=20260828-2';
+  const HERO_SRC = 'home-hero-stable.jpg?v=20260828-3';
 
   function applyHero() {
     document.querySelectorAll('.home-v2-art').forEach((art) => {
