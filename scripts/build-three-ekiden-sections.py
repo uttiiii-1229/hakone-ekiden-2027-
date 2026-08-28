@@ -6,7 +6,7 @@ import pdfplumber
 import requests
 from bs4 import BeautifulSoup
 
-UA={'User-Agent':'Hakone2027SectionsBuilder/2.1'}
+UA={'User-Agent':'Hakone2027SectionsBuilder/2.2'}
 OUT=Path('hakone2027-site 3/three-ekiden-sections-db.js')
 
 def clean(s):
@@ -16,7 +16,7 @@ def norm_team(s):
     return clean(s).replace('國學院大学','國學院大學').replace('國學院大','國學院大學')
 
 def norm_time(s):
-    s=clean(s).replace('◎','').replace('○','').replace('★','').replace('分',':').replace('秒','').replace('時間',':')
+    s=clean(s).replace('◎','').replace('○','').replace('★','').replace('′',':').replace('″','').replace('分',':').replace('秒','').replace('時間',':')
     s=re.sub(r'\[\d+\]','',s)
     m=re.fullmatch(r'(\d+):(\d{1,2})(?::(\d{1,2}))?',s)
     if not m:return clean(s)
@@ -32,12 +32,40 @@ def rank_value(s):
 
 def fetch_html(url):
     try:
-        r=requests.get(url,headers=UA,timeout=20)
+        r=requests.get(url,headers=UA,timeout=12)
         if r.status_code!=200:return None
         r.encoding=r.apparent_encoding or 'utf-8'
         return r.text
     except Exception:
         return None
+
+def looks_time(s):
+    s=clean(s)
+    return bool(re.search(r'(?:\d{1,2}:\d{2}|\d+分\s*\d+秒|\d+′\s*\d+″)',s))
+
+def looks_team(s):
+    s=clean(s)
+    return bool(re.search(r'(?:大学|大學|学連選抜|学生選抜|リーグ選抜|IVY|アイビー|第一工業|東海大$|駒澤大$|駒沢大$)',s))
+
+def generic_section_rows(rows):
+    out=[]
+    for row in rows:
+        if len(row)<5:continue
+        rk=rank_value(row[0])
+        if not isinstance(rk,int) and rk!='OPN':continue
+        ti=next((i for i,x in enumerate(row[1:],1) if looks_time(x)),None)
+        team_i=next((i for i,x in enumerate(row[1:],1) if looks_team(x)),None)
+        if ti is None or team_i is None:continue
+        # legacy: rank/no/time/athlete/team ; modern: rank/no/athlete/kana/team/time/note
+        if ti==2 and team_i>=4: athlete_i=3
+        elif team_i>=4: athlete_i=2
+        else:
+            candidates=[i for i in range(1,len(row)) if i not in (ti,team_i) and not row[i].isdigit() and not re.fullmatch(r'[\uFF61-\uFF9F A-Za-z]+',row[i])]
+            athlete_i=candidates[0] if candidates else None
+        if athlete_i is None or athlete_i>=len(row):continue
+        athlete=clean(row[athlete_i]); team=norm_team(row[team_i]); tm=norm_time(row[ti])
+        if athlete and team and re.search(r'\d',tm):out.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
+    return out
 
 def parse_html_section(url):
     html=fetch_html(url)
@@ -51,7 +79,7 @@ def parse_html_section(url):
             if cells:rows.append(cells)
         if not rows:continue
         header_i=None; indices=None
-        for i,row in enumerate(rows[:8]):
+        for i,row in enumerate(rows[:10]):
             joined=' '.join(row)
             if '順位' not in joined or 'チーム' not in joined or ('氏名' not in joined and '選手' not in joined):continue
             def find_idx(words):
@@ -60,30 +88,24 @@ def parse_html_section(url):
                 return None
             ir=find_idx(['順位']); ia=find_idx(['氏名','選手']); it=find_idx(['チーム']); im=find_idx(['記録','タイム'])
             if None not in (ir,ia,it,im):header_i=i;indices=(ir,ia,it,im);break
-        if header_i is None:continue
-        ir,ia,it,im=indices; out=[]
-        for row in rows[header_i+1:]:
-            if max(ir,ia,it,im)>=len(row):continue
-            rk=rank_value(row[ir]); athlete=clean(row[ia]); team=norm_team(row[it]); tm=norm_time(row[im])
-            if not athlete or not team or not re.search(r'\d',tm):continue
-            if not isinstance(rk,int) and rk!='OPN':continue
-            out.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
+        out=[]
+        if header_i is not None:
+            ir,ia,it,im=indices
+            for row in rows[header_i+1:]:
+                if max(ir,ia,it,im)>=len(row):continue
+                rk=rank_value(row[ir]); athlete=clean(row[ia]); team=norm_team(row[it]); tm=norm_time(row[im])
+                if athlete and team and re.search(r'\d',tm) and (isinstance(rk,int) or rk=='OPN'):
+                    out.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
+        if len(out)<10:out=generic_section_rows(rows)
         if len(out)>len(best):best=out
     return best
 
 def izumo_candidates(year,sec):
     ed=year-1988; yy=str(year)[-2:]
-    urls=[
-        f'https://www.izumo-ekiden.jp/{ed}/record/{sec}b.html',
-        f'https://www.izumo-ekiden.jp/{ed}/record/{sec}b.htm',
-        f'https://www.izumo-ekiden.jp/{ed}/m/record_{sec}b.html',
-        f'https://www.izumo-ekiden.jp/{ed}/m/record/{sec}b.html',
-        f'https://www.izumo-ekiden.jp/{ed}/ke_{sec}b.html',
-        f'https://www.izumo-ekiden.jp/{yy}/ke_{sec}b.html',
-    ]
-    if year==2025:
-        urls.insert(0,f'https://www.izumo-ekiden.jp/record/{sec}b.html')
-        urls.insert(1,f'https://www.izumo-ekiden.jp/37/record/{sec}b.html')
+    old=[f'https://www.izumo-ekiden.jp/{yy}/ke_{sec}b.html',f'https://www.izumo-ekiden.jp/{ed}/ke_{sec}b.html',f'https://www.izumo-ekiden.jp/{ed}/ke_{sec}b.htm']
+    modern=[f'https://www.izumo-ekiden.jp/{ed}/record/{sec}b.html',f'https://www.izumo-ekiden.jp/{ed}/record/{sec}b.htm',f'https://www.izumo-ekiden.jp/{ed}/m/record_{sec}b.html']
+    urls=(old+modern) if year<=2010 else (modern+old)
+    if year==2025:urls=[f'https://www.izumo-ekiden.jp/record/{sec}b.html',f'https://www.izumo-ekiden.jp/37/record/{sec}b.html']+urls
     return urls
 
 def build_izumo():
@@ -97,11 +119,11 @@ def build_izumo():
             rows=[]; used=''
             for u in izumo_candidates(year,sec):
                 rows=parse_html_section(u)
-                if rows:used=u;break
+                if len(rows)>=10:used=u;break
             if len(rows)<10:raise RuntimeError(f'Izumo {year} {sec}: only {len(rows)} rows ({used or "no source"})')
             sections[str(sec)]=rows
             print(f'Izumo {year} {sec}: {len(rows)} {used}')
-            time.sleep(.03)
+            time.sleep(.02)
         db[str(year)]={'edition':ed,'status':'開催','sections':sections}
     return db
 
@@ -112,8 +134,7 @@ def alljapan_pdf_map(html):
         if node.name in ('h2','h3','h4'):
             m=re.search(r'第\s*(\d+)\s*回大会',clean(node.get_text(' ',strip=True)))
             if m:current=int(m.group(1))
-        elif current and node.has_attr('href') and '.pdf' in node['href'].lower():
-            mapping.setdefault(current,urljoin('https://daigaku-ekiden.com/datafile/',node['href']))
+        elif current and node.has_attr('href') and '.pdf' in node['href'].lower():mapping.setdefault(current,urljoin('https://daigaku-ekiden.com/datafile/',node['href']))
     return mapping
 
 def fetch_pdf(year,ed,pdf_map):
@@ -131,8 +152,7 @@ def fetch_pdf(year,ed,pdf_map):
     return None,None
 
 def cluster_lines(words,tol=2.5):
-    words=sorted(words,key=lambda w:(float(w['top']),float(w['x0'])))
-    lines=[]
+    words=sorted(words,key=lambda w:(float(w['top']),float(w['x0']))); lines=[]
     for w in words:
         top=float(w['top'])
         if not lines or abs(top-lines[-1]['top'])>tol:lines.append({'top':top,'words':[w]})
@@ -146,15 +166,10 @@ def token_time_rank(text):
     m=re.fullmatch(r'((?:\d+:)?\d{1,2}:\d{2})\[(\d+)\]',t)
     return (norm_time(m.group(1)),int(m.group(2))) if m else None
 
-def line_time_words(line):
-    return [(w,p) for w in line['words'] if (p:=token_time_rank(w['text']))]
+def line_time_words(line):return [(w,p) for w in line['words'] if (p:=token_time_rank(w['text']))]
 
 def athlete_from_band(line,left,right):
-    parts=[]
-    for w in line['words']:
-        c=(float(w['x0'])+float(w['x1']))/2
-        if left<=c<right:parts.append(w['text'])
-    return clean(' '.join(parts))
+    return clean(' '.join(w['text'] for w in line['words'] if left<=((float(w['x0'])+float(w['x1']))/2)<right))
 
 def parse_alljapan_pdf(pdf_bytes):
     sections={str(i):[] for i in range(1,9)}
@@ -164,16 +179,13 @@ def parse_alljapan_pdf(pdf_bytes):
             for i,line in enumerate(lines):
                 tw=line_time_words(line)
                 if len(tw)<8:continue
-                first=clean(line['words'][0]['text']) if line['words'] else ''
-                second=clean(line['words'][1]['text']) if len(line['words'])>1 else ''
+                first=clean(line['words'][0]['text']) if line['words'] else ''; second=clean(line['words'][1]['text']) if len(line['words'])>1 else ''
                 if not (first.isdigit() or first in ('--','－','—')) or not second.isdigit():continue
                 first_time_idx=next((j for j,w in enumerate(line['words']) if token_time_rank(w['text'])),None)
                 if first_time_idx is None or first_time_idx<3 or i==0 or i+1>=len(lines):continue
-                team=norm_team(' '.join(w['text'] for w in line['words'][2:first_time_idx]))
-                section_line=lines[i+1]; stw=line_time_words(section_line)
+                team=norm_team(' '.join(w['text'] for w in line['words'][2:first_time_idx])); stw=line_time_words(lines[i+1])
                 if not team or len(stw)<8:continue
-                athlete_line=lines[i-1]; stw=stw[:8]
-                centers=[(float(w['x0'])+float(w['x1']))/2 for w,_ in stw]
+                athlete_line=lines[i-1]; stw=stw[:8]; centers=[(float(w['x0'])+float(w['x1']))/2 for w,_ in stw]
                 for sec,(w,(tm,rk)) in enumerate(stw,start=1):
                     left=centers[0]-(centers[1]-centers[0])/2 if sec==1 else (centers[sec-2]+centers[sec-1])/2
                     right=centers[-1]+(centers[-1]-centers[-2])/2 if sec==8 else (centers[sec-1]+centers[sec])/2
@@ -197,7 +209,7 @@ def build_zennihon():
         sections=parse_alljapan_pdf(pdf); counts={s:len(v) for s,v in sections.items()}; print(f'Zennihon {year}: {counts} {url}')
         for sec,n in counts.items():
             if n<15:raise RuntimeError(f'Zennihon {year} {sec}: only {n} rows from {url}')
-        db[str(year)]={'edition':ed,'status':'開催','sections':sections,'source':url}; time.sleep(.05)
+        db[str(year)]={'edition':ed,'status':'開催','sections':sections,'source':url}; time.sleep(.04)
     return db
 
 izumo=build_izumo(); zennihon=build_zennihon()
