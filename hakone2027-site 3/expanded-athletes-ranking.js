@@ -76,3 +76,7 @@ Object.keys(expandedTopAthletes2027).forEach(name=>{
 });
 
 render(location.hash.replace('#','') || 'home');
+
+
+// Explicit public handle for modules that consume athlete PB data.
+window.expandedTopAthletes2027 = expandedTopAthletes2027;

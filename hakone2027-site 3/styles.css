@@ -25,14 +25,16 @@ button { color: inherit; }
 .container { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
 
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 30;
+  left: 0;
+  right: 0;
+  z-index: 9999;
   padding-top: env(safe-area-inset-top, 0px);
-  background: rgba(247, 251, 255, .97);
+  background: rgba(247, 251, 255, .98);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(13, 62, 108, .08);
-  transform: translateZ(0);
+  overflow: visible;
 }
 .header-inner { min-height: 82px; display: flex; align-items: center; gap: 26px; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 250px; color: var(--navy); text-decoration: none; }
@@ -230,3 +232,15 @@ html,body{scroll-padding-top:calc(82px + env(safe-area-inset-top,0px))}
 
 .site-header,.header-inner,.brand,.brand-mark,.brand-mark svg{overflow:visible}
 .header-inner{position:relative}
+
+/* Stable fixed header: reserve its full height from first paint. */
+body { padding-top: calc(82px + env(safe-area-inset-top, 0px)); }
+.site-header .header-inner,
+.site-header .brand,
+.site-header .brand-mark,
+.site-header .brand-mark svg,
+.site-header .brand-copy { overflow: visible; }
+@media(max-width:980px){
+  body { padding-top: calc(72px + env(safe-area-inset-top, 0px)); }
+  .site-header .header-inner { min-height:72px; height:72px; }
+}

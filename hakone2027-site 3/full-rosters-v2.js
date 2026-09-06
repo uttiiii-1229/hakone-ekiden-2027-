@@ -58,3 +58,7 @@ teamsTemplate=function(){
 };
 
 render(location.hash.replace('#','')||'home');
+
+
+// Explicit public handle for modules that consume current roster PB data.
+window.fullRosterData = fullRosterData;

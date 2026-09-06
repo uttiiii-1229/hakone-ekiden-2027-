@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b376d" />
   <meta name="description" content="箱根駅伝・出雲駅伝・全日本大学駅伝の大会記録、大学・選手データ、予想をまとめる大学駅伝データベース" />
   <title>大学駅伝データベース</title>
-  <link rel="stylesheet" href="styles.css?v=20260907-4" />
+  <link rel="stylesheet" href="styles.css?v=20260907-clean1" />
   <link rel="stylesheet" href="team-colors.css" />
   <link rel="stylesheet" href="hero-five-runners.css" />
   <link rel="stylesheet" href="home-redesign-v2.css" />
@@ -18,29 +18,8 @@
   <link rel="stylesheet" href="topics-player-index.css" />
   <link rel="stylesheet" href="university-data-pages.css" />
   <link rel="stylesheet" href="university-expanded-directory.css" />
-  <link rel="stylesheet" href="all-athlete-directory-v2.css?v=20260907-4" />
-  <link rel="stylesheet" href="hakone-qualifier-page.css" />
-
-  <style data-stable-header-fix>
-    :root{--stable-header-h:82px}
-    body{padding-top:calc(var(--stable-header-h) + env(safe-area-inset-top,0px))!important}
-    .site-header{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:9999!important;padding-top:env(safe-area-inset-top,0px)!important;transform:none!important;translate:none!important;overflow:visible!important;background:rgba(247,251,255,.98)!important}
-    .site-header .header-inner{min-height:var(--stable-header-h)!important;height:var(--stable-header-h)!important;overflow:visible!important}
-    .site-header .brand,.site-header .brand-mark,.site-header .brand-mark svg,.site-header .brand-copy{overflow:visible!important;transform:none!important;translate:none!important}
-    @media(max-width:980px){
-      :root{--stable-header-h:72px}
-      .site-header .header-inner{min-height:72px!important;height:72px!important}
-      .site-header .brand-mark{width:64px!important;height:42px!important;min-width:64px!important;flex:0 0 64px!important}
-    }
-    .runtime-pb-block{margin:0 0 14px;padding:12px;border:1px solid #d9e6f0;border-radius:12px;background:#f8fbfe}
-    .runtime-pb-block h4{margin:0 0 9px;color:#234a70}
-    .runtime-pb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-    .runtime-pb-grid>div{padding:9px 10px;border:1px solid #dfe8ef;border-radius:9px;background:#fff}
-    .runtime-pb-grid span{display:block;font-size:.68rem;color:#718190}
-    .runtime-pb-grid strong{display:block;margin-top:3px;color:#123f68;font-variant-numeric:tabular-nums}
-    @media(max-width:430px){.runtime-pb-grid{grid-template-columns:1fr}.runtime-pb-grid>div{display:flex;align-items:center;justify-content:space-between}.runtime-pb-grid strong{margin-top:0}}
-  </style>
-</head>
+  <link rel="stylesheet" href="all-athlete-directory-v2.css?v=20260907-clean1" />
+  <link rel="stylesheet" href="hakone-qualifier-page.css" /></head>
 <body>
   <header class="site-header"><div class="container header-inner"><a class="brand" href="#home" aria-label="大学駅伝データベース ホーム"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 92 46" role="img"><circle class="runner-head" cx="50" cy="8" r="4.5"/><path class="runner-line" d="M46 14c-5 6-7 12-6 18m2-12-12 8m13-6 13 7M40 31 27 42m13-11 14 11"/><path class="tasuki-line" d="M43 16c4 3 8 8 11 14"/><path class="speed-line" d="M9 24h16M5 31h18"/></svg></span><span class="brand-copy"><strong>大学駅伝</strong><small>データベース</small></span></a><button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="mainNav">☰</button><nav class="nav" id="mainNav" aria-label="メインナビゲーション"><button data-route="home" class="nav-link active"><span>⌂</span> ホーム</button><div class="university-dropdown"><button type="button" class="nav-link university-dropdown-toggle" aria-expanded="false" aria-haspopup="true"><span>▦</span> 大学データ <span class="caret">▼</span></button><div class="race-dropdown-menu university-dropdown-menu" role="menu"><button type="button" data-route="teams" class="race-dropdown-item university-dropdown-item" role="menuitem">大学・選手データ</button><button type="button" data-route="meets" class="race-dropdown-item university-dropdown-item" role="menuitem">大会・記録会</button><button type="button" data-route="pbupdates" class="race-dropdown-item university-dropdown-item" role="menuitem">PB更新ランキング</button><button type="button" data-route="grade-rankings" class="race-dropdown-item university-dropdown-item" role="menuitem">学年別ランキング</button></div></div><div class="race-dropdown"><button type="button" class="nav-link race-dropdown-toggle" aria-expanded="false" aria-haspopup="true"><span>▥</span> 大会データ <span class="caret">▼</span></button><div class="race-dropdown-menu" role="menu"><button type="button" data-route="history" class="race-dropdown-item" role="menuitem">箱根駅伝</button><button type="button" data-route="qualifier" class="race-dropdown-item" role="menuitem">箱根駅伝予選会</button><button type="button" data-route="izumo" class="race-dropdown-item" role="menuitem">出雲駅伝</button><button type="button" data-route="zennihon" class="race-dropdown-item" role="menuitem">全日本大学駅伝</button></div></div><div class="topic-dropdown"><button type="button" class="nav-link topic-dropdown-toggle" aria-expanded="false" aria-haspopup="true"><span>★</span> トピック <span class="caret">▼</span></button><div class="race-dropdown-menu topic-dropdown-menu" role="menu"><button type="button" data-route="topics" class="race-dropdown-item topic-dropdown-item" role="menuitem">三大駅伝選手偏差値</button><button type="button" data-route="athletes" class="race-dropdown-item topic-dropdown-item" role="menuitem">全選手名鑑</button></div></div><button data-route="prediction" class="nav-link"><span>🏆</span> 2027箱根駅伝予想</button><button data-route="qualifier-prediction" class="nav-link"><span>◎</span> 箱根駅伝予選会予想</button><button data-route="about" class="nav-link"><span>ⓘ</span> このサイトについて</button></nav></div></header>
   <main id="app"></main>
@@ -73,7 +52,7 @@
   <script src="zennihon-alltime-top10.js"></script>
   <script src="three-ekiden-sections-view.js"></script>
   <script src="topics-player-index.js"></script>
-  <script src="all-athlete-directory-v2.js?v=20260907-4"></script>
+  <script src="all-athlete-directory-v2.js?v=20260907-clean1"></script>
   <script src="university-meet-results-auto.js"></script>
   <script src="university-data-pages.js"></script>
   <script src="university-expanded-directory.js"></script>
@@ -81,85 +60,5 @@
   <script src="hakone-qualifier-page.js"></script>
   <script src="race-dropdown.js"></script>
   <script src="home-hero-final.js"></script>
-  <script src="home-ranking-visuals.js"></script>
-  <script src="site-fixes-final.js?v=20260907-2"></script>
-
-  <script data-runtime-athlete-pb-fix>
-  (()=> {
-    const norm=s=>String(s||'').normalize('NFKC').replace(/[\\s　]+/g,'').trim();
-    const teamNorm=s=>String(s||'').normalize('NFKC')
-      .replace('國學院大学','國學院大學').replace('國學院大','國學院大學')
-      .replace('国学院大学','國學院大學').replace('国学院大','國學院大學').trim();
-    const nameNorm=s=>{
-      let v=String(s||'').trim();
-      if(typeof window.normalizeForeignAthleteName==='function')v=window.normalizeForeignAthleteName(v);
-      return norm(v);
-    };
-    function pbIndex(){
-      const exact=new Map(),byName=new Map();
-      const put=(team,name,pb)=>{
-        const nk=nameNorm(name),tk=norm(teamNorm(team)); if(!nk)return;
-        const key=nk+'|'+tk,prev=exact.get(key)||{};
-        const merged={
-          pb5000:(pb.pb5000&&pb.pb5000!=='—')?pb.pb5000:(prev.pb5000||'—'),
-          pb10000:(pb.pb10000&&pb.pb10000!=='—')?pb.pb10000:(prev.pb10000||'—'),
-          half:(pb.half&&pb.half!=='—')?pb.half:(prev.half||'—')
-        };
-        exact.set(key,merged);
-      };
-      if(typeof fullRosterData!=='undefined'){
-        Object.entries(fullRosterData).forEach(([team,rows])=>(rows||[]).forEach(r=>put(team,r[0],{pb10000:r[2],half:r[3]})));
-      }
-      if(typeof expandedTopAthletes2027!=='undefined'){
-        Object.entries(expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>put(team,r[0],{pb5000:r[2],pb10000:r[3],half:r[4]})));
-      }
-      if(typeof athleteData!=='undefined'){
-        Object.entries(athleteData).forEach(([team,rows])=>(rows||[]).forEach(r=>put(team,r[0],{pb5000:r[1],pb10000:r[2],half:r[3]})));
-      }
-      exact.forEach((pb,key)=>{
-        const nk=key.split('|')[0];
-        if(!byName.has(nk))byName.set(nk,[]);
-        byName.get(nk).push(pb);
-      });
-      return {exact,byName};
-    }
-    function lookup(name,team){
-      const idx=pbIndex(),nk=nameNorm(name),tk=norm(teamNorm(team));
-      const hit=idx.exact.get(nk+'|'+tk);
-      if(hit)return hit;
-      const list=idx.byName.get(nk)||[];
-      return list.length===1?list[0]:{pb5000:'—',pb10000:'—',half:'—'};
-    }
-    function block(name,team){
-      const pb=lookup(name,team);
-      return '<div class="runtime-pb-block"><h4>自己ベスト</h4><div class="runtime-pb-grid">'+
-        '<div><span>5000m PB</span><strong>'+pb.pb5000+'</strong></div>'+
-        '<div><span>10000m PB</span><strong>'+pb.pb10000+'</strong></div>'+
-        '<div><span>ハーフ PB</span><strong>'+pb.half+'</strong></div>'+
-      '</div></div>';
-    }
-    function patchButton(btn){
-      const row=btn.closest('tr'); if(!row)return;
-      const name=btn.textContent.trim();
-      const team=row.cells?.[1]?.textContent?.trim()||'';
-      let detail=row.nextElementSibling;
-      if(!detail||!detail.querySelector('td'))return;
-      const cell=detail.querySelector('td');
-      cell.querySelector('.runtime-pb-block')?.remove();
-      cell.querySelector('.athlete-pb-block')?.remove();
-      cell.insertAdjacentHTML('afterbegin',block(name,team));
-    }
-    document.addEventListener('click',e=>{
-      const btn=e.target.closest('[data-all-athlete-player],[data-directory-player]');
-      if(!btn)return;
-      setTimeout(()=>patchButton(btn),0);
-    });
-    const obs=new MutationObserver(()=>{
-      document.querySelectorAll('[data-all-athlete-player][aria-expanded="true"],[data-directory-player][aria-expanded="true"]').forEach(patchButton);
-    });
-    const app=document.getElementById('app'); if(app)obs.observe(app,{childList:true,subtree:true});
-    window.__athletePbLookup=lookup;
-  })();
-  </script>
-</body>
+  <script src="home-ranking-visuals.js"></script></body>
 </html>

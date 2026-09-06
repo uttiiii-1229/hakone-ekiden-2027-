@@ -84,16 +84,16 @@
     const map=new Map();
 
     // Full current rosters: [name, grade, 10000m PB, half PB]
-    if(typeof fullRosterData!=='undefined'){
-      Object.entries(fullRosterData).forEach(([team,rows])=>(rows||[]).forEach(r=>{
+    if(window.fullRosterData){
+      Object.entries(window.fullRosterData).forEach(([team,rows])=>(rows||[]).forEach(r=>{
         const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
         map.set(key,{grade:r[1],pb5000:'—',pb10000:r[2]||'—',half:r[3]||'—'});
       }));
     }
 
     // TOP10 data additionally has 5000m PB; let it override/fill full-roster values.
-    if(typeof expandedTopAthletes2027!=='undefined'){
-      Object.entries(expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
+    if(window.expandedTopAthletes2027){
+      Object.entries(window.expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
         const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
         const prev=map.get(key)||{};
         map.set(key,{
@@ -188,9 +188,9 @@
     return `<div class="athlete-pb-block">
       <h4>自己ベスト</h4>
       <div class="athlete-pb-grid">
-        <div class="athlete-pb-card"><span>5000m PB</span><strong>${pb?.pb5000||'—'}</strong></div>
-        <div class="athlete-pb-card athlete-pb-card-10000"><span>10000m PB</span><strong>${pb?.pb10000||'—'}</strong></div>
-        <div class="athlete-pb-card"><span>ハーフ PB</span><strong>${pb?.half||'—'}</strong></div>
+        <div class="athlete-pb-card"><span>5000m PB</span><strong>${pb?.pb5000 ?? '—'}</strong></div>
+        <div class="athlete-pb-card athlete-pb-card-10000"><span>10000m PB</span><strong>${pb?.pb10000 ?? '—'}</strong></div>
+        <div class="athlete-pb-card"><span>ハーフ PB</span><strong>${pb?.half ?? '—'}</strong></div>
       </div>
       <div class="athlete-grade-line"><span>学年</span><strong>${pb?.grade?pb.grade+'年':'—'}</strong></div>
     </div>`;

@@ -325,7 +325,7 @@
 
   if(typeof templates!=='undefined'){
     templates.topics=topicsTemplate;
-    templates.athletes=directoryTemplate;
+    // The unified all-athlete directory is owned exclusively by all-athlete-directory-v2.js.
   }
 
   document.addEventListener('click',e=>{
