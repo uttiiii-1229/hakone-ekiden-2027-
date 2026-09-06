@@ -172,11 +172,14 @@
   }
   function pbCards(p){
     const pb=p.pb;
-    return `<div class="athlete-pb-grid">
-      <div><span>5000m PB</span><strong>${pb?.pb5000||'—'}</strong></div>
-      <div><span>10000m PB</span><strong>${pb?.pb10000||'—'}</strong></div>
-      <div><span>ハーフ PB</span><strong>${pb?.half||'—'}</strong></div>
-      <div><span>学年</span><strong>${pb?.grade?pb.grade+'年':'—'}</strong></div>
+    return `<div class="athlete-pb-block">
+      <h4>自己ベスト</h4>
+      <div class="athlete-pb-grid">
+        <div class="athlete-pb-card"><span>5000m PB</span><strong>${pb?.pb5000||'—'}</strong></div>
+        <div class="athlete-pb-card athlete-pb-card-10000"><span>10000m PB</span><strong>${pb?.pb10000||'—'}</strong></div>
+        <div class="athlete-pb-card"><span>ハーフ PB</span><strong>${pb?.half||'—'}</strong></div>
+      </div>
+      <div class="athlete-grade-line"><span>学年</span><strong>${pb?.grade?pb.grade+'年':'—'}</strong></div>
     </div>`;
   }
   function deviationCards(p){
