@@ -30,13 +30,13 @@
   if(typeof originalRender==='function'){
     window.render=function(route='home'){
       originalRender(route);
-      const raceRoutes=['history','izumo','zennihon'];
+      const raceRoutes=['history','qualifier','izumo','zennihon'];
       dropdown.classList.toggle('active',raceRoutes.includes(route));
       dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['history','izumo','zennihon'].includes(route));
+    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon'].includes(route));
     dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
@@ -97,5 +97,28 @@
     const route=location.hash.replace('#','')||'home';
     dropdown.classList.toggle('active',['teams','meets','pbupdates','grade-rankings'].includes(route));
     dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
+  }
+})();
+(() => {
+  const dropdown=document.querySelector('.prediction-dropdown');
+  const toggle=document.querySelector('.prediction-dropdown-toggle');
+  if(!dropdown||!toggle)return;
+  const routes=['prediction','qualifier-prediction'];
+  function closeMenu(){dropdown.classList.remove('open');toggle.setAttribute('aria-expanded','false');}
+  toggle.addEventListener('click',e=>{e.stopPropagation();const open=dropdown.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});
+  dropdown.querySelectorAll('[data-route]').forEach(btn=>btn.addEventListener('click',closeMenu));
+  document.addEventListener('click',e=>{if(!dropdown.contains(e.target))closeMenu();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+  const previousRender=window.render;
+  if(typeof previousRender==='function'){
+    window.render=function(route='home'){
+      previousRender(route);
+      dropdown.classList.toggle('active',routes.includes(route));
+      dropdown.querySelectorAll('.prediction-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
+      closeMenu();
+    };
+    const route=location.hash.replace('#','')||'home';
+    dropdown.classList.toggle('active',routes.includes(route));
+    dropdown.querySelectorAll('.prediction-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
