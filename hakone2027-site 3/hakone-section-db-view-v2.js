@@ -1,14 +1,14 @@
 // Unified Hakone section DB viewer v4
-// 2007-2026: generated static DB with recalculated passing ranks
+// 2000-2026: generated static DB with recalculated passing ranks
 (() => {
-  const YEARS = new Set(Array.from({length:20},(_,i)=>2007+i));
+  const YEARS = new Set(Array.from({length:27},(_,i)=>2000+i));
   let currentYear = 2026;
 
   const sectionRecords = {
     1:{time:'1:00:28', athlete:'青木 瑠郁', university:'國學院大學', edition:'第102回', year:2026},
     2:{time:'1:05:09', athlete:'キムタイ', university:'城西大学', edition:'第102回', year:2026},
-    3:{time:'0:59:25', athlete:'Y.ヴィンセント', university:'東京国際大学', edition:'第96回', year:2020},
-    4:{time:'1:00:00', athlete:'Y.ヴィンセント', university:'東京国際大学', edition:'第99回', year:2023},
+    3:{time:'0:59:25', athlete:'イェゴン・ヴィンセント', university:'東京国際大学', edition:'第96回', year:2020},
+    4:{time:'1:00:00', athlete:'イェゴン・ヴィンセント', university:'東京国際大学', edition:'第99回', year:2023},
     5:{time:'1:07:16', athlete:'黒田 朝日', university:'青山学院大学', edition:'第102回', year:2026},
     6:{time:'0:56:47', athlete:'野村 昭夢', university:'青山学院大学', edition:'第101回', year:2025},
     7:{time:'1:00:43', athlete:'佐藤 圭汰', university:'駒澤大学', edition:'第101回', year:2025},
