@@ -4,6 +4,7 @@
   const sectionCounts={hakone:10,izumo:6,zennihon:8};
   const cache={};
   let activeRace='hakone';
+  const directoryState={query:'',team:'all',minRuns:1,sort:'score',page:1,pageSize:50};
 
   function toSeconds(value){
     const s=String(value||'').trim();
@@ -174,6 +175,109 @@
       </div>`;
   }
 
+  function allTeamsForRace(race){
+    return [...new Set(calcRace(race).ranking.map(p=>p.team).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+  }
+
+  function filteredDirectoryPlayers(race){
+    const q=normText(directoryState.query);
+    return calcRace(race).ranking.filter(p=>{
+      if(q && !normText(p.athlete).includes(q) && !normText(p.team).includes(q)) return false;
+      if(directoryState.team!=='all' && p.team!==directoryState.team) return false;
+      if(p.appearances<directoryState.minRuns) return false;
+      return true;
+    }).sort((a,b)=>{
+      if(directoryState.sort==='runs') return b.appearances-a.appearances||b.score-a.score;
+      if(directoryState.sort==='best') return b.best-a.best||b.score-a.score;
+      if(directoryState.sort==='name') return a.athlete.localeCompare(b.athlete,'ja');
+      return b.score-a.score||b.rawAvg-a.rawAvg||b.best-a.best;
+    });
+  }
+
+  function directoryControls(race){
+    const teams=allTeamsForRace(race);
+    return `<div class="directory-controls">
+      <div class="directory-search-wrap">
+        <label for="directorySearch">選手名・大学名で検索</label>
+        <input id="directorySearch" class="directory-search" type="search" placeholder="例：佐藤悠基 / 東海大学" value="${directoryState.query.replace(/"/g,'&quot;')}" data-directory-search>
+      </div>
+      <div>
+        <label for="directoryTeam">大学・チーム</label>
+        <select id="directoryTeam" class="directory-select" data-directory-team>
+          <option value="all">すべて</option>
+          ${teams.map(t=>`<option value="${t}" ${directoryState.team===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label for="directoryRuns">最低出走数</label>
+        <select id="directoryRuns" class="directory-select" data-directory-runs>
+          ${[1,2,3,4].map(n=>`<option value="${n}" ${directoryState.minRuns===n?'selected':''}>${n}回以上</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label for="directorySort">並び順</label>
+        <select id="directorySort" class="directory-select" data-directory-sort>
+          <option value="score" ${directoryState.sort==='score'?'selected':''}>総合偏差値</option>
+          <option value="runs" ${directoryState.sort==='runs'?'selected':''}>出走数</option>
+          <option value="best" ${directoryState.sort==='best'?'selected':''}>最高偏差値</option>
+          <option value="name" ${directoryState.sort==='name'?'selected':''}>選手名</option>
+        </select>
+      </div>
+    </div>`;
+  }
+
+  function directoryTable(race){
+    const players=filteredDirectoryPlayers(race);
+    const pages=Math.max(1,Math.ceil(players.length/directoryState.pageSize));
+    if(directoryState.page>pages) directoryState.page=pages;
+    const start=(directoryState.page-1)*directoryState.pageSize;
+    const rows=players.slice(start,start+directoryState.pageSize);
+    if(!rows.length){
+      return '<div class="notice">条件に一致する選手が見つかりませんでした。</div>';
+    }
+    return `
+      <div class="directory-result-head"><strong>${players.length.toLocaleString()}名</strong><span>該当</span></div>
+      <div class="table-wrap directory-table"><table>
+        <thead><tr><th>選手</th><th>大学・チーム</th><th>総合偏差値</th><th>出走数</th><th>出走区間</th><th>最高偏差値</th><th>詳細</th></tr></thead>
+        <tbody>
+        ${rows.map(p=>`
+          <tr>
+            <td><strong>${p.athlete}</strong></td>
+            <td>${p.team}</td>
+            <td><span class="topic-score">${p.score.toFixed(1)}</span></td>
+            <td>${p.appearances}回</td>
+            <td>${p.sections.map(s=>s+'区').join('・')}</td>
+            <td>${p.best.toFixed(1)}</td>
+            <td><button class="topic-detail-button" data-directory-player="${p.key}" aria-expanded="false">詳細を見る</button></td>
+          </tr>
+          <tr class="topic-player-detail-row" data-directory-player-detail="${p.key}" hidden><td colspan="7">${playerDetail(p,race)}</td></tr>
+        `).join('')}
+        </tbody>
+      </table></div>
+      <div class="directory-pagination">
+        <button data-directory-page="${directoryState.page-1}" ${directoryState.page<=1?'disabled':''}>‹ 前へ</button>
+        <span>${directoryState.page} / ${pages} ページ</span>
+        <button data-directory-page="${directoryState.page+1}" ${directoryState.page>=pages?'disabled':''}>次へ ›</button>
+      </div>`;
+  }
+
+  function directorySection(race){
+    return `<article class="data-card topic-feature directory-feature">
+      <div class="topic-feature-head">
+        <div><span class="topic-kicker">全選手名鑑</span><h2>${raceLabels[race]} 全選手名鑑</h2></div>
+        <span class="topic-badge">${race==='hakone'?'2000–2026':'収録済み全期間'} DATA</span>
+      </div>
+      <p class="muted directory-intro">収録期間に出走した全選手を検索できます。選手名・大学名・出走回数で絞り込み、総合偏差値や区間別偏差値、出走履歴を確認できます。</p>
+      ${directoryControls(race)}
+      <div id="directoryResults">${directoryTable(race)}</div>
+    </article>`;
+  }
+
+  function refreshDirectory(){
+    const host=document.querySelector('#directoryResults');
+    if(host) host.innerHTML=directoryTable(activeRace);
+  }
+
   function topicsTemplate(){
     return `<section class="container page topics-page">
       <div class="page-header">
@@ -203,6 +307,7 @@
           ${rankingTable(activeRace)}
         </div>
       </article>
+      ${directorySection(activeRace)}
     </section>`;
   }
 
@@ -212,11 +317,14 @@
     const raceBtn=e.target.closest('[data-topic-race]');
     if(raceBtn){
       activeRace=raceBtn.dataset.topicRace;
+      directoryState.query=''; directoryState.team='all'; directoryState.minRuns=1; directoryState.sort='score'; directoryState.page=1;
       document.querySelectorAll('[data-topic-race]').forEach(b=>b.classList.toggle('active',b.dataset.topicRace===activeRace));
       const host=document.querySelector('#topicRanking');
       if(host){
         host.innerHTML=`<div class="section-db-head"><div><h2>${raceLabels[activeRace]} 選手偏差値 TOP20</h2><p class="muted">総合偏差値を主ランキングにし、詳細から区間別偏差値を確認できます。</p></div></div>${rankingTable(activeRace)}`;
       }
+      const dir=document.querySelector('.directory-feature');
+      if(dir) dir.outerHTML=directorySection(activeRace);
       return;
     }
 
@@ -230,6 +338,43 @@
       detailBtn.setAttribute('aria-expanded',String(open));
       detailBtn.textContent=open?'閉じる':'区間別を見る';
     }
+  });
+
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-directory-player]');
+    if(btn){
+      const key=btn.dataset.directoryPlayer;
+      const row=document.querySelector(`[data-directory-player-detail="${CSS.escape(key)}"]`);
+      if(!row)return;
+      const open=row.hidden;
+      row.hidden=!open;
+      btn.setAttribute('aria-expanded',String(open));
+      btn.textContent=open?'閉じる':'詳細を見る';
+      return;
+    }
+    const page=e.target.closest('[data-directory-page]');
+    if(page && !page.disabled){
+      directoryState.page=Number(page.dataset.directoryPage)||1;
+      refreshDirectory();
+      document.querySelector('.directory-feature')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+
+  document.addEventListener('input',e=>{
+    const search=e.target.closest('[data-directory-search]');
+    if(!search)return;
+    directoryState.query=search.value;
+    directoryState.page=1;
+    refreshDirectory();
+  });
+
+  document.addEventListener('change',e=>{
+    const team=e.target.closest('[data-directory-team]');
+    if(team){directoryState.team=team.value;directoryState.page=1;refreshDirectory();return;}
+    const runs=e.target.closest('[data-directory-runs]');
+    if(runs){directoryState.minRuns=Number(runs.value)||1;directoryState.page=1;refreshDirectory();return;}
+    const sort=e.target.closest('[data-directory-sort]');
+    if(sort){directoryState.sort=sort.value;directoryState.page=1;refreshDirectory();}
   });
 
   if(location.hash.replace('#','')==='topics' && typeof render==='function') render('topics');
