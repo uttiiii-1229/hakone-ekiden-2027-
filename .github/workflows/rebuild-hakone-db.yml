@@ -1,0 +1,33 @@
+name: Rebuild Hakone DB
+
+on:
+  push:
+    paths:
+      - ".github/workflows/rebuild-hakone-db.yml"
+      - "scripts/build-hakone-phase2.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build official Hakone database
+        run: node scripts/build-hakone-phase2.mjs
+      - name: Commit generated database
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "hakone2027-site 3/hakone-phase2-static-db.js"
+          if git diff --cached --quiet; then
+            echo "No database changes"
+          else
+            git commit -m "Rebuild Hakone DB for 2000-2026"
+            git push
+          fi
