@@ -13,7 +13,10 @@ def clean(s):
     return re.sub(r'\s+',' ',str(s or '').replace('\u3000',' ')).strip()
 
 def norm_team(s):
-    return clean(s).replace('國學院大学','國學院大學').replace('國學院大','國學院大學')
+    s=clean(s)
+    if s in ('國學院大學學','國學院大学','國學院大','国学院大学','国学院大'):
+        return '國學院大學'
+    return s
 
 def norm_time(s):
     s=clean(s).replace('◎','').replace('○','').replace('★','').replace('′',':').replace('″','').replace('分',':').replace('秒','').replace('時間',':')
@@ -55,6 +58,9 @@ def fetch_html(url):
 def looks_time(s):
     return bool(re.search(r'(?:\d{1,2}:\d{2}|\d+分\s*\d+秒|\d+′\s*\d+″)',clean(s)))
 
+def valid_section_time(s):
+    return bool(re.match(r'^\d{1,2}:\d{2}(?::\d{2})?', clean(s)))
+
 def looks_team(s):
     s=clean(s)
     return bool(re.search(r'(?:大学|大學|学連選抜|学生選抜|リーグ選抜|IVY|アイビー|第一工業|東海大$|駒澤大$|駒沢大$)',s))
@@ -75,7 +81,8 @@ def generic_section_rows(rows):
             athlete_i=candidates[0] if candidates else None
         if athlete_i is None or athlete_i>=len(row):continue
         athlete=clean(row[athlete_i]); team=norm_team(row[team_i]); tm=norm_time(row[ti])
-        if athlete and team and re.search(r'\d',tm):out.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
+        if athlete and team and not athlete.isdigit() and not team.isdigit() and valid_section_time(tm):
+            out.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
     return out
 
 def parse_html_section(url):
@@ -105,7 +112,7 @@ def parse_html_section(url):
             for row in rows[header_i+1:]:
                 if max(ir,ia,it,im)>=len(row):continue
                 rk=rank_value(row[ir]);athlete=clean(row[ia]);team=norm_team(row[it]);tm=norm_time(row[im])
-                if athlete and team and re.search(r'\d',tm) and (isinstance(rk,int) or rk=='OPN'):
+                if athlete and team and not athlete.isdigit() and not team.isdigit() and valid_section_time(tm) and (isinstance(rk,int) or rk=='OPN'):
                     out.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
         if len(out)<10:out=generic_section_rows(rows)
         if len(out)>len(best):best=out
@@ -381,7 +388,7 @@ def parse_zennihon_web(year,ed):
                     break
             if rk is None:
                 continue
-            if not team or not athlete or not re.search(r'\d',tm):
+            if not team or not athlete or team.isdigit() or athlete.isdigit() or not valid_section_time(tm):
                 continue
             rows.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
 
