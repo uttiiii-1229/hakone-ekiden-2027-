@@ -1,6 +1,10 @@
 // Full standings viewer: Hakone / Izumo / All-Japan, 2007-2026
 (() => {
   const raceNames={hakone:'箱根駅伝',izumo:'出雲駅伝',zennihon:'全日本大学駅伝'};
+  function normalizeTeam(name=''){
+    const n=String(name).trim();
+    return ['國學院大學學','國學院大学','國學院大','国学院大学','国学院大'].includes(n)?'國學院大學':n;
+  }
   const hakoneViews={overall:'総合成績',outward:'往路成績',return:'復路成績',detail:'総合・往路・復路'};
   let currentRace='hakone';
   let currentDecade='2017-2026';
@@ -64,15 +68,15 @@
   }
   function hakoneTable(results){
     if(currentHakoneView==='outward'){
-      return `<div class="table-wrap"><table><thead><tr><th>往路順位</th><th>大学・チーム</th><th>往路タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.outwardRank)}"><td><strong>${rankText(r.outwardRank)}</strong></td><td><strong>${r.team}</strong></td><td>${timeText(r.outwardTime)}</td></tr>`).join('')}</tbody></table></div>`;
+      return `<div class="table-wrap"><table><thead><tr><th>往路順位</th><th>大学・チーム</th><th>往路タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.outwardRank)}"><td><strong>${rankText(r.outwardRank)}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${timeText(r.outwardTime)}</td></tr>`).join('')}</tbody></table></div>`;
     }
     if(currentHakoneView==='return'){
-      return `<div class="table-wrap"><table><thead><tr><th>復路順位</th><th>大学・チーム</th><th>復路タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.returnRank)}"><td><strong>${rankText(r.returnRank)}</strong></td><td><strong>${r.team}</strong></td><td>${timeText(r.returnTime)}</td></tr>`).join('')}</tbody></table></div>`;
+      return `<div class="table-wrap"><table><thead><tr><th>復路順位</th><th>大学・チーム</th><th>復路タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.returnRank)}"><td><strong>${rankText(r.returnRank)}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${timeText(r.returnTime)}</td></tr>`).join('')}</tbody></table></div>`;
     }
     if(currentHakoneView==='detail'){
-      return `<div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th><th>往路順位</th><th>往路タイム</th><th>復路順位</th><th>復路タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.rank)}"><td><strong>${rankText(r.rank)}</strong></td><td><strong>${r.team}</strong></td><td>${timeText(r.time)}</td><td>${rankText(r.outwardRank)}</td><td>${timeText(r.outwardTime)}</td><td>${rankText(r.returnRank)}</td><td>${timeText(r.returnTime)}</td></tr>`).join('')}</tbody></table></div>`;
+      return `<div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th><th>往路順位</th><th>往路タイム</th><th>復路順位</th><th>復路タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.rank)}"><td><strong>${rankText(r.rank)}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${timeText(r.time)}</td><td>${rankText(r.outwardRank)}</td><td>${timeText(r.outwardTime)}</td><td>${rankText(r.returnRank)}</td><td>${timeText(r.returnTime)}</td></tr>`).join('')}</tbody></table></div>`;
     }
-    return `<div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.rank)}"><td><strong>${rankText(r.rank)}</strong></td><td><strong>${r.team}</strong></td><td>${timeText(r.time)}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.rank)}"><td><strong>${rankText(r.rank)}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${timeText(r.time)}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function resultBlock(race,year){
     const ed=edition(race,year);
@@ -93,7 +97,7 @@
       return `<div class="section-db-head" style="margin-top:16px"><div><h2>箱根駅伝 第${ed}回（${year}年）${title}</h2><p class="muted">箱根駅伝公式「大会詳細」の総合・往路・復路順位と記録を使用しています。</p></div></div>${hakoneTable(results)}`;
     }
     return `<div class="section-db-head" style="margin-top:16px"><div><h2>${raceNames[race]} 第${ed}回（${year}年）総合成績</h2><p class="muted">公式記録に掲載された全出場校を表示しています。</p></div></div>
-      <div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.rank)}"><td><strong>${rankText(r.rank)}</strong></td><td><strong>${r.team}</strong></td><td>${timeText(r.time)}</td></tr>`).join('')}</tbody></table></div>`;
+      <div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${results.map(r=>`<tr class="${rowClass(r.rank)}"><td><strong>${rankText(r.rank)}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${timeText(r.time)}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function shell(){
     const years=yearsFor(currentDecade);
