@@ -5,18 +5,6 @@
   const cache={};
   let activeRace='hakone';
 
-  // 箱根公式の選手詳細で再照合した通算出走数。
-  // 2007年より前から出走しており、現DBの収録開始年をまたぐ選手を補正する。
-  const hakoneCareerAppearances={
-    '佐藤悠基|東海大学':4,
-    '松瀬元太|順天堂大学':4,
-    '鷲見知彦|日本体育大学':4,
-    '今井正人|順天堂大学':4,
-    '竹沢健介|早稲田大学':4,
-    '上野裕一郎|中央大学':4,
-    '上野祐一郎|中央大学':4
-  };
-
   function toSeconds(value){
     const s=String(value||'').trim();
     if(!s||s==='—') return null;
@@ -61,6 +49,15 @@
   }
   function rawRows(race){ return race==='hakone'?hakoneRows():threeRows(race); }
 
+  // 1回の突出だけで歴代上位になりすぎないように、出走実績が少ない場合だけ50へ穏やかに縮約。
+  // 4回出走は補正なし。区間そのものへの固定ウェイトは付けない。
+  function reliabilityFactor(runs){
+    if(runs>=4) return 1.00;
+    if(runs===3) return 0.96;
+    if(runs===2) return 0.90;
+    return 0.82;
+  }
+
   function calcRace(race){
     if(cache[race]) return cache[race];
     const rows=rawRows(race);
@@ -93,7 +90,7 @@
       if(!nameKey) return;
       const key=`${nameKey}|${teamKey}`;
       if(!players.has(key)){
-        players.set(key,{athlete:a.athlete,team:a.team,scores:[],runs:[]});
+        players.set(key,{key,athlete:a.athlete,team:a.team,scores:[],runs:[]});
       }
       const p=players.get(key);
       p.scores.push(a.deviation);
@@ -101,18 +98,47 @@
     });
 
     const ranking=[...players.values()].map(p=>{
-      const avg=p.scores.reduce((a,b)=>a+b,0)/p.scores.length;
+      const rawAvg=p.scores.reduce((a,b)=>a+b,0)/p.scores.length;
+      const appearances=p.scores.length;
+      const factor=reliabilityFactor(appearances);
+      const score=50+(rawAvg-50)*factor;
       const best=Math.max(...p.scores);
       const sections=[...new Set(p.runs.map(r=>r.section))].sort((a,b)=>a-b);
       const years=[...new Set(p.runs.map(r=>r.year))].sort((a,b)=>a-b);
-      const baseAppearances=p.scores.length;
-      const careerKey=`${normText(p.athlete)}|${normText(p.team)}`;
-      const officialAppearances=race==='hakone' ? (hakoneCareerAppearances[careerKey]||baseAppearances) : baseAppearances;
-      return {...p,score:avg,best,sections,years,appearances:officialAppearances,scoredAppearances:baseAppearances};
-    }).sort((a,b)=>b.score-a.score||b.best-a.best||b.appearances-a.appearances).slice(0,20);
+      const sectionScores={};
+      for(let sec=1;sec<=sectionCounts[race];sec++){
+        const vals=p.runs.filter(r=>r.section===sec).map(r=>r.deviation);
+        if(vals.length) sectionScores[sec]=vals.reduce((a,b)=>a+b,0)/vals.length;
+      }
+      return {...p,score,rawAvg,best,sections,years,appearances,sectionScores,factor};
+    }).sort((a,b)=>b.score-a.score||b.rawAvg-a.rawAvg||b.best-a.best||b.appearances-a.appearances);
 
     cache[race]={ranking,totalRuns:appearances.length,totalPlayers:players.size};
     return cache[race];
+  }
+
+  function sectionGrid(p,race){
+    const count=sectionCounts[race];
+    return `<div class="topic-section-grid">${Array.from({length:count},(_,i)=>{
+      const sec=i+1;
+      const v=p.sectionScores[sec];
+      return `<div class="topic-section-score ${Number.isFinite(v)?'has-score':'no-score'}"><span>${sec}区</span><strong>${Number.isFinite(v)?v.toFixed(1):'—'}</strong></div>`;
+    }).join('')}</div>`;
+  }
+
+  function playerDetail(p,race){
+    const runHistory=p.runs.slice().sort((a,b)=>a.year-b.year).map(r=>`${r.year}年 ${r.section}区 ${r.deviation.toFixed(1)}`).join(' / ');
+    return `<div class="topic-player-detail-card">
+      <div class="topic-detail-stats">
+        <div><span>総合偏差値</span><strong>${p.score.toFixed(1)}</strong></div>
+        <div><span>区間偏差値平均</span><strong>${p.rawAvg.toFixed(1)}</strong></div>
+        <div><span>最高偏差値</span><strong>${p.best.toFixed(1)}</strong></div>
+        <div><span>出走数</span><strong>${p.appearances}回</strong></div>
+      </div>
+      <p class="muted topic-reliability-note">出走回数補正: ${Math.round(p.factor*100)}%（4回で100%）。区間への固定ウェイトは付けず、同年・同区間内で標準化しています。</p>
+      ${sectionGrid(p,race)}
+      <p class="topic-run-history"><strong>出走履歴:</strong> ${runHistory}</p>
+    </div>`;
   }
 
   function rankingTable(race){
@@ -120,17 +146,18 @@
     if(!data.ranking.length){
       return '<div class="notice">区間タイムDBを読み込めなかったため、偏差値を算出できませんでした。</div>';
     }
+    const top=data.ranking.slice(0,20);
     return `
       <div class="topic-summary">
         <div><strong>${data.totalPlayers.toLocaleString()}</strong><span>選手を集計</span></div>
         <div><strong>${data.totalRuns.toLocaleString()}</strong><span>区間走を標準化</span></div>
-        <div><strong>TOP 20</strong><span>平均偏差値順</span></div>
+        <div><strong>TOP 20</strong><span>総合偏差値順</span></div>
       </div>
       <div class="table-wrap topic-ranking-table">
         <table>
-          <thead><tr><th>順位</th><th>選手</th><th>大学・チーム</th><th>偏差値</th><th>公式出走数</th><th>出走区間</th></tr></thead>
+          <thead><tr><th>順位</th><th>選手</th><th>大学・チーム</th><th>総合偏差値</th><th>出走数</th><th>出走区間</th><th>詳細</th></tr></thead>
           <tbody>
-            ${data.ranking.map((p,i)=>`
+            ${top.map((p,i)=>`
               <tr>
                 <td><strong>${i+1}</strong></td>
                 <td><strong>${p.athlete}</strong></td>
@@ -138,7 +165,10 @@
                 <td><span class="topic-score">${p.score.toFixed(1)}</span></td>
                 <td>${p.appearances}</td>
                 <td>${p.sections.map(s=>s+'区').join('・')}</td>
-              </tr>`).join('')}
+                <td><button class="topic-detail-button" data-topic-player="${p.key}" data-topic-player-race="${race}" aria-expanded="false">区間別を見る</button></td>
+              </tr>
+              <tr class="topic-player-detail-row" data-topic-player-detail="${p.key}" hidden><td colspan="7">${playerDetail(p,race)}</td></tr>
+            `).join('')}
           </tbody>
         </table>
       </div>`;
@@ -158,17 +188,18 @@
             <span class="topic-kicker">選手偏差値名鑑</span>
             <h2>三大駅伝・選手偏差値 TOP20</h2>
           </div>
-          <span class="topic-badge">2007–2026 DATA</span>
+          <span class="topic-badge">2000–2026 DATA</span>
         </div>
         <div class="notice topic-method">
-          同じ年・同じ区間を走った選手のタイム分布から「偏差値 = 50 + 10 ×（区間平均タイム − 選手タイム）÷ 標準偏差」を算出します。
-          選手が複数年・複数区間を走っている場合は、それぞれの区間偏差値を平均して平準化します。これにより距離やコースが違う区間同士をタイムそのままで比較しません。箱根の出走数は公式選手詳細も照合し、収録開始年をまたぐ選手は通算出走数を補正しています。
+          各出走は、同じ年・同じ区間を走った選手のタイム分布から「偏差値 = 50 + 10 ×（区間平均タイム − 選手タイム）÷ 標準偏差」で標準化します。
+          総合偏差値は各出走の平均を基礎に、1回82%・2回90%・3回96%・4回以上100%の信頼度で50側へ補正します。
+          これにより一度だけの突出走を過大評価しにくくしつつ、区間ごとの難しさは同年・同区間内の標準化で吸収します。
         </div>
         <div class="tabs topic-race-tabs">
           ${Object.entries(raceLabels).map(([k,v])=>`<button class="tab ${k===activeRace?'active':''}" data-topic-race="${k}">${v}</button>`).join('')}
         </div>
         <div id="topicRanking">
-          <div class="section-db-head"><div><h2>${raceLabels[activeRace]} 選手偏差値 TOP20</h2><p class="muted">各年・各区間で標準化した偏差値を選手単位で平均。</p></div></div>
+          <div class="section-db-head"><div><h2>${raceLabels[activeRace]} 選手偏差値 TOP20</h2><p class="muted">総合偏差値を主ランキングにし、詳細から区間別偏差値を確認できます。</p></div></div>
           ${rankingTable(activeRace)}
         </div>
       </article>
@@ -178,13 +209,26 @@
   if(typeof templates!=='undefined') templates.topics=topicsTemplate;
 
   document.addEventListener('click',e=>{
-    const btn=e.target.closest('[data-topic-race]');
-    if(!btn) return;
-    activeRace=btn.dataset.topicRace;
-    document.querySelectorAll('[data-topic-race]').forEach(b=>b.classList.toggle('active',b.dataset.topicRace===activeRace));
-    const host=document.querySelector('#topicRanking');
-    if(host){
-      host.innerHTML=`<div class="section-db-head"><div><h2>${raceLabels[activeRace]} 選手偏差値 TOP20</h2><p class="muted">各年・各区間で標準化した偏差値を選手単位で平均。</p></div></div>${rankingTable(activeRace)}`;
+    const raceBtn=e.target.closest('[data-topic-race]');
+    if(raceBtn){
+      activeRace=raceBtn.dataset.topicRace;
+      document.querySelectorAll('[data-topic-race]').forEach(b=>b.classList.toggle('active',b.dataset.topicRace===activeRace));
+      const host=document.querySelector('#topicRanking');
+      if(host){
+        host.innerHTML=`<div class="section-db-head"><div><h2>${raceLabels[activeRace]} 選手偏差値 TOP20</h2><p class="muted">総合偏差値を主ランキングにし、詳細から区間別偏差値を確認できます。</p></div></div>${rankingTable(activeRace)}`;
+      }
+      return;
+    }
+
+    const detailBtn=e.target.closest('[data-topic-player]');
+    if(detailBtn){
+      const key=detailBtn.dataset.topicPlayer;
+      const row=document.querySelector(`[data-topic-player-detail="${CSS.escape(key)}"]`);
+      if(!row) return;
+      const open=row.hidden;
+      row.hidden=!open;
+      detailBtn.setAttribute('aria-expanded',String(open));
+      detailBtn.textContent=open?'閉じる':'区間別を見る';
     }
   });
 
