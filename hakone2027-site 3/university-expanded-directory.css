@@ -38,3 +38,19 @@
   .university-pb-table td::before{content:attr(data-label);font-size:.7rem;font-weight:800;color:#728293}
   .university-pb-details>summary{padding:8px 0}
 }
+
+.average-top3-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+.average-top3-card{padding:14px}
+.average-top3-head span{font-size:.68rem;font-weight:900;color:#6e7f8e;letter-spacing:.06em}
+.average-top3-head h2{margin:2px 0 10px;color:#173f63}
+.average-top3-list{display:grid;gap:7px}
+.average-top3-list>div{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #edf2f6}
+.average-top3-list>div:first-child{border-top:0}
+.average-top3-list b{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:999px;background:#eef5fb;color:#0b5a9a;font-size:.72rem}
+.average-top3-list>div>span{display:flex;align-items:center;gap:7px;min-width:0}
+.average-top3-list .university-tasuki-icon{width:30px;height:30px;flex-basis:30px;border-radius:9px}
+.average-top3-list .university-icon-sash{width:9px;height:46px;left:11px;top:-8px}
+.average-top3-list .university-icon-letter{font-size:.72rem}
+.average-top3-list strong{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.average-top3-list em{font-style:normal;font-weight:900;color:#123f68;font-variant-numeric:tabular-nums}
+@media(max-width:760px){.average-top3-overview{grid-template-columns:1fr}.average-top3-card{padding:12px}}
