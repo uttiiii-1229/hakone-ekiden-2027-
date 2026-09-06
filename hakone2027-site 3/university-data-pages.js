@@ -20,21 +20,25 @@
   const meetCatalog=[
     {id:'japan-ic-2026',autoId:'95ic-2026',year:2026,name:'第95回 日本インカレ',type:'インカレ',period:'2026/9/5–9/7',venue:'日産スタジアム',status:'結果自動取得'},
     {id:'student-individual-2026',autoId:'26kojin-2026',year:2026,name:'2026 日本学生個人選手権',type:'学生選手権',period:'2026/4/24–4/26',venue:'レモンガススタジアム平塚',status:'結果自動取得'},
-    {id:'japan-ic-2025',autoId:'94ic-2025',year:2025,name:'第94回 日本インカレ',type:'インカレ',period:'2025年',venue:'大会公式会場',status:'過去結果自動取得'},
-    {id:'student-individual-2025',autoId:'25kojin-2025',year:2025,name:'2025 日本学生個人選手権',type:'学生選手権',period:'2025/4/25–4/27',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
-    {id:'japan-ic-2024',autoId:'93ic-2024',year:2024,name:'第93回 日本インカレ',type:'インカレ',period:'2024/9/19–9/22',venue:'大会公式会場',status:'過去結果自動取得'},
-    {id:'student-individual-2024',autoId:'24kojin-2024',year:2024,name:'2024 日本学生個人選手権',type:'学生選手権',period:'2024/6/14–6/16',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
-    {id:'japan-ic-2023',autoId:'92ic-2023',year:2023,name:'第92回 日本インカレ',type:'インカレ',period:'2023年',venue:'大会公式会場',status:'過去結果自動取得'},
-    {id:'student-individual-2023',autoId:'23kojin-2023',year:2023,name:'2023 日本学生個人選手権',type:'学生選手権',period:'2023年4月',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
-    {id:'japan-ic-2022',autoId:'91ic-2022',year:2022,name:'第91回 日本インカレ',type:'インカレ',period:'2022/9/9–9/11',venue:'大会公式会場',status:'過去結果自動取得'},
-    {id:'student-individual-2022',autoId:'22kojin-2022',year:2022,name:'2022 日本学生個人選手権',type:'学生選手権',period:'2022/4/15–4/17',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
-    {id:'kanto-ic-2026',year:2026,name:'第105回 関東インカレ',type:'インカレ',period:'2026/5/21–5/24',venue:'カンセキスタジアムとちぎ',status:'一部結果収録'},
-    {id:'abashiri-2026',year:2026,name:'関東学生網走夏季記録挑戦競技会',type:'記録会',period:'2026年7月',venue:'網走',status:'結果収録準備中'},
+    {id:'kanto-ic-2026',autoId:'kanto-ic-105-2026',year:2026,name:'第105回 関東インカレ',type:'インカレ',period:'2026/5/21–5/24',venue:'カンセキスタジアムとちぎ',status:'結果自動取得'},
+    {id:'abashiri-2026',autoId:'abashiri-summer-2026',year:2026,name:'関東学生網走夏季記録挑戦競技会',type:'記録会',period:'2026/7/12',venue:'網走市営陸上競技場',status:'結果自動取得'},
     {id:'twilight-2026',year:2026,name:'トワイライト・ゲームス',type:'競技会',period:'2026年8月',venue:'関東',status:'結果収録準備中'},
     {id:'nittai-long-2026',year:2026,name:'日本体育大学長距離競技会',type:'記録会',period:'2026年・複数回',venue:'日本体育大学健志台',status:'大会別DB拡張予定'},
     {id:'march-2026',year:2026,name:'MARCH対抗戦',type:'対抗戦',period:'2026年秋〜冬',venue:'関東',status:'開催後収録予定'},
     {id:'hachioji-2026',year:2026,name:'八王子ロングディスタンス',type:'記録会',period:'2026年冬季',venue:'八王子',status:'開催後収録予定'},
-    {id:'hokuren-2026',year:2026,name:'ホクレン・ディスタンスチャレンジ',type:'シリーズ',period:'2026年7月',venue:'北海道各地',status:'結果収録準備中'}
+    {id:'hokuren-2026',year:2026,name:'ホクレン・ディスタンスチャレンジ',type:'シリーズ',period:'2026年7月',venue:'北海道各地',status:'結果収録準備中'},
+    {id:'japan-ic-2025',autoId:'94ic-2025',year:2025,name:'第94回 日本インカレ',type:'インカレ',period:'2025年',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2025',autoId:'25kojin-2025',year:2025,name:'2025 日本学生個人選手権',type:'学生選手権',period:'2025/4/25–4/27',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'kanto-ic-2025',autoId:'kanto-ic-104-2025',year:2025,name:'第104回 関東インカレ',type:'インカレ',period:'2025/5/8–5/11',venue:'関東学連公式会場',status:'過去結果自動取得'},
+    {id:'abashiri-2025',autoId:'abashiri-summer-2025',year:2025,name:'関東学生網走夏季記録挑戦競技会',type:'記録会',period:'2025/7/20',venue:'網走',status:'過去結果自動取得'},
+    {id:'japan-ic-2024',autoId:'93ic-2024',year:2024,name:'第93回 日本インカレ',type:'インカレ',period:'2024/9/19–9/22',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2024',autoId:'24kojin-2024',year:2024,name:'2024 日本学生個人選手権',type:'学生選手権',period:'2024/6/14–6/16',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'kanto-10000-2024',autoId:'kanto-10000-2024',year:2024,name:'10000m記録挑戦競技会',type:'記録会',period:'2024/11/16',venue:'相模原ギオンスタジアム',status:'過去結果自動取得'},
+    {id:'japan-ic-2023',autoId:'92ic-2023',year:2023,name:'第92回 日本インカレ',type:'インカレ',period:'2023年',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2023',autoId:'23kojin-2023',year:2023,name:'2023 日本学生個人選手権',type:'学生選手権',period:'2023年4月',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'japan-ic-2022',autoId:'91ic-2022',year:2022,name:'第91回 日本インカレ',type:'インカレ',period:'2022/9/9–9/11',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2022',autoId:'22kojin-2022',year:2022,name:'2022 日本学生個人選手権',type:'学生選手権',period:'2022/4/15–4/17',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'kanto-10000-2022',autoId:'kanto-10000-2022',year:2022,name:'10000m記録挑戦競技会',type:'記録会',period:'2022/11/20',venue:'国立競技場',status:'過去結果自動取得'}
   ];
 
   const meetResults={
