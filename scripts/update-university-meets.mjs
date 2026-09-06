@@ -10,7 +10,8 @@ const sources=JSON.parse(await fs.readFile(manifestPath,'utf8'));
 const fw=s=>String(s||'').normalize('NFKC').replace(/\s+/g,' ').trim();
 function eligibleEvent(text){
   const t=fw(text).toLowerCase();
-  if(/競歩|walking|walk|3000m\s*sc|3000m障害/.test(t)) return false;
+  // NANS pages often abbreviate race walking as 5000mW / 10000mW, so reject both words and suffix notation.
+  if(/競歩|walking|walk|\b(?:5|10|20|30|50|5000|10000|20000|30000|50000)(?:km|m)\s*w\b|3000m\s*sc|3000m障害/.test(t)) return false;
   return /5000m|10000m|ハーフ|half marathon|20km|30km|15km|10km|5km/.test(t);
 }
 function absolutize(base,href){try{return new URL(href,base).href}catch{return null}}
