@@ -307,11 +307,27 @@
           ${rankingTable(activeRace)}
         </div>
       </article>
+    </section>`;
+  }
+
+  function directoryTemplate(){
+    return `<section class="container page topics-page">
+      <div class="page-header">
+        <div class="eyebrow">TOPICS / ALL ATHLETES</div>
+        <h1>全選手名鑑</h1>
+        <p>三大駅伝の収録データから、歴代出走選手を検索・比較できます。</p>
+      </div>
+      <div class="tabs topic-race-tabs">
+        ${Object.entries(raceLabels).map(([k,v])=>`<button class="tab ${k===activeRace?'active':''}" data-topic-race="${k}">${v}</button>`).join('')}
+      </div>
       ${directorySection(activeRace)}
     </section>`;
   }
 
-  if(typeof templates!=='undefined') templates.topics=topicsTemplate;
+  if(typeof templates!=='undefined'){
+    templates.topics=topicsTemplate;
+    templates.athletes=directoryTemplate;
+  }
 
   document.addEventListener('click',e=>{
     const raceBtn=e.target.closest('[data-topic-race]');
@@ -377,5 +393,6 @@
     if(sort){directoryState.sort=sort.value;directoryState.page=1;refreshDirectory();}
   });
 
-  if(location.hash.replace('#','')==='topics' && typeof render==='function') render('topics');
+  const topicRoute=location.hash.replace('#','');
+  if(['topics','athletes'].includes(topicRoute) && typeof render==='function') render(topicRoute);
 })();
