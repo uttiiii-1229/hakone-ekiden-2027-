@@ -331,39 +331,57 @@ def parse_zennihon_web(year,ed):
             raise RuntimeError(f'Zennihon {year} {sec}: table not found')
 
         rows=[]
-        header=None
+        saw_header=False
         for tr in table.find_all('tr'):
             cells=[clean(x.get_text(' ',strip=True)) for x in tr.find_all(['th','td'])]
             if not cells:
                 continue
-            if header is None:
-                joined=' '.join(cells)
+            joined=' '.join(cells)
+            if not saw_header:
                 if '大学' in joined and '選手' in joined and '区間' in joined and '順位' in joined:
-                    header=cells
+                    saw_header=True
                 continue
-
-            # Current table layouts have either:
-            # 通過順位, 通過タイム, 大学名, 選手名, 学年, 区間タイム, 区間順位, ...
-            # or 大学名, 通過タイム, 選手名, 学年, 区間タイム, 区間順位, ...
             if len(cells)<6:
                 continue
-            try:
-                uni_i=next(i for i,x in enumerate(header) if '大学' in x)
-                ath_i=next(i for i,x in enumerate(header) if '選手' in x)
-                time_i=next(i for i,x in enumerate(header) if '区間' in x and ('タイム' in x or '記録' in x))
-                rank_i=next(i for i,x in enumerate(header) if '区間' in x and '順位' in x)
-            except StopIteration:
-                break
-            if max(uni_i,ath_i,time_i,rank_i)>=len(cells):
-                continue
 
-            team=norm_team(cells[uni_i])
-            athlete=clean(cells[ath_i])
-            tm=norm_time(cells[time_i])
-            rk=rank_value(cells[rank_i])
-            if not team or not athlete or not re.search(r'\d',tm):
+            team_i=next((i for i,x in enumerate(cells) if looks_team(x)),None)
+            if team_i is None:
                 continue
-            if not isinstance(rk,int) and rk!='OPN':
+            team=norm_team(cells[team_i])
+
+            athlete_i=None
+            for i in range(team_i+1,len(cells)):
+                x=cells[i]
+                if not x or looks_time(x) or x.isdigit():
+                    continue
+                if re.fullmatch(r'(?:---|→|↑|↓|[-+]?\d+)',x):
+                    continue
+                if re.search(r'(?:区間|順位|タイム|通過)',x):
+                    continue
+                athlete_i=i
+                break
+            if athlete_i is None:
+                continue
+            athlete=clean(cells[athlete_i])
+
+            time_indices=[i for i,x in enumerate(cells) if looks_time(x)]
+            if not time_indices:
+                continue
+            section_time_i=time_indices[-1]
+            tm=norm_time(cells[section_time_i])
+
+            rk=None
+            for i in range(section_time_i+1,len(cells)):
+                rv=rank_value(cells[i])
+                if isinstance(rv,int):
+                    rk=rv
+                    break
+                if rv=='OPN':
+                    rk='OPN'
+                    break
+            if rk is None:
+                continue
+            if not team or not athlete or not re.search(r'\d',tm):
                 continue
             rows.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
 
