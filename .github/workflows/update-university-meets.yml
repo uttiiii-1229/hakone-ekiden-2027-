@@ -34,5 +34,6 @@ jobs:
             echo "No result changes"
           else
             git commit -m "Update university meet results"
+            git pull --rebase origin main
             git push
           fi
