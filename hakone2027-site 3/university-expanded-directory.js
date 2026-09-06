@@ -41,7 +41,7 @@
     return metrics.map(([label,idx,kind])=>{
       const vals=rows.map(r=>timeToSeconds(r[idx])).filter(Number.isFinite);
       const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
-      return {label,value:formatAverage(avg,kind),count:vals.length};
+      return {label,key:label,value:formatAverage(avg,kind),seconds:avg,count:vals.length};
     });
   }
   function hakoneUniversityStats(){
@@ -86,6 +86,33 @@
   function pbRows(team){
     return typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
   }
+  function averageRanks(stats){
+    const ranks={};
+    ['5000m','10000m','ハーフ'].forEach(metric=>{
+      const list=stats.map(s=>{
+        const a=top10Averages(s.team).find(x=>x.key===metric);
+        return {team:s.team,seconds:a?.seconds,count:a?.count||0};
+      }).filter(x=>Number.isFinite(x.seconds)&&x.count>0).sort((a,b)=>a.seconds-b.seconds);
+      list.forEach((x,i)=>{if(!ranks[x.team])ranks[x.team]={};ranks[x.team][metric]=i+1;});
+    });
+    return ranks;
+  }
+  function mergedCurrentRows(team){
+    const top=pbRows(team);
+    const seen=new Set(top.map(r=>String(r[0]).replace(/[\\s　]+/g,'')));
+    const extra=[];
+    if(typeof fullRosterData!=='undefined'){
+      (fullRosterData[team]||[]).forEach(r=>{
+        const key=String(r[0]).replace(/[\\s　]+/g,'');
+        if(seen.has(key))return;
+        extra.push([r[0],r[1],'—',r[2]||'—',r[3]||'—']);
+      });
+    }
+    return {top,extra};
+  }
+  function pbTableRows(rows){
+    return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+r[1]+'年</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
+  }
   function historicalAthletes(team){
     const db=window.hakonePhase2StaticDB||{};
     const map=new Map();
@@ -104,15 +131,22 @@
     return [...map.values()].map(a=>({...a,years:[...a.years].sort((x,y)=>x-y),sections:[...a.sections].sort((x,y)=>x-y)})).sort((a,b)=>b.runs-a.runs||a.name.localeCompare(b.name,'ja'));
   }
   function athleteDataBlock(team){
-    const rows=pbRows(team);
-    const pb=rows.length?`<h3>現行選手PB</h3><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}年</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody></table></div>`:'<div class="notice">現行選手PBは確認できたデータから順次追加しています。</div>';
+    const merged=mergedCurrentRows(team);
+    const top=merged.top,extra=merged.extra;
+    let pb='<div class="notice">現行選手PBは確認できたデータから順次追加しています。</div>';
+    if(top.length||extra.length){
+      pb='<h3>現行選手PB</h3>'+
+        '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(top.slice(0,10))+'</tbody></table></div>'+
+        (extra.length?'<details class="other-current-athletes"><summary>その他の選手（'+extra.length+'名）</summary><div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(extra)+'</tbody></table></div></details>':'');
+    }
     const hist=historicalAthletes(team);
-    const history=`<h3>箱根歴代出走選手（2007〜2026）</h3><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>${hist.map(a=>`<tr><td><strong>${a.name}</strong></td><td>${a.runs}回</td><td>${a.years.join('・')}</td><td>${a.sections.map(s=>s+'区').join('・')}</td></tr>`).join('')}</tbody></table></div>`;
+    const history='<details class="historical-athletes-details"><summary>箱根歴代出走選手（2007〜2026）</summary><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>'+hist.map(a=>'<tr><td><strong>'+a.name+'</strong></td><td>'+a.runs+'回</td><td>'+a.years.join('・')+'</td><td>'+a.sections.map(s=>s+'区').join('・')+'</td></tr>').join('')+'</tbody></table></div></details>';
     return pb+history;
   }
   function universityDirectoryTemplate(){
     const stats=hakoneUniversityStats();
     const currentPbCount=stats.filter(s=>pbRows(s.team).length).length;
+    const avgRanks=averageRanks(stats);
     return `<section class="container page university-directory-page">
       <div class="page-header">
         <div class="eyebrow">UNIVERSITY DATA / HAKONE 20 YEARS</div>
@@ -134,7 +168,7 @@
             <div><span>収録区間走</span><strong>${s.runs}</strong></div>
             <div><span>収録選手</span><strong>${s.athleteCount}</strong></div>
           </div>
-          ${pbRows(s.team).length?`<div class="top10-average-block"><h3>TOP10選手 平均タイム</h3><div class="top10-average-grid">${top10Averages(s.team).map(a=>`<div><span>${a.label}</span><strong>${a.value}</strong><small>${a.count===10?'10名平均':a.count+'名確認平均'}</small></div>`).join('')}</div></div>`:''}
+          ${pbRows(s.team).length?`<div class="top10-average-block"><h3>TOP10選手 平均タイム</h3><div class="top10-average-grid">${top10Averages(s.team).map(a=>`<div><span>${a.label}</span><strong>${a.value}${avgRanks[s.team]?.[a.key]?` <em>${avgRanks[s.team][a.key]}位</em>`:''}</strong><small>${a.count===10?'10名平均':a.count+'名確認平均'}</small></div>`).join('')}</div></div>`:''}
           <p class="muted university-years"><strong>出場年度:</strong> ${s.years.join('・')}</p>
           <details class="university-pb-details">
             <summary>選手データを見る</summary>
