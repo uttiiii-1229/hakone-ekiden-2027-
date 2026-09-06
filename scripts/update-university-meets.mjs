@@ -66,6 +66,7 @@ async function parseIuau(source){
     const url=absolutize(source.indexUrl,href);
     if(url) links.set(url,context);
   });
+  console.log(source.id,'candidate links',links.size,[...links.entries()].slice(0,3));
   const events={};
   for(const [url,indexText] of links){
     try{
