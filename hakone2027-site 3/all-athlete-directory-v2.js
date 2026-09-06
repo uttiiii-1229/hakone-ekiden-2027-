@@ -244,6 +244,7 @@
     const t=e.target.closest('[data-all-athlete-team]');if(t){state.team=t.value;state.page=1;refresh();return;}
     const s=e.target.closest('[data-all-athlete-sort]');if(s){state.sort=s.value;state.page=1;refresh();}
   });
+  window.allAthleteDirectoryV2={template,refresh};
   if(typeof templates!=='undefined')templates.athletes=template;
   if(location.hash.replace('#','')==='athletes'&&typeof render==='function')render('athletes');
 })();
