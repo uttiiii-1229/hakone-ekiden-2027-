@@ -83,10 +83,10 @@
       <div class="home-v2-main">
         <section class="home-v2-hero">
           <div class="home-v2-hero-copy">
-            <div class="home-v2-kicker">HAKONE EKIDEN 2027 • DATA PREDICTION</div>
+            <div class="home-v2-kicker">UNIVERSITY EKIDEN • DATA & PREDICTION</div>
             <h1>想いを襷に、未来をつなぐ。</h1>
             <h2>その一歩が、歴史をつくる。</h2>
-            <p>過去10年の三大駅伝実績と最新の選手データをもとに、箱根駅伝2027の展開と優勝争いを読み解く。</p>
+            <p>箱根・出雲・全日本の三大駅伝実績と最新の選手データをもとに、大学駅伝の現在地と次のレースを読み解く。</p>
           </div>
           <div class="home-v2-art">${runnerScene()}</div>
         </section>
