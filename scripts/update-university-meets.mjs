@@ -56,7 +56,7 @@ function parseResultRows($){
       const cells=$(tr).find('th,td').map((___,td)=>fw($(td).text())).get();
       if(cells.length<6 || /順位/.test(cells[0])) return;
       let rank=cells[0]||'—',name='',team='',record='',comment='';
-      // Standard NANS21V layout: rank, ORD, Bib, name, optional kana/prefecture, team, record, comment.
+      // Standard NANS21V layout used by IUAU/KGRR: rank, ORD, Bib, name, optional kana/prefecture, team, record, comment.
       const timeIdx=cells.findIndex((v,i)=>i>=4 && (/^\d{1,2}:\d{2}(?:\.\d+)?$/.test(v)||v===''));
       name=cells[3]||'';
       if(timeIdx>=5){team=cells[timeIdx-1]||'';record=cells[timeIdx]||'';comment=cells[timeIdx+1]||'';}
@@ -71,7 +71,7 @@ function parseResultRows($){
   const seen=new Set();
   return rows.filter(r=>{const k=r.join('|');if(seen.has(k))return false;seen.add(k);return true});
 }
-async function parseIuau(source){
+async function parseNansWeb(source){
   const indexHtml=await fetchText(source.indexUrl);
   const $=cheerio.load(indexHtml);
   const links=new Map();
@@ -105,7 +105,7 @@ async function parseIuau(source){
 const db={generatedAt:new Date().toISOString(),rule:'distance > 3000m; running events only; race walking and 3000mSC excluded',meets:{}};
 for(const source of sources){
   try{
-    if(source.adapter==='iuau-web-results') db.meets[source.id]=await parseIuau(source);
+    if(source.adapter==='iuau-web-results'||source.adapter==='kgrr-web-results') db.meets[source.id]=await parseNansWeb(source);
   }catch(err){console.error('source failed',source.id,err.message)}
 }
 const meetCount=Object.keys(db.meets).length;
