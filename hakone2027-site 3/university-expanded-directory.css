@@ -10,3 +10,31 @@
 .top10-average-grid span,.top10-average-grid small{display:block;color:#708091;font-size:.68rem}
 .top10-average-grid strong{display:block;margin:2px 0;color:#123f68;font-size:1rem;font-variant-numeric:tabular-nums}
 @media(max-width:600px){.top10-average-grid{grid-template-columns:1fr 1fr 1fr}.university-tasuki-icon{flex-basis:42px;width:42px;height:42px}}
+
+.top10-average-grid strong em{font-style:normal;font-size:.72rem;margin-left:4px;padding:2px 5px;border-radius:999px;background:#eef5fb;color:#0b5a9a;white-space:nowrap}
+.other-current-athletes,.historical-athletes-details{margin-top:12px}
+.other-current-athletes summary,.historical-athletes-details summary{cursor:pointer;font-weight:900;color:#0b5a9a;padding:8px 0}
+.other-current-athletes[open] summary,.historical-athletes-details[open] summary{margin-bottom:8px}
+@media(max-width:680px){
+  .university-directory-page{padding-left:12px;padding-right:12px}
+  .university-history-card{padding:14px}
+  .university-history-head{gap:8px}
+  .university-title-with-icon{align-items:center}
+  .university-history-head h2{font-size:1.05rem;line-height:1.3}
+  .university-history-stats{grid-template-columns:1fr 1fr;gap:6px}
+  .university-history-stats>div{padding:8px}
+  .top10-average-block{padding:10px}
+  .top10-average-grid{grid-template-columns:1fr}
+  .top10-average-grid>div{display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:8px}
+  .top10-average-grid span,.top10-average-grid small{margin:0}
+  .top10-average-grid strong{margin:0}
+  .university-years{font-size:.78rem;overflow-wrap:anywhere}
+  .university-pb-table{overflow:visible}
+  .university-pb-table table,.university-pb-table thead,.university-pb-table tbody,.university-pb-table tr,.university-pb-table td{display:block;width:100%}
+  .university-pb-table table{min-width:0}
+  .university-pb-table thead{display:none}
+  .university-pb-table tr{margin:0 0 9px;padding:9px 10px;border:1px solid #e1e9f0;border-radius:10px;background:#fff}
+  .university-pb-table td{display:grid;grid-template-columns:95px minmax(0,1fr);gap:8px;padding:4px 0;border:0;text-align:left}
+  .university-pb-table td::before{content:attr(data-label);font-size:.7rem;font-weight:800;color:#728293}
+  .university-pb-details>summary{padding:8px 0}
+}
