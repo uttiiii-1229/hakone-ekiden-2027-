@@ -22,3 +22,18 @@
   .topic-summary strong{font-size:.95rem}
   .topic-summary span{font-size:.7rem}
 }
+
+.topic-detail-button{border:1px solid #cbd9e6;background:#fff;color:#0b4e86;border-radius:8px;padding:6px 9px;font-weight:800;cursor:pointer;white-space:nowrap}
+.topic-player-detail-row td{background:#f8fbfe!important;padding:0!important}
+.topic-player-detail-card{padding:16px 18px;border-top:1px solid #dbe7f1;border-bottom:1px solid #dbe7f1}
+.topic-detail-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.topic-detail-stats>div{padding:10px 12px;border:1px solid #e0e8f0;border-radius:10px;background:#fff}
+.topic-detail-stats span{display:block;font-size:.72rem;color:#6b7785}.topic-detail-stats strong{display:block;margin-top:2px;color:#123f68;font-size:1.05rem}
+.topic-section-grid{display:grid;grid-template-columns:repeat(10,minmax(58px,1fr));gap:6px;margin:12px 0}
+.topic-section-score{padding:8px 6px;text-align:center;border-radius:9px;border:1px solid #dce6ef;background:#fff}
+.topic-section-score span{display:block;font-size:.68rem;color:#6b7785}.topic-section-score strong{display:block;margin-top:2px;font-variant-numeric:tabular-nums}
+.topic-section-score.no-score{opacity:.48}.topic-run-history{margin:8px 0 0;font-size:.82rem}.topic-reliability-note{margin:0}
+.year-select-control{display:flex;align-items:center;gap:10px;margin:12px 0 16px;flex-wrap:wrap}
+.year-select-control label{font-size:.82rem;font-weight:800;color:#234a70}
+.year-select{appearance:auto;min-width:170px;padding:10px 38px 10px 12px;border:1px solid #cbd9e6;border-radius:10px;background:#fff;color:#123f68;font-size:1rem;font-weight:800;cursor:pointer}
+@media(max-width:760px){.topic-detail-stats{grid-template-columns:1fr 1fr}.topic-section-grid{grid-template-columns:repeat(5,minmax(52px,1fr))}.year-select{width:100%}}
