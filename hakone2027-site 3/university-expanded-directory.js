@@ -8,6 +8,42 @@
   function isSelection(name=''){
     return /学生連合|学連選抜|関東学連|選抜/.test(String(name));
   }
+  const hakone2026Order=['青山学院大学','國學院大學','順天堂大学','早稲田大学','中央大学','駒澤大学','城西大学','創価大学','帝京大学','日本大学','中央学院大学','東海大学','神奈川大学','東洋大学','日本体育大学','東京国際大学','山梨学院大学','東京農業大学','大東文化大学','立教大学'];
+  const tasukiColors={
+    '青山学院大学':'#2f9b79','國學院大學':'#8f1d60','順天堂大学':'#2874b8','早稲田大学':'#7b1638','中央大学':'#d21f2b','駒澤大学':'#73539d','城西大学':'#d73b75','創価大学':'#1d58a7','帝京大学':'#cf202f','日本大学':'#d71920',
+    '中央学院大学':'#6f2c91','東海大学':'#1698d1','神奈川大学':'#243f8f','東洋大学':'#273c80','日本体育大学':'#b91d2c','東京国際大学':'#194f9b','山梨学院大学':'#005aa9','東京農業大学':'#2f7d32','大東文化大学':'#71b644','立教大学':'#5a2a82',
+    '法政大学':'#f28c28','明治大学':'#652d90','国士舘大学':'#7d001f','専修大学':'#2c8a54','拓殖大学':'#d3543b','駿河台大学':'#2a6f9e','筑波大学':'#4d2785','上武大学':'#136b4f','亜細亜大学':'#233a72'
+  };
+  function teamIcon(team){
+    const color=tasukiColors[team]||'#52718d';
+    const initial=team.replace(/大学|大學/g,'').slice(0,1);
+    return `<span class="university-tasuki-icon" style="--tasuki:${color}" aria-hidden="true"><span class="university-icon-letter">${initial}</span><span class="university-icon-sash"></span></span>`;
+  }
+  function timeToSeconds(v){
+    const s=String(v||'').trim(); if(!s||s==='—') return null;
+    const p=s.split(':').map(Number); if(p.some(x=>!Number.isFinite(x))) return null;
+    if(p.length===3)return p[0]*3600+p[1]*60+p[2];
+    if(p.length===2)return p[0]*60+p[1];
+    return null;
+  }
+  function formatAverage(seconds,kind){
+    if(!Number.isFinite(seconds)) return '—';
+    if(kind==='half'){
+      const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60),s=Math.round(seconds%60);
+      return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+    const m=Math.floor(seconds/60),s=(seconds-m*60).toFixed(2).padStart(5,'0');
+    return `${m}:${s}`;
+  }
+  function top10Averages(team){
+    const rows=pbRows(team).slice(0,10);
+    const metrics=[['5000m',2,'track'],['10000m',3,'track'],['ハーフ',4,'half']];
+    return metrics.map(([label,idx,kind])=>{
+      const vals=rows.map(r=>timeToSeconds(r[idx])).filter(Number.isFinite);
+      const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+      return {label,value:formatAverage(avg,kind),count:vals.length};
+    });
+  }
   function hakoneUniversityStats(){
     const db=window.hakonePhase2StaticDB||{};
     const map=new Map();
@@ -38,7 +74,14 @@
         runs:x.runs,
         athleteCount:x.athletes.size
       };
-    }).sort((a,b)=>b.latest-a.latest||b.appearances-a.appearances||a.team.localeCompare(b.team,'ja'));
+    }).sort((a,b)=>{
+      const ai=hakone2026Order.indexOf(a.team),bi=hakone2026Order.indexOf(b.team);
+      if(ai>=0||bi>=0){
+        if(ai>=0&&bi>=0) return ai-bi;
+        return ai>=0?-1:1;
+      }
+      return b.appearances-a.appearances||b.latest-a.latest||a.team.localeCompare(b.team,'ja');
+    });
   }
   function pbRows(team){
     return typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
@@ -84,13 +127,14 @@
       <div class="notice"><strong>データ範囲:</strong> 全大学に箱根出場回数・出場年度・直近出場・収録区間走数・歴代出走選手数を掲載します。現行選手PBは確認できた大学から順次追加します。</div>
       <div class="university-directory-grid">
         ${stats.map(s=>`<article class="data-card university-history-card">
-          <div class="university-history-head"><div><span class="topic-kicker">HAKONE HISTORY</span><h2>${s.team}</h2></div><span class="topic-badge">${s.appearances}回出場</span></div>
+          <div class="university-history-head"><div class="university-title-with-icon">${teamIcon(s.team)}<div><span class="topic-kicker">${hakone2026Order.includes(s.team)?'2026 HAKONE '+(hakone2026Order.indexOf(s.team)+1)+'位':'HAKONE HISTORY'}</span><h2>${s.team}</h2></div></div><span class="topic-badge">${s.appearances}回出場</span></div>
           <div class="university-history-stats">
             <div><span>初出場（対象期間）</span><strong>${s.first}</strong></div>
             <div><span>直近出場</span><strong>${s.latest}</strong></div>
             <div><span>収録区間走</span><strong>${s.runs}</strong></div>
             <div><span>収録選手</span><strong>${s.athleteCount}</strong></div>
           </div>
+          ${pbRows(s.team).length?`<div class="top10-average-block"><h3>TOP10選手 平均タイム</h3><div class="top10-average-grid">${top10Averages(s.team).map(a=>`<div><span>${a.label}</span><strong>${a.value}</strong><small>${a.count===10?'10名平均':a.count+'名確認平均'}</small></div>`).join('')}</div></div>`:''}
           <p class="muted university-years"><strong>出場年度:</strong> ${s.years.join('・')}</p>
           <details class="university-pb-details">
             <summary>選手データを見る</summary>
