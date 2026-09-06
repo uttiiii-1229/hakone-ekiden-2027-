@@ -1,0 +1,18 @@
+[
+  {
+    "id": "95ic-2026",
+    "year": 2026,
+    "name": "第95回日本学生陸上競技対校選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2026/95ic/res/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
+    "id": "26kojin-2026",
+    "year": 2026,
+    "name": "2026日本学生陸上競技個人選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2026/26kosen/res/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  }
+]
