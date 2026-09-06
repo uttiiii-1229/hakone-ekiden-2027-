@@ -29,11 +29,14 @@
   function formatAverage(seconds,kind){
     if(!Number.isFinite(seconds)) return '—';
     if(kind==='half'){
-      const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60),s=Math.round(seconds%60);
+      const total=Math.round(seconds);
+      const h=Math.floor(total/3600),m=Math.floor((total%3600)/60),s=total%60;
       return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     }
-    const m=Math.floor(seconds/60),s=(seconds-m*60).toFixed(2).padStart(5,'0');
-    return `${m}:${s}`;
+    const centiseconds=Math.round(seconds*100);
+    const m=Math.floor(centiseconds/6000);
+    const remain=centiseconds-m*6000;
+    return `${m}:${(remain/100).toFixed(2).padStart(5,'0')}`;
   }
   function top10Averages(team){
     const rows=pbRows(team).slice(0,10);
@@ -143,10 +146,20 @@
     const history='<details class="historical-athletes-details"><summary>箱根歴代出走選手（2007〜2026）</summary><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>'+hist.map(a=>'<tr><td><strong>'+a.name+'</strong></td><td>'+a.runs+'回</td><td>'+a.years.join('・')+'</td><td>'+a.sections.map(s=>s+'区').join('・')+'</td></tr>').join('')+'</tbody></table></div></details>';
     return pb+history;
   }
+  function averageTop3(stats){
+    return ['5000m','10000m','ハーフ'].map(metric=>{
+      const list=stats.map(s=>{
+        const a=top10Averages(s.team).find(x=>x.key===metric);
+        return {team:s.team,...a};
+      }).filter(x=>Number.isFinite(x.seconds)).sort((a,b)=>a.seconds-b.seconds).slice(0,3);
+      return {metric,list};
+    });
+  }
   function universityDirectoryTemplate(){
     const stats=hakoneUniversityStats();
     const currentPbCount=stats.filter(s=>pbRows(s.team).length).length;
     const avgRanks=averageRanks(stats);
+    const top3=averageTop3(stats);
     return `<section class="container page university-directory-page">
       <div class="page-header">
         <div class="eyebrow">UNIVERSITY DATA / HAKONE 20 YEARS</div>
@@ -157,6 +170,9 @@
         <div><strong>${stats.length}</strong><span>箱根出場大学</span></div>
         <div><strong>2007–2026</strong><span>対象20大会</span></div>
         <div><strong>${currentPbCount}</strong><span>現行PB詳細収録校</span></div>
+      </div>
+      <div class="average-top3-overview">
+        ${top3.map(group=>`<article class="data-card average-top3-card"><div class="average-top3-head"><span>TOP10平均</span><h2>${group.metric}</h2></div><div class="average-top3-list">${group.list.map((x,i)=>`<div><b>${i+1}</b><span>${teamIcon(x.team)}<strong>${x.team}</strong></span><em>${x.value}</em></div>`).join('')}</div></article>`).join('')}
       </div>
       <div class="notice"><strong>データ範囲:</strong> 全大学に箱根出場回数・出場年度・直近出場・収録区間走数・歴代出走選手数を掲載します。現行選手PBは確認できた大学から順次追加します。</div>
       <div class="university-directory-grid">
