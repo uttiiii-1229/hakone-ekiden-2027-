@@ -82,10 +82,28 @@
 
   function pbMap(){
     const map=new Map();
-    if(typeof expandedTopAthletes2027==='undefined')return map;
-    Object.entries(expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
-      map.set(norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team)),{grade:r[1],pb5000:r[2],pb10000:r[3],half:r[4]});
-    }));
+
+    // Full current rosters: [name, grade, 10000m PB, half PB]
+    if(typeof fullRosterData!=='undefined'){
+      Object.entries(fullRosterData).forEach(([team,rows])=>(rows||[]).forEach(r=>{
+        const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
+        map.set(key,{grade:r[1],pb5000:'—',pb10000:r[2]||'—',half:r[3]||'—'});
+      }));
+    }
+
+    // TOP10 data additionally has 5000m PB; let it override/fill full-roster values.
+    if(typeof expandedTopAthletes2027!=='undefined'){
+      Object.entries(expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
+        const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
+        const prev=map.get(key)||{};
+        map.set(key,{
+          grade:r[1]||prev.grade||'',
+          pb5000:r[2]||prev.pb5000||'—',
+          pb10000:r[3]||prev.pb10000||'—',
+          half:r[4]||prev.half||'—'
+        });
+      }));
+    }
     return map;
   }
 
