@@ -20,7 +20,13 @@ function normalizeTeam(team){return fw(team).replace(/大$/,'大学').replace('�
 async function fetchText(url){
   const res=await fetch(url,{headers:{'user-agent':'UniversityEkidenDatabase/1.0 (+github-actions)'}});
   if(!res.ok) throw new Error(`${res.status} ${url}`);
-  return await res.text();
+  const buf=Buffer.from(await res.arrayBuffer());
+  const head=buf.subarray(0,4096).toString('latin1');
+  const headerCharset=(res.headers.get('content-type')||'').match(/charset=([^;]+)/i)?.[1]?.toLowerCase();
+  const metaCharset=head.match(/charset\s*=\s*["']?([\w-]+)/i)?.[1]?.toLowerCase();
+  const charset=headerCharset||metaCharset||'utf-8';
+  const enc=/shift[_-]?jis|sjis|windows-31j|cp932/i.test(charset)?'shift_jis':'utf-8';
+  return new TextDecoder(enc).decode(buf);
 }
 function parseResultRows($){
   const rows=[];
