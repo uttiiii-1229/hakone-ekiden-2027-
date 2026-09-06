@@ -4,7 +4,8 @@ const meets = {
   2026:106, 2025:104, 2024:103, 2023:102, 2022:101, 2021:99,
   2020:96, 2019:95, 2018:94, 2017:93,
   2016:92, 2015:91, 2014:90, 2013:89, 2012:88,
-  2011:87, 2010:86, 2009:85, 2008:84, 2007:83, 2006:82
+  2011:87, 2010:86, 2009:85, 2008:84, 2007:83, 2006:82,
+  2005:81, 2004:80, 2003:79, 2002:78, 2001:77, 2000:76
 };
 
 function decodeHtml(s='') {
@@ -161,6 +162,6 @@ for(const [yearStr,tn] of Object.entries(meets)){
   applyPassingRanks(db[year]);
 }
 
-const out=`// AUTO-GENERATED from 東京箱根間往復大学駅伝競走 公式「過去の記録」\n// 2006-2026 / Generated: ${new Date().toISOString()}\n// section row = [区間順位, 通過順位, 大学, 選手, 区間タイム]\nwindow.hakonePhase2StaticDB = ${JSON.stringify(db)};\n// 公式大会詳細の総合・往路・復路順位／記録を直接使用\nwindow.hakoneOfficialOverallDB = ${JSON.stringify(overallDb)};\n`;
+const out=`// AUTO-GENERATED from 東京箱根間往復大学駅伝競走 公式「過去の記録」\n// 2000-2026 / Generated: ${new Date().toISOString()}\n// section row = [区間順位, 通過順位, 大学, 選手, 区間タイム]\nwindow.hakonePhase2StaticDB = ${JSON.stringify(db)};\n// 公式大会詳細の総合・往路・復路順位／記録を直接使用\nwindow.hakoneOfficialOverallDB = ${JSON.stringify(overallDb)};\n`;
 await fs.writeFile('hakone2027-site 3/hakone-phase2-static-db.js',out,'utf8');
 console.log('wrote hakone2027-site 3/hakone-phase2-static-db.js');
