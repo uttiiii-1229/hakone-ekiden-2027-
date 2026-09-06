@@ -18,12 +18,19 @@
   }
 
   const meetCatalog=[
-    {id:'japan-ic-2026',year:2026,name:'第95回 日本学生陸上競技対校選手権大会（日本インカレ）',type:'インカレ',period:'2026/9/5–9/7',venue:'日産スタジアム',status:'開催中・結果確認中'},
-    {id:'student-individual-2026',year:2026,name:'2026 日本学生陸上競技個人選手権大会',type:'学生選手権',period:'2026/4/24–4/26',venue:'レモンガススタジアム平塚',status:'結果収録中'},
-    {id:'kanto-ic-2026',year:2026,name:'第105回 関東学生陸上競技対校選手権大会（関東インカレ）',type:'インカレ',period:'2026/5/21–5/24',venue:'カンセキスタジアムとちぎ',status:'一部結果収録'},
+    {id:'japan-ic-2026',autoId:'95ic-2026',year:2026,name:'第95回 日本インカレ',type:'インカレ',period:'2026/9/5–9/7',venue:'日産スタジアム',status:'結果自動取得'},
+    {id:'student-individual-2026',autoId:'26kojin-2026',year:2026,name:'2026 日本学生個人選手権',type:'学生選手権',period:'2026/4/24–4/26',venue:'レモンガススタジアム平塚',status:'結果自動取得'},
+    {id:'japan-ic-2025',autoId:'94ic-2025',year:2025,name:'第94回 日本インカレ',type:'インカレ',period:'2025年',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2025',autoId:'25kojin-2025',year:2025,name:'2025 日本学生個人選手権',type:'学生選手権',period:'2025/4/25–4/27',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'japan-ic-2024',autoId:'93ic-2024',year:2024,name:'第93回 日本インカレ',type:'インカレ',period:'2024/9/19–9/22',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2024',autoId:'24kojin-2024',year:2024,name:'2024 日本学生個人選手権',type:'学生選手権',period:'2024/6/14–6/16',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'japan-ic-2023',autoId:'92ic-2023',year:2023,name:'第92回 日本インカレ',type:'インカレ',period:'2023年',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2023',autoId:'23kojin-2023',year:2023,name:'2023 日本学生個人選手権',type:'学生選手権',period:'2023年4月',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'japan-ic-2022',autoId:'91ic-2022',year:2022,name:'第91回 日本インカレ',type:'インカレ',period:'2022/9/9–9/11',venue:'大会公式会場',status:'過去結果自動取得'},
+    {id:'student-individual-2022',autoId:'22kojin-2022',year:2022,name:'2022 日本学生個人選手権',type:'学生選手権',period:'2022/4/15–4/17',venue:'レモンガススタジアム平塚',status:'過去結果自動取得'},
+    {id:'kanto-ic-2026',year:2026,name:'第105回 関東インカレ',type:'インカレ',period:'2026/5/21–5/24',venue:'カンセキスタジアムとちぎ',status:'一部結果収録'},
     {id:'abashiri-2026',year:2026,name:'関東学生網走夏季記録挑戦競技会',type:'記録会',period:'2026年7月',venue:'網走',status:'結果収録準備中'},
     {id:'twilight-2026',year:2026,name:'トワイライト・ゲームス',type:'競技会',period:'2026年8月',venue:'関東',status:'結果収録準備中'},
-    {id:'kanto-rookie-2026',year:2026,name:'関東学生新人陸上競技選手権大会',type:'新人戦',period:'2026年9月',venue:'関東',status:'結果収録準備中'},
     {id:'nittai-long-2026',year:2026,name:'日本体育大学長距離競技会',type:'記録会',period:'2026年・複数回',venue:'日本体育大学健志台',status:'大会別DB拡張予定'},
     {id:'march-2026',year:2026,name:'MARCH対抗戦',type:'対抗戦',period:'2026年秋〜冬',venue:'関東',status:'開催後収録予定'},
     {id:'hachioji-2026',year:2026,name:'八王子ロングディスタンス',type:'記録会',period:'2026年冬季',venue:'八王子',status:'開催後収録予定'},
@@ -118,18 +125,19 @@
     }
   };
 
-  const autoMeetMap={'95ic-2026':'japan-ic-2026','26kojin-2026':'student-individual-2026'};
   const autoDB=window.universityMeetResultsAutoDB?.meets||{};
-  Object.entries(autoDB).forEach(([autoId,meet])=>{
-    const id=autoMeetMap[autoId]||autoId;
-    if(!meetResults[id]) meetResults[id]={source:'公式WEBリザルト自動取得',events:{}};
+  meetCatalog.forEach(meta=>{
+    const autoId=meta.autoId;
+    if(!autoId||!autoDB[autoId]) return;
+    const meet=autoDB[autoId];
+    if(!meetResults[meta.id]) meetResults[meta.id]={source:'公式WEBリザルト自動取得',events:{}};
     Object.entries(meet?.events||{}).forEach(([eventName,event])=>{
       const rows=Array.isArray(event)?event:event?.rows;
-      if(Array.isArray(rows)&&rows.length) meetResults[id].events[eventName]=rows;
+      if(Array.isArray(rows)&&rows.length) meetResults[meta.id].events[eventName]=rows;
     });
-    if(meet?.name) meetResults[id].autoName=meet.name;
   });
 
+  let activeMeetYear=2026;
   let activeMeet='student-individual-2026';
   let activeMeetEvent='男子10000m';
 
@@ -157,13 +165,16 @@
   }
 
   function meetsTemplate(){
-    const years=[...new Set(meetCatalog.map(m=>m.year))].sort((a,b)=>b-a);
+    const years=[2026,2025,2024,2023,2022];
+    const list=meetCatalog.filter(m=>m.year===activeMeetYear);
+    if(!list.some(m=>m.id===activeMeet)) activeMeet=list[0]?.id||'';
     return `<section class="container page university-subpage">
-      <div class="page-header"><div class="eyebrow">UNIVERSITY DATA / MEETS</div><h1>大会・記録会データベース</h1><p>大学長距離のインカレ・記録会結果を、外部ページへ移動せずサイト内で確認できます。</p></div>
-      <div class="university-note"><strong>収録方針:</strong> 公式に結果を確認できた大会・種目から順に全結果を保存します。主要インカレだけでなく、日体大長距離、MARCH対抗戦、八王子ロングディスタンス、関東学連記録会なども対象です。</div>
+      <div class="page-header"><div class="eyebrow">UNIVERSITY DATA / MEETS</div><h1>大会・記録会データベース</h1><p>2022〜2026の5年分を対象に、大学長距離の3000mより長いランニング種目をサイト内で確認できます。</p></div>
+      <div class="university-note"><strong>収録ルール:</strong> 5000m・10000m・ロード5km以上・ハーフ等を対象とし、3000m、3000mSC、競歩は除外します。公式結果が残っている大会から順次バックフィルします。</div>
+      <div class="year-select-control"><label for="meetYearSelect">年度</label><select id="meetYearSelect" class="year-select" data-meet-year>${years.map(y=>`<option value="${y}" ${y===activeMeetYear?'selected':''}>${y}年</option>`).join('')}</select></div>
       <div class="meet-db-layout">
-        <aside class="meet-db-list"><div class="meet-year-label">${years[0]}年</div>${meetCatalog.map(m=>`<button class="meet-db-button ${m.id===activeMeet?'active':''}" data-meet-id="${m.id}"><strong>${m.name}</strong><span>${m.period} ・ ${m.status}</span></button>`).join('')}</aside>
-        <div id="meetDatabaseResult">${meetResultPanel(activeMeet)}</div>
+        <aside class="meet-db-list">${list.map(m=>`<button class="meet-db-button ${m.id===activeMeet?'active':''}" data-meet-id="${m.id}"><strong>${m.name}</strong><span>${m.period} ・ ${m.status}</span></button>`).join('')}</aside>
+        <div id="meetDatabaseResult">${activeMeet?meetResultPanel(activeMeet):'<div class="notice">大会データを確認中です。</div>'}</div>
       </div>
     </section>`;
   }
@@ -181,6 +192,15 @@
   function gradeRankingsTemplate(){
     return `<section class="container page university-subpage"><div class="page-header"><div class="eyebrow">UNIVERSITY DATA / GRADE RANKING</div><h1>学年別ランキング</h1><p>現在PBを収録している選手を、学年別・種目別に比較します。</p></div>${[1,2,3,4].map(g=>`<article class="data-card grade-block"><div class="grade-head"><h2>${g}年生ランキング</h2><span class="topic-badge">TOP 20</span></div><div class="tabs grade-metric-tabs"><button class="tab active" data-grade-metric="pb5000" data-grade="${g}">5000m</button><button class="tab" data-grade-metric="pb10000" data-grade="${g}">10000m</button><button class="tab" data-grade-metric="half" data-grade="${g}">ハーフ</button></div><div data-grade-result="${g}">${gradeRankTable('pb5000','5000m PB',g)}</div></article>`).join('')}<div class="notice">大学データ対象は箱根直近20年の出場校へ拡張済みです。PBランキングは確認できた現行選手から順次対象校を増やします。</div></section>`;
   }
+
+  document.addEventListener('change',e=>{
+    const year=e.target.closest('[data-meet-year]');
+    if(!year)return;
+    activeMeetYear=Number(year.value);
+    const first=meetCatalog.find(m=>m.year===activeMeetYear);
+    activeMeet=first?.id||'';
+    if(typeof render==='function') render('meets');
+  });
 
   document.addEventListener('click',e=>{
     const meetBtn=e.target.closest('[data-meet-id]');
