@@ -1,6 +1,10 @@
 // 過去大会を箱根専用にし、出雲・全日本を独立ページへ分離
 (() => {
   const hakoneOverallState={decade:'2017-2026',year:2026};
+  function normalizeTeam(name=''){
+    const n=String(name).trim();
+    return ['國學院大學學','國學院大学','國學院大','国学院大学','国学院大'].includes(n)?'國學院大學':n;
+  }
 
   function hakoneOverallYears(decade){
     const [a,b]=decade.split('-').map(Number);
@@ -21,7 +25,7 @@
     if(d.status!=='開催')return `<div class="notice"><strong>第${d.edition}回（${year}年）:</strong> ${d.status}</div>`;
     const rs=d.results||[];
     const winner=rs.find(r=>r.rank===1)||rs[0];
-    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${d.edition}回・${year}年</strong></div><div class="race-summary-card"><small>総合優勝</small><strong>${winner?.team||'—'}</strong></div><div class="race-summary-card"><small>総合タイム</small><strong>${winner?.time||'—'}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th><th>往路順位</th><th>往路タイム</th><th>復路順位</th><th>復路タイム</th></tr></thead><tbody>${rs.map(r=>{const ref=r.rank==='参考'||r.outwardRank==='参考'||r.returnRank==='参考';return `<tr class="${ref?'reference-row':''}"><td><strong>${rankLabel(r.rank)}</strong></td><td><strong>${r.team}</strong></td><td>${r.time||'—'}</td><td>${rankLabel(r.outwardRank)}</td><td>${r.outwardTime||'—'}</td><td>${rankLabel(r.returnRank)}</td><td>${r.returnTime||'—'}</td></tr>`;}).join('')}</tbody></table></div><div class="notice">総合順位だけでなく、各大学の往路順位・往路タイム・復路順位・復路タイムも同じ表で確認できます。棄権・参考記録は公式記録の表記を維持しています。</div>`;
+    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${d.edition}回・${year}年</strong></div><div class="race-summary-card"><small>総合優勝</small><strong>${normalizeTeam(winner?.team||'—')}</strong></div><div class="race-summary-card"><small>総合タイム</small><strong>${winner?.time||'—'}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th><th>往路順位</th><th>往路タイム</th><th>復路順位</th><th>復路タイム</th></tr></thead><tbody>${rs.map(r=>{const ref=r.rank==='参考'||r.outwardRank==='参考'||r.returnRank==='参考';return `<tr class="${ref?'reference-row':''}"><td><strong>${rankLabel(r.rank)}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.time||'—'}</td><td>${rankLabel(r.outwardRank)}</td><td>${r.outwardTime||'—'}</td><td>${rankLabel(r.returnRank)}</td><td>${r.returnTime||'—'}</td></tr>`;}).join('')}</tbody></table></div><div class="notice">総合順位だけでなく、各大学の往路順位・往路タイム・復路順位・復路タイムも同じ表で確認できます。棄権・参考記録は公式記録の表記を維持しています。</div>`;
   }
 
   function hakoneOverallBlock(){
@@ -53,7 +57,7 @@
     if(!d)return `<div class="notice">${year}年のデータは登録されていません。</div>`;
     if(d.status!=='開催')return `<div class="notice"><strong>${m.title} 第${ed}回（${year}年）:</strong> ${d.status}</div>`;
     const rs=d.results||[];
-    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${rs[0]?.team||'—'}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rs.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${r.team}</strong></td><td>${r.time}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rs.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.time}</td></tr>`).join('')}</tbody></table></div>`;
   }
   function racePage(race){
     const st=raceState[race],m=raceMeta[race],ys=years(st.decade); if(!ys.includes(st.year))st.year=ys[0];
