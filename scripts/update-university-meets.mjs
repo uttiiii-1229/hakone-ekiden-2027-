@@ -16,7 +16,13 @@ function eligibleEvent(text){
 function absolutize(base,href){try{return new URL(href,base).href}catch{return null}}
 function gradeFromName(name){const m=String(name||'').match(/\((M\d|D\d|\d)\)/i);return m?m[1]:''}
 function cleanName(name){return fw(name).replace(/\((?:M\d|D\d|\d)\)$/i,'').trim()}
-function normalizeTeam(team){return fw(team).replace(/大$/,'大学').replace('國學院大学','國學院大學')}
+function normalizeTeam(team){
+  let t=fw(team).replace(/\s+/g,'');
+  const suffixes=['北海道','青森','岩手','宮城','秋田','山形','福島','茨城','栃木','群馬','埼玉','千葉','東京','神奈川','新潟','富山','石川','福井','山梨','長野','岐阜','静岡','愛知','三重','滋賀','京都','大阪','兵庫','奈良','和歌山','鳥取','島根','岡山','広島','山口','徳島','香川','愛媛','高知','福岡','佐賀','長崎','熊本','大分','宮崎','鹿児島','沖縄','学連'];
+  for(const s of suffixes){if(t.endsWith(s)){t=t.slice(0,-s.length);break;}}
+  if(t.endsWith('大')&&!t.endsWith('大学')) t+='学';
+  return t.replace('國學院大学','國學院大學');
+}
 async function fetchText(url){
   const res=await fetch(url,{headers:{'user-agent':'UniversityEkidenDatabase/1.0 (+github-actions)'}});
   if(!res.ok) throw new Error(`${res.status} ${url}`);
