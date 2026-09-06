@@ -129,6 +129,19 @@
     zennihon:raceDeviation(rowsByRace.zennihon)
   };
   const pbs=pbMap();
+  const pbsByName=new Map();
+  pbs.forEach((pb,key)=>{
+    const nameKey=key.split('|')[0];
+    if(!pbsByName.has(nameKey)) pbsByName.set(nameKey,[]);
+    pbsByName.get(nameKey).push(pb);
+  });
+  function pbFor(name,team){
+    const exact=pbs.get(norm(name)+'|'+norm(team));
+    if(exact) return exact;
+    const candidates=pbsByName.get(norm(name))||[];
+    if(candidates.length===1) return candidates[0];
+    return null;
+  }
 
   function players(){
     const map=new Map();
@@ -138,7 +151,7 @@
       map.get(key).runs[race].push(r);
     }));
     return [...map.values()].map(p=>{
-      const pb=pbs.get(p.key)||null;
+      const pb=pbFor(p.name,p.team);
       return {...p,pb,totalRuns:Object.values(p.runs).reduce((n,a)=>n+a.length,0)};
     });
   }
@@ -244,7 +257,7 @@
     const t=e.target.closest('[data-all-athlete-team]');if(t){state.team=t.value;state.page=1;refresh();return;}
     const s=e.target.closest('[data-all-athlete-sort]');if(s){state.sort=s.value;state.page=1;refresh();}
   });
-  window.allAthleteDirectoryV2={template,refresh};
+  window.allAthleteDirectoryV2={template,refresh,pbFor};
   if(typeof templates!=='undefined')templates.athletes=template;
   if(location.hash.replace('#','')==='athletes'&&typeof render==='function')render('athletes');
 })();
