@@ -21,6 +21,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Sync latest main
+        run: git pull --rebase origin main
       - name: Install parser
         run: npm install --no-save cheerio@1.0.0
       - name: Fetch and normalize official results
@@ -34,6 +36,5 @@ jobs:
             echo "No result changes"
           else
             git commit -m "Update university meet results"
-            git pull --rebase origin main
             git push
           fi
