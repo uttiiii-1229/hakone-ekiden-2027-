@@ -14,7 +14,7 @@
     "Andrew Benford":"アンドリュー ベンフォード","Thomas Robbins":"トーマス ロビンズ","John Maina":"ジョン マイナ","Jonathan Grey":"ジョナサン グレイ",
     "JHON KARIUKI":"ジョン カリウキ","JOHN KARIUKI":"ジョン カリウキ","Elliott Heath":"エリオット ヒース","Julian de Rubira":"ジュリアン デ ルビラ",
     "John Thomas Sullivan":"ジョン トーマス サリバン","Brendan Gregg":"ブレンダン グレッグ","Enock Omwamba":"エノック オムワンバ",
-    "Matt LＬano":"マット リャノ","Joseph Stilin":"ジョセフ スティリン","Mark Amirault":"マーク アミロール","Daniel Lowry":"ダニエル ローリー",
+    "Matt LＬano":"マット リャノ","Matt Llano":"マット リャノ","Joseph Stilin":"ジョセフ スティリン","Mark Amirault":"マーク アミロール","Daniel Lowry":"ダニエル ローリー",
     "Kyle Merber":"カイル マーバー","Trevor Van Ackeren":"トレバー バンアッカレン","Brendan Martin":"ブレンダン マーティン","Samuel Pons":"サミュエル ポンス",
     "Tyler Udland":"タイラー アドランド","Christopher Bendtsen":"クリストファー ベンツェン","Alejandro Arroyo Yamin":"アレハンドロ アロヨ ヤミン",
     "Will Geiken":"ウィル ガイケン","Dominic Nyairo":"ドミニク ニャイロ","James Leakos":"ジェームズ リーコス","Geoffrey Gichia":"ジェフリー ギチア",
