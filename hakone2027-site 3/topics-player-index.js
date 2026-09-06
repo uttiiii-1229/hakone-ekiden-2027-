@@ -168,7 +168,7 @@
                 <td>${p.sections.map(s=>s+'区').join('・')}</td>
                 <td><button class="topic-detail-button" data-topic-player="${p.key}" data-topic-player-race="${race}" aria-expanded="false">区間別を見る</button></td>
               </tr>
-              <tr class="topic-player-detail-row" data-topic-player-detail="${p.key}" hidden><td colspan="7">${playerDetail(p,race)}</td></tr>
+              <tr class="topic-player-detail-row" data-topic-player-detail="${p.key}" hidden><td colspan="6">${playerDetail(p,race)}</td></tr>
             `).join('')}
           </tbody>
         </table>
@@ -238,17 +238,16 @@
     return `
       <div class="directory-result-head"><strong>${players.length.toLocaleString()}名</strong><span>該当</span></div>
       <div class="table-wrap directory-table"><table>
-        <thead><tr><th>選手</th><th>大学・チーム</th><th>総合偏差値</th><th>出走数</th><th>出走区間</th><th>最高偏差値</th><th>詳細</th></tr></thead>
+        <thead><tr><th>選手</th><th>大学・チーム</th><th>総合偏差値</th><th>出走数</th><th>出走区間</th><th>最高偏差値</th></tr></thead>
         <tbody>
         ${rows.map(p=>`
           <tr>
-            <td><strong>${p.athlete}</strong></td>
+            <td><button class="directory-player-name" data-directory-player="${p.key}" aria-expanded="false">${p.athlete}</button></td>
             <td>${p.team}</td>
             <td><span class="topic-score">${p.score.toFixed(1)}</span></td>
             <td>${p.appearances}回</td>
             <td>${p.sections.map(s=>s+'区').join('・')}</td>
             <td>${p.best.toFixed(1)}</td>
-            <td><button class="topic-detail-button" data-directory-player="${p.key}" aria-expanded="false">詳細を見る</button></td>
           </tr>
           <tr class="topic-player-detail-row" data-directory-player-detail="${p.key}" hidden><td colspan="7">${playerDetail(p,race)}</td></tr>
         `).join('')}
@@ -267,7 +266,7 @@
         <div><span class="topic-kicker">全選手名鑑</span><h2>${raceLabels[race]} 全選手名鑑</h2></div>
         <span class="topic-badge">${race==='hakone'?'2000–2026':'収録済み全期間'} DATA</span>
       </div>
-      <p class="muted directory-intro">収録期間に出走した全選手を検索できます。選手名・大学名・出走回数で絞り込み、総合偏差値や区間別偏差値、出走履歴を確認できます。</p>
+      <p class="muted directory-intro">収録期間に出走した全選手を検索できます。選手名・大学名・出走回数で絞り込み、総合偏差値や区間別偏差値、出走履歴を確認できます。<strong>選手名をタップすると、その選手の詳細が開きます。</strong></p>
       ${directoryControls(race)}
       <div id="directoryResults">${directoryTable(race)}</div>
     </article>`;
@@ -365,7 +364,7 @@
       const open=row.hidden;
       row.hidden=!open;
       btn.setAttribute('aria-expanded',String(open));
-      btn.textContent=open?'閉じる':'詳細を見る';
+      btn.setAttribute('aria-label',open?`${btn.textContent}の詳細を閉じる`:`${btn.textContent}の詳細を見る`);
       return;
     }
     const page=e.target.closest('[data-directory-page]');
