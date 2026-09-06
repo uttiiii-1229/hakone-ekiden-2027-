@@ -5,7 +5,54 @@
     "name": "第95回日本学生陸上競技対校選手権大会",
     "adapter": "iuau-web-results",
     "indexUrl": "https://iuau.jp/ev2026/95ic/res/kyougi.html",
-    "includeGenders": ["男子", "女子"]
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "94ic-2025",
+    "year": 2025,
+    "name": "第94回日本学生陸上競技対校選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2025/94ic/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "93ic-2024",
+    "year": 2024,
+    "name": "第93回日本学生陸上競技対校選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2024/93ic/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "92ic-2023",
+    "year": 2023,
+    "name": "第92回日本学生陸上競技対校選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2023/92ic/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "91ic-2022",
+    "year": 2022,
+    "name": "第91回日本学生陸上競技対校選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2022/91ic/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
   },
   {
     "id": "26kojin-2026",
@@ -13,22 +60,53 @@
     "name": "2026日本学生陸上競技個人選手権大会",
     "adapter": "iuau-web-results",
     "indexUrl": "https://iuau.jp/ev2026/26kosen/res/kyougi.html",
-    "includeGenders": ["男子", "女子"]
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
   },
   {
-    "id": "105kantoic-2026",
-    "year": 2026,
-    "name": "第105回関東学生陸上競技対校選手権大会",
+    "id": "25kojin-2025",
+    "year": 2025,
+    "name": "2025日本学生陸上競技個人選手権大会",
     "adapter": "iuau-web-results",
-    "indexUrl": "https://www.kgrr.org/event/event/2026/kan-currywithgyoza/kyougi.html",
-    "includeGenders": ["男子", "女子"]
+    "indexUrl": "https://iuau.jp/ev2025/25kosen/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
   },
   {
-    "id": "abashiri-2026",
-    "year": 2026,
-    "name": "関東学生網走夏季記録挑戦競技会",
+    "id": "24kojin-2024",
+    "year": 2024,
+    "name": "2024日本学生陸上競技個人選手権大会",
     "adapter": "iuau-web-results",
-    "indexUrl": "https://www.kgrr.org/event/event/2026/abashiri/kyougi.html",
-    "includeGenders": ["男子", "女子"]
+    "indexUrl": "https://iuau.jp/ev2024/24kosen/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "23kojin-2023",
+    "year": 2023,
+    "name": "2023日本学生陸上競技個人選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2023/23kosen/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "22kojin-2022",
+    "year": 2022,
+    "name": "2022日本学生陸上競技個人選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://iuau.jp/ev2022/22kosen/res/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
   }
 ]
