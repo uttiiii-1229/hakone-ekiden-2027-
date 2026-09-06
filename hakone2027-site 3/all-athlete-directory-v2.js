@@ -1,9 +1,38 @@
 // Unified all-athlete directory across Hakone, Izumo, Zennihon and track data.
 (() => {
   const races={hakone:'箱根駅伝',izumo:'出雲駅伝',zennihon:'全日本大学駅伝'};
-  const state={query:'',team:'all',sort:'name',page:1,pageSize:50};
+  const state={query:'',team:'all',sort:'pb5000',page:1,pageSize:50};
   const norm=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
-  const teamNorm=s=>String(s||'').replace('國學院大学','國學院大學').replace(/大$/,'大学').trim();
+  const teamNorm=s=>String(s||'').normalize('NFKC').replace('國學院大学','國學院大學').replace('國學院大學學','國學院大學').replace(/大$/,'大学').trim();
+  const athleteNameFixes={
+    '久 龍':'高久 龍','髙久 龍':'高久 龍',
+    'Matt LＬano':'マット リャノ','Matt LLano':'マット リャノ'
+  };
+  function athleteDisplayName(name){
+    let s=String(name||'').trim();
+    if(athleteNameFixes[s]) return athleteNameFixes[s];
+    if(typeof window.normalizeForeignAthleteName==='function'){
+      const n=window.normalizeForeignAthleteName(s);
+      if(n&&n!==s) return n;
+    }
+    s=s.normalize('NFKC').replace(/\uFFFD/g,'').replace(/[\uE000-\uF8FF]/g,'');
+    return athleteNameFixes[s]||s;
+  }
+  const teamReadings={
+    '青山学院大学':'あおやまがくいん','亜細亜大学':'あじあ','育英大学':'いくえい','上武大学':'じょうぶ','大阪経済大学':'おおさかけいざい',
+    '大阪体育大学':'おおさかたいいく','関西大学':'かんさい','関西学院大学':'かんせいがくいん','神奈川大学':'かながわ','京都大学':'きょうと',
+    '京都産業大学':'きょうとさんぎょう','皇學館大学':'こうがっかん','國學院大學':'こくがくいん','国士舘大学':'こくしかん','駒澤大学':'こまざわ',
+    '札幌学院大学':'さっぽろがくいん','城西大学':'じょうさい','順天堂大学':'じゅんてんどう','信州大学':'しんしゅう','駿河台大学':'するがだい',
+    '専修大学':'せんしゅう','創価大学':'そうか','大東文化大学':'だいとうぶんか','第一工科大学':'だいいちこうか','第一工業大学':'だいいちこうぎょう',
+    '拓殖大学':'たくしょく','中央大学':'ちゅうおう','中央学院大学':'ちゅうおうがくいん','筑波大学':'つくば','帝京大学':'ていきょう',
+    '東海大学':'とうかい','東京大学':'とうきょう','東京国際大学':'とうきょうこくさい','東京農業大学':'とうきょうのうぎょう',
+    '東北大学':'とうほく','東洋大学':'とうよう','日本大学':'にほん','日本体育大学':'にほんたいいく','日本文理大学':'にほんぶんり',
+    '法政大学':'ほうせい','明治大学':'めいじ','山梨学院大学':'やまなしがくいん','立教大学':'りっきょう','立命館大学':'りつめいかん',
+    '早稲田大学':'わせだ'
+  };
+  const teamCollator=new Intl.Collator('ja',{usage:'sort',sensitivity:'base',numeric:true});
+  function teamSortKey(team){return teamReadings[team]||team;}
+
   const toSec=v=>{
     const p=String(v||'').trim().split(':').map(Number);
     if(p.some(x=>!Number.isFinite(x)))return null;
@@ -16,7 +45,7 @@
     Object.entries(h).forEach(([year,sections])=>{
       for(let sec=1;sec<=10;sec++) (sections?.[sec]||[]).forEach(r=>{
         const seconds=toSec(r?.[4]); if(seconds===null)return;
-        all.hakone.push({race:'hakone',year:+year,section:sec,team:teamNorm(r?.[2]),athlete:r?.[3]||'',time:r?.[4],rank:r?.[0],seconds});
+        all.hakone.push({race:'hakone',year:+year,section:sec,team:teamNorm(r?.[2]),athlete:athleteDisplayName(r?.[3]||''),time:r?.[4],rank:r?.[0],seconds});
       });
     });
     const db=window.threeEkidenSectionsDB||{};
@@ -25,7 +54,7 @@
         if(yd?.status!=='開催')return;
         Object.entries(yd?.sections||{}).forEach(([sec,rows])=>(rows||[]).forEach(r=>{
           const seconds=toSec(r?.time); if(seconds===null)return;
-          all[race].push({race,year:+year,section:+sec,team:teamNorm(r?.team),athlete:r?.athlete||'',time:r?.time,rank:r?.rank,seconds});
+          all[race].push({race,year:+year,section:+sec,team:teamNorm(r?.team),athlete:athleteDisplayName(r?.athlete||''),time:r?.time,rank:r?.rank,seconds});
         }));
       });
     });
@@ -55,7 +84,7 @@
     const map=new Map();
     if(typeof expandedTopAthletes2027==='undefined')return map;
     Object.entries(expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
-      map.set(norm(r[0])+'|'+norm(teamNorm(team)),{grade:r[1],pb5000:r[2],pb10000:r[3],half:r[4]});
+      map.set(norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team)),{grade:r[1],pb5000:r[2],pb10000:r[3],half:r[4]});
     }));
     return map;
   }
@@ -66,7 +95,7 @@
     Object.values(db).forEach(meet=>Object.entries(meet?.events||{}).forEach(([eventName,event])=>{
       const rows=Array.isArray(event)?event:event?.rows||[];
       rows.forEach(r=>{
-        if(norm(r?.[1])!==norm(name))return;
+        if(norm(athleteDisplayName(r?.[1]))!==norm(name))return;
         const rt=teamNorm(r?.[2]);
         if(team&&rt&&norm(rt)!==norm(team))return;
         out.push({year:meet.year,meet:meet.name,event:eventName,rank:r?.[0],time:r?.[4],note:r?.[5]||''});
@@ -98,7 +127,7 @@
   const allPlayers=players();
 
   function teams(){
-    return [...new Set(allPlayers.map(p=>p.team).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));
+    return [...new Set(allPlayers.map(p=>p.team).filter(Boolean))].sort((a,b)=>teamCollator.compare(teamSortKey(a),teamSortKey(b))||teamCollator.compare(a,b));
   }
   function filtered(){
     const q=norm(state.query);
@@ -109,8 +138,9 @@
     }).sort((a,b)=>{
       if(state.sort==='runs')return b.totalRuns-a.totalRuns||a.name.localeCompare(b.name,'ja');
       if(state.sort==='hakone')return b.runs.hakone.length-a.runs.hakone.length||b.totalRuns-a.totalRuns;
-      if(state.sort==='pb5000'){
-        const av=toSec(a.pb?.pb5000),bv=toSec(b.pb?.pb5000);
+      if(state.sort==='pb5000'||state.sort==='pb10000'||state.sort==='half'){
+        const field=state.sort==='pb5000'?'pb5000':state.sort==='pb10000'?'pb10000':'half';
+        const av=toSec(a.pb?.[field]),bv=toSec(b.pb?.[field]);
         return (av??Infinity)-(bv??Infinity)||a.name.localeCompare(b.name,'ja');
       }
       return a.name.localeCompare(b.name,'ja');
@@ -155,7 +185,7 @@
     return `<div class="directory-controls">
       <div class="directory-search-wrap"><label>選手名・大学名で検索</label><input class="directory-search" type="search" value="${String(state.query).replace(/"/g,'&quot;')}" placeholder="例：山口竣平 / 早稲田大学" data-all-athlete-search></div>
       <div><label>大学</label><select class="directory-select" data-all-athlete-team><option value="all">すべて</option>${teams().map(t=>`<option value="${t}" ${state.team===t?'selected':''}>${t}</option>`).join('')}</select></div>
-      <div><label>並び順</label><select class="directory-select" data-all-athlete-sort><option value="name" ${state.sort==='name'?'selected':''}>選手名</option><option value="runs" ${state.sort==='runs'?'selected':''}>三大駅伝出走数</option><option value="hakone" ${state.sort==='hakone'?'selected':''}>箱根出走数</option><option value="pb5000" ${state.sort==='pb5000'?'selected':''}>5000m PB</option></select></div>
+      <div><label>並び順</label><select class="directory-select" data-all-athlete-sort><option value="pb5000" ${state.sort==='pb5000'?'selected':''}>5000m PB</option><option value="pb10000" ${state.sort==='pb10000'?'selected':''}>10000m PB</option><option value="half" ${state.sort==='half'?'selected':''}>ハーフ PB</option><option value="name" ${state.sort==='name'?'selected':''}>選手名</option><option value="runs" ${state.sort==='runs'?'selected':''}>三大駅伝出走数</option><option value="hakone" ${state.sort==='hakone'?'selected':''}>箱根出走数</option></select></div>
     </div>`;
   }
 
