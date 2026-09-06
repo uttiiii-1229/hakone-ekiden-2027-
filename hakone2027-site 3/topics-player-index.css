@@ -52,3 +52,7 @@
 .directory-pagination span{font-size:.82rem;font-weight:800;color:#52697e}
 @media(max-width:900px){.directory-controls{grid-template-columns:1fr 1fr}.directory-search-wrap{grid-column:1/-1}}
 @media(max-width:600px){.directory-controls{grid-template-columns:1fr}.directory-search-wrap{grid-column:auto}.directory-pagination{justify-content:space-between}}
+
+.directory-player-name{border:0;background:transparent;padding:0;color:#0b5a9a;font:inherit;font-weight:900;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;cursor:pointer;text-align:left}
+.directory-player-name:hover{color:#073d6b}.directory-player-name[aria-expanded="true"]{color:#123f68}
+.directory-intro strong{color:#123f68}
