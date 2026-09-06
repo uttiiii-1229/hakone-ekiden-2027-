@@ -34,7 +34,7 @@
     },
     zennihon:{
       1:[
-        {start:2007,end:2017,distance:'14.6km',course:'第49回までの旧コース',time:'41:56',holders:[{athlete:'永田 宏一郎',team:'鹿屋体育大学',year:2000,edition:32},{athlete:'G・ダニエル',team:'日本大学',year:2007,edition:39}]},
+        {start:2007,end:2017,distance:'14.6km',course:'第49回までの旧コース',time:'41:56',holders:[{athlete:'永田 宏一郎',team:'鹿屋体育大学',year:2000,edition:32},{athlete:'ギタウ・ダニエル',team:'日本大学',year:2007,edition:39}]},
         {start:2018,end:2025,distance:'9.5km',course:'第50回以降の現行コース',time:'26:58',holders:[{athlete:'ピーター・ワンジル',team:'大東文化大学',year:2022,edition:54}]}
       ],
       2:[
@@ -61,7 +61,7 @@
         {start:2007,end:2017,distance:'11.9km',course:'第49回までの旧コース',time:'34:08',holders:[{athlete:'阿部 弘輝',team:'明治大学',year:2017,edition:49}]},
         {start:2018,end:2025,distance:'17.6km',course:'第50回以降の現行コース',time:'49:31',holders:[{athlete:'黒田 朝日',team:'青山学院大学',year:2025,edition:57}]}
       ],
-      8:[{start:2007,end:2025,distance:'19.7km',course:'第24回以降コース',time:'55:32',holders:[{athlete:'M・J・モグス',team:'山梨学院大学',year:2007,edition:39}]}]
+      8:[{start:2007,end:2025,distance:'19.7km',course:'第24回以降コース',time:'55:32',holders:[{athlete:'メクボ・ジョブ・モグス',team:'山梨学院大学',year:2007,edition:39}]}]
     }
   };
 
