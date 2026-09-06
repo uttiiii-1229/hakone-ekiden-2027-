@@ -308,19 +308,83 @@ def parse_alljapan_pdf(pdf_bytes):
         sections[str(sec)]=sorted(dedup.values(),key=lambda r:(r['rank'] if isinstance(r['rank'],int) else 999,r['team']))
     return sections
 
+def parse_zennihon_web(year,ed):
+    url=f'https://genkimanman.com/ekiden/daigakuekiden/zennihon/zennihon{ed:03d}_{year}.html'
+    html=fetch_html(url)
+    if not html:
+        raise RuntimeError(f'Zennihon {year}: source page missing {url}')
+    soup=BeautifulSoup(html,'html.parser')
+    sections={str(i):[] for i in range(1,9)}
+
+    for sec in range(1,9):
+        heading=None
+        for h in soup.find_all(['h2','h3','h4']):
+            txt=clean(h.get_text(' ',strip=True))
+            if re.search(rf'第\s*{sec}\s*区',txt):
+                heading=h
+                break
+        if heading is None:
+            raise RuntimeError(f'Zennihon {year} {sec}: section heading not found')
+
+        table=heading.find_next('table')
+        if table is None:
+            raise RuntimeError(f'Zennihon {year} {sec}: table not found')
+
+        rows=[]
+        header=None
+        for tr in table.find_all('tr'):
+            cells=[clean(x.get_text(' ',strip=True)) for x in tr.find_all(['th','td'])]
+            if not cells:
+                continue
+            if header is None:
+                joined=' '.join(cells)
+                if '大学' in joined and '選手' in joined and '区間' in joined and '順位' in joined:
+                    header=cells
+                continue
+
+            # Current table layouts have either:
+            # 通過順位, 通過タイム, 大学名, 選手名, 学年, 区間タイム, 区間順位, ...
+            # or 大学名, 通過タイム, 選手名, 学年, 区間タイム, 区間順位, ...
+            if len(cells)<6:
+                continue
+            try:
+                uni_i=next(i for i,x in enumerate(header) if '大学' in x)
+                ath_i=next(i for i,x in enumerate(header) if '選手' in x)
+                time_i=next(i for i,x in enumerate(header) if '区間' in x and ('タイム' in x or '記録' in x))
+                rank_i=next(i for i,x in enumerate(header) if '区間' in x and '順位' in x)
+            except StopIteration:
+                break
+            if max(uni_i,ath_i,time_i,rank_i)>=len(cells):
+                continue
+
+            team=norm_team(cells[uni_i])
+            athlete=clean(cells[ath_i])
+            tm=norm_time(cells[time_i])
+            rk=rank_value(cells[rank_i])
+            if not team or not athlete or not re.search(r'\d',tm):
+                continue
+            if not isinstance(rk,int) and rk!='OPN':
+                continue
+            rows.append({'rank':rk,'athlete':athlete,'team':team,'time':tm})
+
+        if len(rows)<15:
+            raise RuntimeError(f'Zennihon {year} {sec}: only {len(rows)} rows from {url}')
+        sections[str(sec)]=sorted(rows,key=lambda r:(r['rank'] if isinstance(r['rank'],int) else 999,r['team']))
+
+    return url,sections
+
 def build_zennihon():
-    index=requests.get('https://daigaku-ekiden.com/datafile/',headers=UA,timeout=30);index.raise_for_status();html=index.text
-    pdf_map=alljapan_pdf_map(html);print('All-Japan PDF map:',sorted(pdf_map.items()))
     db={}
     for year in range(2007,2027):
         ed=year-1968
-        if year==2026:db[str(year)]={'edition':ed,'status':'未開催','sections':{}};continue
-        url,pdf=fetch_pdf(year,ed,pdf_map)
-        if not pdf:raise RuntimeError(f'Zennihon {year}: PDF missing')
-        sections=parse_alljapan_pdf(pdf);counts={s:len(v) for s,v in sections.items()};print(f'Zennihon {year}: {counts} {url}')
-        for sec,n in counts.items():
-            if n<15:raise RuntimeError(f'Zennihon {year} {sec}: only {n} rows from {url}')
-        db[str(year)]={'edition':ed,'status':'開催','sections':sections,'source':url};time.sleep(.04)
+        if year==2026:
+            db[str(year)]={'edition':ed,'status':'未開催','sections':{}}
+            continue
+        url,sections=parse_zennihon_web(year,ed)
+        counts={s:len(v) for s,v in sections.items()}
+        print(f'Zennihon {year}: {counts} {url}')
+        db[str(year)]={'edition':ed,'status':'開催','sections':sections,'source':url}
+        time.sleep(.05)
     return db
 
 izumo=build_izumo();zennihon=build_zennihon()
