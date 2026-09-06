@@ -43,10 +43,29 @@
   function pbRows(team){
     return typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
   }
-  function pbTable(team){
+  function historicalAthletes(team){
+    const db=window.hakonePhase2StaticDB||{};
+    const map=new Map();
+    for(let year=2007;year<=2026;year++){
+      for(let section=1;section<=10;section++){
+        (db?.[year]?.[section]||[]).forEach(r=>{
+          if(normalizeTeam(r?.[2])!==team) return;
+          const display=String(r?.[3]||'').trim();
+          const key=display.replace(/[\s　]+/g,'');
+          if(!key)return;
+          if(!map.has(key)) map.set(key,{name:display,runs:0,years:new Set(),sections:new Set()});
+          const a=map.get(key);a.runs++;a.years.add(year);a.sections.add(section);
+        });
+      }
+    }
+    return [...map.values()].map(a=>({...a,years:[...a.years].sort((x,y)=>x-y),sections:[...a.sections].sort((x,y)=>x-y)})).sort((a,b)=>b.runs-a.runs||a.name.localeCompare(b.name,'ja'));
+  }
+  function athleteDataBlock(team){
     const rows=pbRows(team);
-    if(!rows.length) return '<div class="notice">現在のPB詳細は未収録です。箱根出場履歴・歴代出走選手データは下記の大学プロフィールに収録しています。</div>';
-    return `<div class="table-wrap compact"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}年</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody></table></div>`;
+    const pb=rows.length?`<h3>現行選手PB</h3><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}年</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody></table></div>`:'<div class="notice">現行選手PBは確認できたデータから順次追加しています。</div>';
+    const hist=historicalAthletes(team);
+    const history=`<h3>箱根歴代出走選手（2007〜2026）</h3><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>${hist.map(a=>`<tr><td><strong>${a.name}</strong></td><td>${a.runs}回</td><td>${a.years.join('・')}</td><td>${a.sections.map(s=>s+'区').join('・')}</td></tr>`).join('')}</tbody></table></div>`;
+    return pb+history;
   }
   function universityDirectoryTemplate(){
     const stats=hakoneUniversityStats();
@@ -75,7 +94,7 @@
           <p class="muted university-years"><strong>出場年度:</strong> ${s.years.join('・')}</p>
           <details class="university-pb-details">
             <summary>選手データを見る</summary>
-            ${pbTable(s.team)}
+            ${athleteDataBlock(s.team)}
           </details>
         </article>`).join('')}
       </div>
