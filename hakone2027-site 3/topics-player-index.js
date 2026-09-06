@@ -5,6 +5,18 @@
   const cache={};
   let activeRace='hakone';
 
+  // 箱根公式の選手詳細で再照合した通算出走数。
+  // 2007年より前から出走しており、現DBの収録開始年をまたぐ選手を補正する。
+  const hakoneCareerAppearances={
+    '佐藤悠基|東海大学':4,
+    '松瀬元太|順天堂大学':4,
+    '鷲見知彦|日本体育大学':4,
+    '今井正人|順天堂大学':4,
+    '竹沢健介|早稲田大学':4,
+    '上野裕一郎|中央大学':4,
+    '上野祐一郎|中央大学':4
+  };
+
   function toSeconds(value){
     const s=String(value||'').trim();
     if(!s||s==='—') return null;
@@ -93,7 +105,10 @@
       const best=Math.max(...p.scores);
       const sections=[...new Set(p.runs.map(r=>r.section))].sort((a,b)=>a-b);
       const years=[...new Set(p.runs.map(r=>r.year))].sort((a,b)=>a-b);
-      return {...p,score:avg,best,sections,years,appearances:p.scores.length};
+      const baseAppearances=p.scores.length;
+      const careerKey=`${normText(p.athlete)}|${normText(p.team)}`;
+      const officialAppearances=race==='hakone' ? (hakoneCareerAppearances[careerKey]||baseAppearances) : baseAppearances;
+      return {...p,score:avg,best,sections,years,appearances:officialAppearances,scoredAppearances:baseAppearances};
     }).sort((a,b)=>b.score-a.score||b.best-a.best||b.appearances-a.appearances).slice(0,20);
 
     cache[race]={ranking,totalRuns:appearances.length,totalPlayers:players.size};
@@ -113,7 +128,7 @@
       </div>
       <div class="table-wrap topic-ranking-table">
         <table>
-          <thead><tr><th>順位</th><th>選手</th><th>大学・チーム</th><th>偏差値</th><th>出走数</th><th>出走区間</th></tr></thead>
+          <thead><tr><th>順位</th><th>選手</th><th>大学・チーム</th><th>偏差値</th><th>公式出走数</th><th>出走区間</th></tr></thead>
           <tbody>
             ${data.ranking.map((p,i)=>`
               <tr>
@@ -147,7 +162,7 @@
         </div>
         <div class="notice topic-method">
           同じ年・同じ区間を走った選手のタイム分布から「偏差値 = 50 + 10 ×（区間平均タイム − 選手タイム）÷ 標準偏差」を算出します。
-          選手が複数年・複数区間を走っている場合は、それぞれの区間偏差値を平均して平準化します。これにより距離やコースが違う区間同士をタイムそのままで比較しません。
+          選手が複数年・複数区間を走っている場合は、それぞれの区間偏差値を平均して平準化します。これにより距離やコースが違う区間同士をタイムそのままで比較しません。箱根の出走数は公式選手詳細も照合し、収録開始年をまたぐ選手は通算出走数を補正しています。
         </div>
         <div class="tabs topic-race-tabs">
           ${Object.entries(raceLabels).map(([k,v])=>`<button class="tab ${k===activeRace?'active':''}" data-topic-race="${k}">${v}</button>`).join('')}
