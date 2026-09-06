@@ -1,0 +1,24 @@
+/* Topics / athlete deviation-score directory */
+.topics-page{max-width:1180px}
+.topic-feature{padding:22px}
+.topic-feature-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.topic-feature-head h2{margin:4px 0 0}
+.topic-kicker{font-size:.78rem;font-weight:800;letter-spacing:.08em;color:#0b5a9a}
+.topic-badge{display:inline-flex;padding:7px 10px;border-radius:999px;background:#eef5fb;color:#174f7d;font-size:.75rem;font-weight:800;white-space:nowrap}
+.topic-method{margin:0 0 16px}
+.topic-race-tabs{margin:0 0 12px;display:flex;gap:8px;flex-wrap:wrap}
+.topic-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.topic-summary>div{padding:13px 14px;border:1px solid #e3eaf0;border-radius:12px;background:#f8fafc}
+.topic-summary strong{display:block;font-size:1.08rem;color:#123f68}
+.topic-summary span{display:block;margin-top:2px;color:#6b7785;font-size:.78rem}
+.topic-score{display:inline-flex;min-width:58px;justify-content:center;padding:5px 9px;border-radius:999px;background:#eaf3fb;color:#0b4e86;font-weight:800;font-variant-numeric:tabular-nums}
+.topic-ranking-table table{min-width:720px}
+@media(max-width:760px){
+  .topic-feature{padding:16px}
+  .topic-feature-head{display:block}
+  .topic-badge{margin-top:10px}
+  .topic-summary{grid-template-columns:1fr 1fr 1fr}
+  .topic-summary>div{padding:10px}
+  .topic-summary strong{font-size:.95rem}
+  .topic-summary span{font-size:.7rem}
+}
