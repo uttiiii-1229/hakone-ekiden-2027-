@@ -14,5 +14,21 @@
     "adapter": "iuau-web-results",
     "indexUrl": "https://iuau.jp/ev2026/26kosen/res/kyougi.html",
     "includeGenders": ["男子", "女子"]
+  },
+  {
+    "id": "105kantoic-2026",
+    "year": 2026,
+    "name": "第105回関東学生陸上競技対校選手権大会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://www.kgrr.org/event/event/2026/kan-currywithgyoza/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
+    "id": "abashiri-2026",
+    "year": 2026,
+    "name": "関東学生網走夏季記録挑戦競技会",
+    "adapter": "iuau-web-results",
+    "indexUrl": "https://www.kgrr.org/event/event/2026/abashiri/kyougi.html",
+    "includeGenders": ["男子", "女子"]
   }
 ]
