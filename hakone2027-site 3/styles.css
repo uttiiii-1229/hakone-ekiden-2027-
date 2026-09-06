@@ -217,7 +217,6 @@ th { background:#f5f9fd; color:var(--navy); }
 @media(max-width:680px){.team-detail{padding:15px}.team-detail-head{flex-direction:column}.prediction-layout{grid-template-columns:1fr}.history-block{margin-bottom:26px}}
 
 html,body{scroll-padding-top:calc(82px + env(safe-area-inset-top,0px))}
-.site-header,.header-inner,.brand,.brand-mark,.brand-copy{contain:layout paint}
 .brand-mark{flex:0 0 82px;min-width:82px;max-width:82px}
 .brand-mark svg{display:block}
 @media(max-width:980px){
@@ -228,3 +227,6 @@ html,body{scroll-padding-top:calc(82px + env(safe-area-inset-top,0px))}
   .brand-copy strong{font-size:20px}
   .brand-copy small{font-size:11px}
 }
+
+.site-header,.header-inner,.brand,.brand-mark,.brand-mark svg{overflow:visible}
+.header-inner{position:relative}
