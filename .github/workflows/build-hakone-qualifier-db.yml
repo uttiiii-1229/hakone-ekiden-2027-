@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Sync latest main
+        run: git pull --rebase origin main
       - run: npm install --no-save cheerio@1.0.0
       - run: node scripts/build-hakone-qualifier-db.mjs
       - name: Commit DB
@@ -26,5 +28,4 @@ jobs:
           git add "hakone2027-site 3/hakone-qualifier-db.js"
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Update Hakone qualifier database"
-          git pull --rebase origin main
           git push
