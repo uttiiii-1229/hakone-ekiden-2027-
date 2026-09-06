@@ -28,9 +28,11 @@ button { color: inherit; }
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(247, 251, 255, .93);
+  padding-top: env(safe-area-inset-top, 0px);
+  background: rgba(247, 251, 255, .97);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(13, 62, 108, .08);
+  transform: translateZ(0);
 }
 .header-inner { min-height: 82px; display: flex; align-items: center; gap: 26px; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 250px; color: var(--navy); text-decoration: none; }
@@ -213,3 +215,16 @@ th { background:#f5f9fd; color:var(--navy); }
 .score-pill{white-space:nowrap;background:var(--blue-soft);color:var(--navy);font-weight:900;padding:10px 14px;border-radius:999px}.compact table{min-width:520px}.compact th,.compact td{padding:11px 14px}
 .history-block{margin-bottom:34px}.history-block h2{color:var(--navy);margin:0 0 12px}.prediction-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.weight-list{display:grid;gap:12px;margin-top:14px}.weight-list>div{display:flex;justify-content:space-between;gap:16px;padding-bottom:10px;border-bottom:1px solid var(--line)}.weight-list strong{color:var(--navy)}.muted{color:var(--muted)}
 @media(max-width:680px){.team-detail{padding:15px}.team-detail-head{flex-direction:column}.prediction-layout{grid-template-columns:1fr}.history-block{margin-bottom:26px}}
+
+html,body{scroll-padding-top:calc(82px + env(safe-area-inset-top,0px))}
+.site-header,.header-inner,.brand,.brand-mark,.brand-copy{contain:layout paint}
+.brand-mark{flex:0 0 82px;min-width:82px;max-width:82px}
+.brand-mark svg{display:block}
+@media(max-width:980px){
+  .site-header{position:sticky;top:0}
+  .header-inner{min-height:72px}
+  .brand{min-width:0}
+  .brand-mark{width:64px;height:42px;flex-basis:64px;min-width:64px;max-width:64px}
+  .brand-copy strong{font-size:20px}
+  .brand-copy small{font-size:11px}
+}
