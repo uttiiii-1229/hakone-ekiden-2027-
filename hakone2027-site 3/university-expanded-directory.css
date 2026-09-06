@@ -1,1 +1,12 @@
 .university-directory-page{max-width:1180px}.university-directory-grid{display:grid;grid-template-columns:1fr;gap:14px}.university-history-card{padding:20px}.university-history-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.university-history-head h2{margin:3px 0 0}.university-history-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}.university-history-stats>div{padding:10px;border:1px solid #e0e8f0;border-radius:10px;background:#f8fafc}.university-history-stats span{display:block;font-size:.72rem;color:#6b7785}.university-history-stats strong{display:block;margin-top:3px;color:#123f68}.university-years{line-height:1.7}.university-pb-details{margin-top:12px}.university-pb-details summary{cursor:pointer;font-weight:900;color:#0b5a9a}.university-pb-details[open] summary{margin-bottom:12px}@media(max-width:760px){.university-history-stats{grid-template-columns:1fr 1fr}.university-history-head{display:block}.university-history-head .topic-badge{margin-top:8px}}
+.university-title-with-icon{display:flex;align-items:center;gap:12px;min-width:0}
+.university-tasuki-icon{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:0 0 48px;width:48px;height:48px;border-radius:13px;background:#fff;border:2px solid var(--tasuki);box-shadow:0 3px 10px rgba(20,50,80,.08);overflow:hidden}
+.university-icon-letter{position:relative;z-index:2;font-size:1rem;font-weight:900;color:#173b5d;text-shadow:0 1px 0 #fff}
+.university-icon-sash{position:absolute;width:13px;height:72px;background:var(--tasuki);transform:rotate(38deg);left:18px;top:-12px;opacity:.9}
+.top10-average-block{margin:14px 0;padding:13px 14px;border:1px solid #dbe7f1;border-radius:12px;background:#fbfdff}
+.top10-average-block h3{margin:0 0 9px;font-size:.88rem;color:#234a70}
+.top10-average-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.top10-average-grid>div{padding:9px 10px;border-radius:10px;background:#fff;border:1px solid #e3ebf2}
+.top10-average-grid span,.top10-average-grid small{display:block;color:#708091;font-size:.68rem}
+.top10-average-grid strong{display:block;margin:2px 0;color:#123f68;font-size:1rem;font-variant-numeric:tabular-nums}
+@media(max-width:600px){.top10-average-grid{grid-template-columns:1fr 1fr 1fr}.university-tasuki-icon{flex-basis:42px;width:42px;height:42px}}
