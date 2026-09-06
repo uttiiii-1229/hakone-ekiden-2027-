@@ -225,26 +225,41 @@ def build_izumo():
 
 def alljapan_pdf_map(html):
     soup=BeautifulSoup(html,'html.parser')
-    mapping={};current=None
-    for node in soup.find_all(['h2','h3','h4','a']):
-        if node.name in ('h2','h3','h4'):
-            m=re.search(r'第\s*(\d+)\s*回大会',clean(node.get_text(' ',strip=True)))
-            if m:current=int(m.group(1))
-        elif current and node.has_attr('href') and '.pdf' in node['href'].lower():mapping.setdefault(current,urljoin('https://daigaku-ekiden.com/datafile/',node['href']))
+    mapping={}
+    for a in soup.find_all('a',href=True):
+        href=a['href']
+        if '.pdf' not in href.lower():
+            continue
+        text=clean(a.get_text(' ',strip=True))
+        m=re.search(r'第\s*(\d+)\s*回(?:記念)?大会.*成績表',text)
+        if not m:
+            parent=clean(a.parent.get_text(' ',strip=True)) if a.parent else ''
+            m=re.search(r'第\s*(\d+)\s*回(?:記念)?大会.*成績表',parent)
+        if m:
+            mapping[int(m.group(1))]=urljoin('https://daigaku-ekiden.com/datafile/',href)
     return mapping
 
 def fetch_pdf(year,ed,pdf_map):
     candidates=[]
-    if ed in pdf_map:candidates.append(pdf_map[ed])
-    candidates += [f'https://daigaku-ekiden.com/datafile/files/{year}result.pdf',f'https://daigaku-ekiden.com/files/{year}_result.pdf',f'https://daigaku-ekiden.com/files/{year}result.pdf']
+    if ed in pdf_map:
+        candidates.append(pdf_map[ed])
+    candidates += [
+        f'https://daigaku-ekiden.com/datafile/files/{ed}_01.pdf',
+        f'https://daigaku-ekiden.com/datafile/files/{year}result.pdf',
+        f'https://daigaku-ekiden.com/files/{year}_result.pdf',
+        f'https://daigaku-ekiden.com/files/{year}result.pdf',
+    ]
     seen=set()
     for u in candidates:
-        if u in seen:continue
+        if u in seen:
+            continue
         seen.add(u)
         try:
             r=requests.get(u,headers=UA,timeout=30)
-            if r.status_code==200 and r.content.startswith(b'%PDF'):return u,r.content
-        except Exception:pass
+            if r.status_code==200 and r.content.startswith(b'%PDF'):
+                return u,r.content
+        except Exception:
+            pass
     return None,None
 
 def cluster_lines(words,tol=2.5):
