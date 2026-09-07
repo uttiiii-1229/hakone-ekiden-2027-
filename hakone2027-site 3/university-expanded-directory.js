@@ -9,6 +9,15 @@
     return /学生連合|学連選抜|関東学連|選抜/.test(String(name));
   }
   const hakone2026Order=['青山学院大学','國學院大學','順天堂大学','早稲田大学','中央大学','駒澤大学','城西大学','創価大学','帝京大学','日本大学','中央学院大学','東海大学','神奈川大学','東洋大学','日本体育大学','東京国際大学','山梨学院大学','東京農業大学','大東文化大学','立教大学'];
+  // 第102回（2026年）終了時点の箱根駅伝・大学別通算出場回数。
+  // 2007〜2026のサイト収録期間だけでなく、第1回からの通算回数を表示する。
+  const hakoneAllTimeAppearances={
+    '中央大学':99,'早稲田大学':95,'日本大学':92,'法政大学':85,'東洋大学':84,'日本体育大学':78,
+    '専修大学':72,'東京農業大学':71,'順天堂大学':67,'明治大学':65,'筑波大学':61,'駒澤大学':60,
+    '神奈川大学':56,'大東文化大学':54,'国士舘大学':52,'東海大学':52,'拓殖大学':42,'山梨学院大学':39,
+    '亜細亜大学':33,'立教大学':31,'青山学院大学':31,'帝京大学':27,'中央学院大学':25,'城西大学':20,
+    '國學院大學':19,'上武大学':11,'東京国際大学':9,'創価大学':9,'関東学院大学':6,'駿河台大学':2,'平成国際大学':1
+  };
   const tasukiColors={
     '青山学院大学':'#2f9b79','國學院大學':'#8f1d60','順天堂大学':'#2874b8','早稲田大学':'#7b1638','中央大学':'#d21f2b','駒澤大学':'#73539d','城西大学':'#d73b75','創価大学':'#1d58a7','帝京大学':'#cf202f','日本大学':'#d71920',
     '中央学院大学':'#6f2c91','東海大学':'#1698d1','神奈川大学':'#243f8f','東洋大学':'#273c80','日本体育大学':'#b91d2c','東京国際大学':'#194f9b','山梨学院大学':'#005aa9','東京農業大学':'#2f7d32','大東文化大学':'#71b644','立教大学':'#5a2a82',
@@ -70,7 +79,8 @@
       const years=[...x.years].sort((a,b)=>a-b);
       return {
         team:x.team,
-        appearances:years.length,
+        appearances:hakoneAllTimeAppearances[x.team]||years.length,
+        periodAppearances:years.length,
         years,
         first:years[0],
         latest:years[years.length-1],
@@ -174,12 +184,12 @@
       <div class="average-top3-overview">
         ${top3.map(group=>`<article class="data-card average-top3-card"><div class="average-top3-head"><span>TOP10平均</span><h2>${group.metric}</h2></div><div class="average-top3-list">${group.list.map((x,i)=>`<div><b>${i+1}</b><span>${teamIcon(x.team)}<strong>${x.team}</strong></span><em>${x.value}</em></div>`).join('')}</div></article>`).join('')}
       </div>
-      <div class="notice"><strong>データ範囲:</strong> 全大学に箱根出場回数・出場年度・直近出場・収録区間走数・歴代出走選手数を掲載します。現行選手PBは確認できた大学から順次追加します。</div>
+      <div class="notice"><strong>データ範囲:</strong> 出場回数は第1回〜第102回（2026年）までの大学別通算回数を表示します。出場年度・直近出場・区間走数・歴代出走選手数は、サイト収録範囲の2007〜2026年を対象にしています。現行選手PBは確認できた大学から順次追加します。</div>
       <div class="university-directory-grid">
         ${stats.map(s=>`<article class="data-card university-history-card">
-          <div class="university-history-head"><div class="university-title-with-icon">${teamIcon(s.team)}<div><span class="topic-kicker">${hakone2026Order.includes(s.team)?'2026 HAKONE '+(hakone2026Order.indexOf(s.team)+1)+'位':'HAKONE HISTORY'}</span><h2>${s.team}</h2></div></div><span class="topic-badge">${s.appearances}回出場</span></div>
+          <div class="university-history-head"><div class="university-title-with-icon">${teamIcon(s.team)}<div><span class="topic-kicker">${hakone2026Order.includes(s.team)?'2026 HAKONE '+(hakone2026Order.indexOf(s.team)+1)+'位':'HAKONE HISTORY'}</span><h2>${s.team}</h2></div></div><span class="topic-badge">通算 ${s.appearances}回出場</span></div>
           <div class="university-history-stats">
-            <div><span>初出場（対象期間）</span><strong>${s.first}</strong></div>
+            <div><span>2007〜2026出場</span><strong>${s.periodAppearances}回</strong></div>
             <div><span>直近出場</span><strong>${s.latest}</strong></div>
             <div><span>収録区間走</span><strong>${s.runs}</strong></div>
             <div><span>収録選手</span><strong>${s.athleteCount}</strong></div>
