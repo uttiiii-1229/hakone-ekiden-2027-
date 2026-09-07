@@ -54,12 +54,14 @@ const universityPbText=fs.readFileSync('hakone2027-site 3/university-pb-expansio
 const universityViewText=fs.readFileSync('hakone2027-site 3/university-expanded-directory.js','utf8');
 
 for(const expected of [
-  "'田島 駿介':['13:46.12','28:11.41','1:02:04']",
-  "'平島 龍斗':['13:42.84','27:56.84','1:01:02']",
-  "'二村 昇太朗':['13:56.57','28:31.64','1:03:58']",
-  "'山崎 丞':['13:52.09','28:19.16','1:02:06']"
+  "'佐藤 大和':['14:05.12','28:37.62','1:03:44']",
+  "'夏見 虹郎':['14:15.75','28:29.82','1:04:17']",
+  "'吉田 黎大':['14:15.16','29:09.64','1:04:08']"
 ]){
-  if(!universityPbText.includes(expected)) throw new Error('NSSU current PB snapshot is stale: '+expected);
+  if(!universityPbText.includes(expected)) throw new Error('NSSU 2026 current PB snapshot is stale: '+expected);
+}
+for(const graduate of ['平島 龍斗','田島 駿介','二村 昇太朗','山崎 丞']){
+  if(universityPbText.includes("'"+graduate+"':")) throw new Error('Graduated NSSU athlete remains in current PB DB: '+graduate);
 }
 if(!universityViewText.includes('window.currentAthletePbResolver?.currentRows')){
   throw new Error('University directory does not use the unified current PB resolver');
@@ -103,15 +105,30 @@ console.log('All 20 Hakone 2026 teams have a current-athlete PB source.');
 const currentRosterText=fs.readFileSync('hakone2027-site 3/current-roster-official-20260907.js','utf8');
 const currentResolverText=fs.readFileSync('hakone2027-site 3/current-athlete-pb-resolver.js','utf8');
 
-for(const active of ['本島 尚緒','田島 駿介','平島 龍斗','阿知和 優汰','藤原 大竜','今野 健太']){
+for(const active of ['天瀬 海斗','吉田 黎大','佐藤 大和','夏見 虹郎','宗像 琢馬']){
   if(!currentRosterText.includes(active)) throw new Error('NSSU active roster missing '+active);
 }
-for(const stale of ['植松 孝太','住原 聡太','杉本 訓也','高村 比呂飛','富永 椋太','溝上 賢伸','分須 尊紀']){
-  if(currentRosterText.includes(stale)) throw new Error('NSSU stale athlete leaked into official roster '+stale);
+for(const stale of ['平島 龍斗','田島 駿介','二村 昇太朗','山崎 丞','植松 孝太','富永 椋太']){
+  if(currentRosterText.includes(stale)) throw new Error('NSSU graduate/stale athlete leaked into official roster '+stale);
+}
+for(const gradeCheck of [
+  "['天瀬 海斗','4']","['吉田 黎大','4']","['佐藤 大和','3']","['夏見 虹郎','2']","['宗像 琢馬','1']"
+]){
+  if(!currentRosterText.includes(gradeCheck)) throw new Error('NSSU academic-year grade mismatch: '+gradeCheck);
 }
 if(!currentResolverText.includes('PB snapshots are enrichment only') ||
-   !currentResolverText.includes('if(!mayEnrich') ||
-   !currentResolverText.includes('authoritativeRoster')){
+   !currentResolverText.includes('if(!isKnownCurrent') ||
+   !currentResolverText.includes('authoritativeRoster') ||
+   !currentResolverText.includes('Never overwrite an authoritative roster grade')){
   throw new Error('Current resolver can re-create athletes from stale PB data');
 }
 console.log('Authoritative current-roster filtering validation passed.');
+
+
+const nssuSetCount=(universityPbText.match(/set\('日本体育大学'/g)||[]).length;
+if(nssuSetCount!==1) throw new Error('NSSU display PB set must be defined exactly once; got '+nssuSetCount);
+for(const graduate of ['平島 龍斗','田島 駿介','二村 昇太朗','山崎 丞']){
+  if(currentRosterText.includes(graduate)) throw new Error('Academic-year regression: graduate in current roster '+graduate);
+}
+if(!currentRosterText.includes("season:2026")) throw new Error('Current roster metadata must declare academic season 2026');
+console.log('Academic-year roster boundary validation passed.');
