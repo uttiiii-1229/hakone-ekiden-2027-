@@ -49,7 +49,14 @@
     "Mike Smith":"マイク スミス","David Nash":"デイビッド ナッシュ",
 
     "エティーリ":"リチャード エティーリ","Ｒ.エティーリ":"リチャード エティーリ","R.エティーリ":"リチャード エティーリ",
-    "キムタイ":"ヴィクター キムタイ","ムチーニ":"スティーブン ムチーニ","ムトゥク":"ソロモン ムトゥク"
+    "Ｒ・エティーリ":"リチャード エティーリ","R・エティーリ":"リチャード エティーリ","リチャード・エティーリ":"リチャード エティーリ",
+    "RICHARD Etir":"リチャード エティーリ","Richard Etir":"リチャード エティーリ","Richard Etiri":"リチャード エティーリ",
+    "V.キムタイ":"ヴィクター キムタイ","Ｖ.キムタイ":"ヴィクター キムタイ","ヴィクター・キムタイ":"ヴィクター キムタイ","キムタイ":"ヴィクター キムタイ",
+    "S.キップケメイ":"シャドラック キップケメイ","Ｓ.キップケメイ":"シャドラック キップケメイ",
+    "B.キピエゴ":"ブライアン キピエゴ","Ｂ.キピエゴ":"ブライアン キピエゴ",
+    "Y.ヴィンセント":"イェゴン ヴィンセント","Ｙ.ヴィンセント":"イェゴン ヴィンセント",
+    "S.ムチーニ":"スティーブン ムチーニ","Ｓ.ムチーニ":"スティーブン ムチーニ","ムチーニ":"スティーブン ムチーニ",
+    "A.ベット":"アモス ベット","Ａ.ベット":"アモス ベット"
   };
 
   const folded = new Map(Object.entries(exact).map(([k,v]) => [k.normalize('NFKC').trim().toLowerCase(), v]));
@@ -95,6 +102,25 @@
   }
 
   window.normalizeForeignAthleteName = cleanupLegacy;
+  window.canonicalAthleteName = cleanupLegacy;
+
+  // Canonicalize athlete identities in every race DB that is already loaded.
+  // This is intentionally done at the DB layer (not only at display time) so
+  // current PB rows, athlete directories and historical race results join on
+  // the same athlete key. Example: "エティーリ" and "Ｒ.エティーリ" both
+  // become "リチャード エティーリ" before any player index is built.
+  const hakone=window.hakonePhase2StaticDB||{};
+  Object.values(hakone).forEach(yearDb=>{
+    for(let section=1;section<=10;section++){
+      (yearDb?.[section]||[]).forEach(r=>{ if(r?.[3]) r[3]=cleanupLegacy(r[3]); });
+    }
+  });
+
+  if(typeof hakone2026SectionDB!=='undefined'){
+    for(let section=1;section<=10;section++){
+      (hakone2026SectionDB?.[section]||[]).forEach(r=>{ if(r?.[3]) r[3]=cleanupLegacy(r[3]); });
+    }
+  }
 
   const db=window.threeEkidenSectionsDB||{};
   Object.values(db).forEach(race=>Object.values(race||{}).forEach(yd=>{
