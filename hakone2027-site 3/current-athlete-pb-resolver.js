@@ -65,9 +65,10 @@
     // PB snapshots are enrichment only. They must never create a "current" athlete
     // when an authoritative roster exists.
     (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>{
-      if(!mayEnrich(r?.[0])) return;
+      // Legacy ranking data is never proof of current membership.
+      if(!map.has(norm(r?.[0]))) return;
       upsert(r?.[0],{
-        grade:r?.[1],pb5000:r?.[2],pb10000:r?.[3],half:r?.[4],source:'current selected PB'
+        grade:r?.[1],pb5000:r?.[2],pb10000:r?.[3],half:r?.[4],source:'legacy selected PB enrichment'
       });
     });
 
