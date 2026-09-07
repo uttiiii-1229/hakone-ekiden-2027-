@@ -91,7 +91,7 @@
       }));
     }
 
-    // TOP10 data additionally has 5000m PB; let it override/fill full-roster values.
+    // Ranking data additionally has 5000m PB.
     if(window.expandedTopAthletes2027){
       Object.entries(window.expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
         const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
@@ -103,6 +103,24 @@
           half:r[4]||prev.half||'—'
         });
       }));
+    }
+
+    // Officially verified PB overrides are intentionally university-agnostic.
+    // This lets schools outside the ranking dataset (Tokai, Toyo, Hosei, etc.)
+    // appear with current PBs as soon as verified data is added.
+    if(window.verifiedCurrentPb2026){
+      Object.entries(window.verifiedCurrentPb2026).forEach(([team,athletes])=>{
+        Object.entries(athletes||{}).forEach(([name,pb])=>{
+          const key=norm(athleteDisplayName(name))+'|'+norm(teamNorm(team));
+          const prev=map.get(key)||{};
+          map.set(key,{
+            grade:prev.grade||'',
+            pb5000:(pb?.[0]&&pb[0]!=='—')?pb[0]:(prev.pb5000||'—'),
+            pb10000:(pb?.[1]&&pb[1]!=='—')?pb[1]:(prev.pb10000||'—'),
+            half:(pb?.[2]&&pb[2]!=='—')?pb[2]:(prev.half||'—')
+          });
+        });
+      });
     }
     return map;
   }
