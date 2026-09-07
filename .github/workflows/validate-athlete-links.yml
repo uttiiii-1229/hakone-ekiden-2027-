@@ -8,6 +8,8 @@ on:
       - 'hakone2027-site 3/foreign-name-normalizer.js'
       - 'hakone2027-site 3/tokyo-international-pb-correction-20260907.js'
       - 'hakone2027-site 3/all-athlete-directory-v2.js'
+      - 'hakone2027-site 3/university-pb-expansion-20260907.js'
+      - 'hakone2027-site 3/university-data-pages.js'
       - 'hakone2027-site 3/university-expanded-directory.js'
       - 'scripts/validate-athlete-identity-links.mjs'
       - '.github/workflows/validate-athlete-links.yml'
