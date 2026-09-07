@@ -1,0 +1,25 @@
+name: Validate Athlete Identity Links
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'hakone2027-site 3/hakone-phase2-static-db.js'
+      - 'hakone2027-site 3/foreign-name-normalizer.js'
+      - 'hakone2027-site 3/tokyo-international-pb-correction-20260907.js'
+      - 'hakone2027-site 3/all-athlete-directory-v2.js'
+      - 'hakone2027-site 3/university-expanded-directory.js'
+      - 'scripts/validate-athlete-identity-links.mjs'
+      - '.github/workflows/validate-athlete-links.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate canonical athlete links
+        run: node scripts/validate-athlete-identity-links.mjs
