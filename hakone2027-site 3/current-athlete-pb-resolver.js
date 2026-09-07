@@ -60,20 +60,21 @@
       source:officialRoster.length?'official current roster':'2026 roster'
     }));
 
-    const mayEnrich=name=>!hasAuthoritativeRoster||map.has(norm(name));
+    const isKnownCurrent=name=>map.has(norm(name));
 
     // PB snapshots are enrichment only. They must never create a "current" athlete
     // when an authoritative roster exists.
     (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>{
       // Legacy ranking data is never proof of current membership.
-      if(!map.has(norm(r?.[0]))) return;
+      if(!isKnownCurrent(r?.[0])) return;
       upsert(r?.[0],{
         grade:r?.[1],pb5000:r?.[2],pb10000:r?.[3],half:r?.[4],source:'legacy selected PB enrichment'
       });
     });
 
     Object.entries(window.verifiedCurrentPb2026?.[team]||{}).forEach(([name,pb])=>{
-      if(!mayEnrich(name)) return;
+      // A PB snapshot never proves current enrollment.
+      if(!isKnownCurrent(name)) return;
       upsert(name,{
         pb5000:pb?.[0],pb10000:pb?.[1],half:pb?.[2],source:'verified current PB'
       });
@@ -87,11 +88,18 @@
         const metric=eventMetric(eventName);
         const rows=Array.isArray(event)?event:event?.rows||[];
         rows.forEach(r=>{
-          if(teamNorm(r?.[2])!==team||!mayEnrich(r?.[1])) return;
-          const val=metric?recordCandidate(r?.[4]):null;
-          const data={grade:r?.[3],source:'2026 official meet'};
+          if(teamNorm(r?.[2])!==team) return;
+          const name=r?.[1];
+          if(hasAuthoritativeRoster && !isKnownCurrent(name)) return;
+          // A post-April 2026 official meet can prove current participation when no roster snapshot exists.
+          if(!hasAuthoritativeRoster && !isKnownCurrent(name)) upsert(name,{grade:r?.[3],source:'2026 official meet membership'});
+          const comment=String(r?.[5]||'');
+          const val=metric&&/\bPB\b|自己ベスト|自己新/i.test(comment)?recordCandidate(r?.[4]):null;
+          const data={source:'2026 official meet PB'};
+          // Never overwrite an authoritative roster grade with stale race-page grade labels.
+          if(!hasAuthoritativeRoster && r?.[3]) data.grade=r?.[3];
           if(metric&&val) data[metric]=val;
-          upsert(r?.[1],data);
+          upsert(name,data);
         });
       });
     });
