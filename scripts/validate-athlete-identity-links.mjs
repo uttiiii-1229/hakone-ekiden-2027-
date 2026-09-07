@@ -61,8 +61,8 @@ for(const expected of [
 ]){
   if(!universityPbText.includes(expected)) throw new Error('NSSU current PB snapshot is stale: '+expected);
 }
-if(!universityViewText.includes('window.verifiedCurrentPb2026?.[team]')){
-  throw new Error('University directory does not prioritize verified current PB overrides');
+if(!universityViewText.includes('window.currentAthletePbResolver?.currentRows')){
+  throw new Error('University directory does not use the unified current PB resolver');
 }
 console.log('University current-PB priority validation passed.');
 
