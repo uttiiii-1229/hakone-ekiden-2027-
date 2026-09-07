@@ -144,6 +144,22 @@
     "includeGenders": ["男子", "女子"]
   },
   {
+    "id": "kanto-spring-open-2025",
+    "year": 2025,
+    "name": "2024年度関東学連春季オープン競技会",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://www.kgrr.org/event/event/2024/StaRt/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
+    "id": "kanto-spring-open-2023",
+    "year": 2023,
+    "name": "2022年度関東学連春季オープン競技会",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://www.kgrr.org/event/2022/kgrr/2022Spring/hp/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
     "id": "kanto-10000-2024",
     "year": 2024,
     "name": "10000m記録挑戦競技会",
