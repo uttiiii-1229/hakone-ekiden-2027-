@@ -28,7 +28,9 @@
     "Jakob Kintzele":"ヤコブ キンツェレ","Owen Ritz":"オーウェン リッツ","Kevin Berry":"ケビン ベリー","Kieran Tuntivate":"キーラン タンティベート",
     "Tyler Berg":"タイラー バーグ","Acer Iverson":"エイサー アイバーソン","Robert Miranda":"ロバート ミランダ","Benjamin Rosa":"ベンジャミン ローザ",
     "Graham Blanks":"グラハム ブランクス","Derek Amicon":"デレク アミコン","James Lawrence":"ジェームズ ローレンス",
-    "Stephen Muthini":"スティーブン ムチーニ","Solomon Mutuku":"ソロモン ムトゥク"
+    "Stephen Muthini":"スティーブン ムチーニ","Solomon Mutuku":"ソロモン ムトゥク",
+    "エティーリ":"リチャード エティーリ","Ｒ.エティーリ":"リチャード エティーリ","R.エティーリ":"リチャード エティーリ",
+    "キムタイ":"ヴィクター キムタイ","ムチーニ":"スティーブン ムチーニ","ムトゥク":"ソロモン ムトゥク"
   };
   const normalize = (name) => {
     const s=String(name||'').trim();
