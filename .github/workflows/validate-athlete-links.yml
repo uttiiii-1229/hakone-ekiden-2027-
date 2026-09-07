@@ -12,6 +12,7 @@ on:
       - 'hakone2027-site 3/university-data-pages.js'
       - 'hakone2027-site 3/university-expanded-directory.js'
       - 'hakone2027-site 3/current-athlete-pb-resolver.js'
+      - 'hakone2027-site 3/current-roster-official-20260907.js'
       - 'hakone2027-site 3/university-pb-expansion-remaining-20260907.js'
       - 'hakone2027-site 3/index.html'
       - 'scripts/validate-athlete-identity-links.mjs'
