@@ -51,6 +51,45 @@
   };
   Object.entries(tokai).forEach(([g,names])=>names.forEach(n=>set('東海大学',n,g,'Tokai official team/results 2026',98)));
 
+  // Kanagawa University official 2026 results / member pages.
+  const kanagawa={
+    '4':['阿部 倫久','大岩 蓮','滝本 朗史','花井 創','三原 涼雅','森 稜真','山本 琉楓'],
+    '3':['淺田 龍','安部 爽仁朗','遠藤 優裕','太田 宗一郎','近藤 大智','野間 黎矢','柳生 琥珀'],
+    '2':['牛嶋 勇斗','金山 隆斗','木村 駿太','佐伯 遥大','佐藤 輝','清水 陽永'],
+    '1':['梅木 新太','小田垣 茉周','北村 海智','由井 蓮']
+  };
+  Object.entries(kanagawa).forEach(([g,names])=>names.forEach(n=>set('神奈川大学',n,g,'Kanagawa official 2026 results/members',98)));
+
+  // Toyo official current team pages.
+  const toyo={
+    '3':['内堀 勇','陳内 紫音','杉浦 蒼太','濱中 尊','宮崎 優'],
+    '2':['小川 隼登','藤本 祐輔','飯田 ケビン','生天目 温','馬場 大翔','世利 雄太','木村 隆晴']
+  };
+  Object.entries(toyo).forEach(([g,names])=>names.forEach(n=>set('東洋大学',n,g,'Toyo official current team 2026',98)));
+
+  // Yamanashi Gakuin official 2026 race pages.
+  ['ブライアン・キピエゴ','占部 大和'].forEach(n=>set('山梨学院大学',n,'4','YGU official 2026 results',98));
+
+  // Nihon University official 2026 All-Japan qualifier coverage.
+  set('日本大学','シャドラック・キップケメイ','4','Nihon University official 2026 report',98);
+  set('日本大学','後藤 玄樹','2','Nihon University official 2026 report',98);
+  set('日本大学','山口 彰太','4','Nihon University 2026 current cohort',98);
+  set('日本大学','首藤 海翔','1','Nihon University official 2026 report',98);
+
+  // Rikkyo official 2026 incoming-athlete announcement: all are first-years.
+  ['武川 航也','北川 寛人','安藤 槙悟','添田 倖斗','川副 剛煌','奥野 恭史','伊藤 颯汰','新妻 翔和','江藤 大輝','伊藤 悠ノ介','宮本 拓弥','相沢 駿斗']
+    .forEach(n=>set('立教大学',n,'1','Rikkyo official 2026 freshmen',98));
+
+  // Meiji official 2026 sports-admission list + 2026 All-Japan qualifier entry.
+  ['青島 大陸','綾 秀人','石毛 翔麻','石田 悠翔','大江 秀弥','上出 陸仁','小林 環','阪本 圭一郎','田中 秀磨']
+    .forEach(n=>set('明治大学',n,'1','Meiji official 2026 admission list',98));
+  ['阿部 宥人','小松 映智','三平 弦徳']
+    .forEach(n=>set('明治大学',n,'2','Meiji official 2026 qualifier entry',98));
+
+  // Surugadai official 2026 team page (PB source already audited).
+  const surugadai={'スティーブン レマイヤン':'4','小島 光稀':'3','稲葉 龍矢':'3','久保 俊翔':'4','森 丈二':'4','木下 瑛仁':'4','浜川 柊二':'2','中山 智拓':'2'};
+  Object.entries(surugadai).forEach(([n,g])=>set('駿河台大学',n,g,'Surugadai official 2026 team',98));
+
   // Official IUAU/KGRR meet results. All auto-DB sources are academic-year events
   // (April or later), so grade + (2026 - sourceYear) yields 2026 academic grade.
   Object.values(window.universityMeetResultsAutoDB?.meets||{}).forEach(meet=>{
