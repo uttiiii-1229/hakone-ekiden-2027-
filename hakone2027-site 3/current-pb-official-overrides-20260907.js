@@ -115,13 +115,12 @@
   };
 
   // Additional current 5000m PBs for full-roster athletes who are not in the old TOP10 dataset.
-  // This closes the old directory limitation where only TOP10 athletes could display a 5000m PB.
   const verified5000 = {
     '青山学院大学': {
-      '熊井 渓人':'13:48.28','中村 海斗':'14:03.19','花本 史龍':'14:05.49','浜川 舜斗':'13:52.83','本間 創':'14:05.88','村上 直弥':'14:17.24',
+      '熊井 渓人':'13:48.28','中村 海斗':'13:59.74','花本 史龍':'14:05.49','浜川 舜斗':'13:52.83','本間 創':'14:05.88','村上 直弥':'14:17.24',
       '遠藤 大成':'13:56.06','橋本 昊太':'13:56.43','福冨 翔':'13:55.95','松田 煌希':'13:57.56','若林 良樹':'13:59.71',
-      '石川 浩輝':'13:48.21','上野山 拳士朗':'13:52.93','大島 福':'14:05.85','神邑 亮佑':'13:43.99','坂本 康太':'14:16.15','榅山 一颯':'13:47.73','田中 智稀':'14:08.48','櫨元 優馬':'13:52.05','日向 春空':'14:06.57','本宮 優心':'13:54.99','前川 竜之将':'13:52.52','松田 祐真':'13:58.60','村岡 大雅':'14:37.85',
-      '大竹 実吹':'14:27.54','大藪 遙斗':'14:13.14','栗林 凛太朗':'14:12.24','斎藤 晴樹':'14:16.59','谷口 僚哉':'14:21.33','寺内 頼':'14:12.08','新見 春陽':'14:10.62','藤岡 孝太郎':'14:07.76','前田 蒼空':'14:21.31','横畑 僚大':'14:28.71'
+      '石川 浩輝':'13:47.76','上野山 拳士朗':'13:52.93','大島 福':'14:05.85','神邑 亮佑':'13:43.99','坂本 康太':'14:16.15','榅山 一颯':'13:47.73','田中 智稀':'14:01.33','櫨元 優馬':'13:52.05','日向 春空':'14:06.57','本宮 優心':'13:54.99','前川 竜之将':'13:52.52','松田 祐真':'13:54.64','村岡 大雅':'14:37.85',
+      '大竹 実吹':'14:27.54','大藪 遙斗':'14:13.14','栗林 凛太朗':'14:12.24','斎藤 晴樹':'14:16.59','谷口 僚哉':'14:21.33','寺内 頼':'14:12.08','新見 春陽':'14:10.62','藤岡 孝太郎':'14:07.76','前田 蒼空':'14:21.67','横畑 僚大':'14:28.71'
     },
     '中央大学': {},
     '國學院大學': {},
@@ -153,7 +152,6 @@
 
   window.verifiedCurrentPb2026 = verified;
 
-  // Reconcile the full current roster's 10000m / half values.
   if (window.fullRosterData) {
     Object.entries(window.fullRosterData).forEach(([team, rows]) => (rows || []).forEach(row => {
       const pb = lookup(team,row[0]);
@@ -163,7 +161,6 @@
     }));
   }
 
-  // Keep the original TOP10 dataset corrected for pages that intentionally use only TOP10.
   if (typeof expandedTopAthletes2027 !== 'undefined') {
     Object.entries(expandedTopAthletes2027).forEach(([team, rows]) => (rows || []).forEach(row => {
       const pb = lookup(team,row[0]);
@@ -174,9 +171,8 @@
     }));
   }
 
-  // The all-athlete directory reads window.expandedTopAthletes2027.
-  // Give it a private clone and extend that clone with every current roster athlete,
-  // so full-roster 5000m PBs appear without changing TOP10 rankings elsewhere.
+  // Private PB dataset for the all-athlete directory. It includes current full-roster athletes
+  // without expanding the original TOP10 array used by rankings elsewhere.
   const directoryPbRows = {};
   if (typeof expandedTopAthletes2027 !== 'undefined') {
     Object.entries(expandedTopAthletes2027).forEach(([team,rows]) => {
