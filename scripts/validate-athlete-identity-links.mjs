@@ -173,3 +173,18 @@ for(const unsafe of ["'+r[1]+'年",'${r.grade}年','${r[3]}年']){
   }
 }
 console.log('Dedicated athlete grade DB wiring validation passed.');
+
+const expandedRankingText=fs.readFileSync('hakone2027-site 3/expanded-athletes-ranking.js','utf8');
+const finalUniversityViewText=fs.readFileSync('hakone2027-site 3/university-expanded-directory.js','utf8');
+if(expandedRankingText.includes('templates.teams = expandedTeamsTemplate')){
+  throw new Error('Legacy expanded athlete module must not own templates.teams');
+}
+const finalViewPos=indexText.indexOf('university-expanded-directory.js');
+const legacyExpandedPos=indexText.indexOf('expanded-athletes-ranking.js');
+if(!(finalViewPos>legacyExpandedPos)){
+  throw new Error('Final university directory must load after legacy expanded athlete data');
+}
+if(!finalUniversityViewText.includes("return /^[1-4]$/.test(g)?g+'年':'—'")){
+  throw new Error('Final university directory must render missing grades as em dash, never bare 年');
+}
+console.log('Final university teams-template ownership validation passed.');
