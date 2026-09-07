@@ -8,12 +8,16 @@
     '久 龍':'高久 龍','髙久 龍':'高久 龍',
     'Matt LＬano':'マット リャノ','Matt LLano':'マット リャノ'
   };
-  function athleteDisplayName(name){
+  function athleteDisplayName(name,context={}){
     let s=String(name||'').trim().normalize('NFKC').replace(/\uFFFD/g,'').replace(/[\uE000-\uF8FF]/g,'');
     // Older Izumo result pages append grade + kana reading, e.g. "田子 康宏 (3) タゴ ヤスヒロ".
     // Strip that metadata so the same athlete is merged across every season.
     s=s.replace(/\s*[（(]\s*(?:[1-6]|M[12])\s*[）)](?:\s+[ァ-ヶー・\s]+)?$/u,'').trim();
     if(athleteNameFixes[s]) return athleteNameFixes[s];
+    if(typeof window.canonicalAthleteIdentity==='function'){
+      const n=window.canonicalAthleteIdentity(s,context);
+      if(n) return n;
+    }
     if(typeof window.normalizeForeignAthleteName==='function'){
       const n=window.normalizeForeignAthleteName(s);
       if(n&&n!==s) return n;
@@ -47,7 +51,7 @@
     Object.entries(h).forEach(([year,sections])=>{
       for(let sec=1;sec<=10;sec++) (sections?.[sec]||[]).forEach(r=>{
         const seconds=toSec(r?.[4]); if(seconds===null)return;
-        all.hakone.push({race:'hakone',year:+year,section:sec,team:teamNorm(r?.[2]),athlete:athleteDisplayName(r?.[3]||''),time:r?.[4],rank:r?.[0],seconds});
+        all.hakone.push({race:'hakone',year:+year,section:sec,team:teamNorm(r?.[2]),athlete:athleteDisplayName(r?.[3]||'',{race:'hakone',year:+year,team:teamNorm(r?.[2])}),time:r?.[4],rank:r?.[0],seconds});
       });
     });
     const db=window.threeEkidenSectionsDB||{};
@@ -56,7 +60,7 @@
         if(yd?.status!=='開催')return;
         Object.entries(yd?.sections||{}).forEach(([sec,rows])=>(rows||[]).forEach(r=>{
           const seconds=toSec(r?.time); if(seconds===null)return;
-          all[race].push({race,year:+year,section:+sec,team:teamNorm(r?.team),athlete:athleteDisplayName(r?.athlete||''),time:r?.time,rank:r?.rank,seconds});
+          all[race].push({race,year:+year,section:+sec,team:teamNorm(r?.team),athlete:athleteDisplayName(r?.athlete||'',{race,year:+year,team:teamNorm(r?.team)}),time:r?.time,rank:r?.rank,seconds});
         }));
       });
     });
