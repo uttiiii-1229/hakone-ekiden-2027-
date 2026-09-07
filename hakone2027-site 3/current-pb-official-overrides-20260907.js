@@ -2,6 +2,18 @@
 // Source priority: university official athlete profiles / official active-player ranking.
 // Never infer missing values. This file only overwrites values explicitly verified from official sources.
 (() => {
+  // full-rosters-v2.js / expanded-athletes-ranking.js declare their datasets with
+  // top-level `const`. In a classic script that creates a global lexical binding,
+  // but NOT a `window.*` property. The all-athlete directory intentionally reads
+  // from window.*, so expose the already-loaded datasets explicitly here before
+  // applying overrides and before all-athlete-directory-v2.js runs.
+  if (typeof fullRosterData !== 'undefined') {
+    window.fullRosterData = fullRosterData;
+  }
+  if (typeof expandedTopAthletes2027 !== 'undefined') {
+    window.expandedTopAthletes2027 = expandedTopAthletes2027;
+  }
+
   const verified = {
     '駒澤大学': {
       '桑田 駿介': ['13:39.47','28:07.63','1:00:13'],
