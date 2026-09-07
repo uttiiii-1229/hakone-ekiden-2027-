@@ -9,13 +9,15 @@
     'Matt LＬano':'マット リャノ','Matt LLano':'マット リャノ'
   };
   function athleteDisplayName(name){
-    let s=String(name||'').trim();
+    let s=String(name||'').trim().normalize('NFKC').replace(/\uFFFD/g,'').replace(/[\uE000-\uF8FF]/g,'');
+    // Older Izumo result pages append grade + kana reading, e.g. "田子 康宏 (3) タゴ ヤスヒロ".
+    // Strip that metadata so the same athlete is merged across every season.
+    s=s.replace(/\s*[（(]\s*(?:[1-6]|M[12])\s*[）)](?:\s+[ァ-ヶー・\s]+)?$/u,'').trim();
     if(athleteNameFixes[s]) return athleteNameFixes[s];
     if(typeof window.normalizeForeignAthleteName==='function'){
       const n=window.normalizeForeignAthleteName(s);
       if(n&&n!==s) return n;
     }
-    s=s.normalize('NFKC').replace(/\uFFFD/g,'').replace(/[\uE000-\uF8FF]/g,'');
     return athleteNameFixes[s]||s;
   }
   const teamReadings={
@@ -168,10 +170,15 @@
       if(!map.has(key))map.set(key,{key,name:r.athlete,team:r.team,runs:{hakone:[],izumo:[],zennihon:[]}});
       map.get(key).runs[race].push(r);
     }));
-    return [...map.values()].map(p=>{
-      const pb=pbFor(p.name,p.team);
-      return {...p,pb,totalRuns:totalCareerAppearances(p)};
-    });
+    // The public directory remains the 2007+ cohort, but career totals can look back
+    // to 2004. This captures the complete four-year university career for athletes
+    // who first appear in the site's original 2007+ race database.
+    return [...map.values()]
+      .filter(p=>Object.values(p.runs).some(rows=>rows.some(r=>Number(r.year)>=2007)))
+      .map(p=>{
+        const pb=pbFor(p.name,p.team);
+        return {...p,pb,totalRuns:totalCareerAppearances(p)};
+      });
   }
   const allPlayers=players();
 
@@ -262,10 +269,10 @@
 
   function template(){
     return `<section class="container page topics-page">
-      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>三大駅伝の大学在籍中の通算出走歴を選手ごとに統合し、PB・大会結果と一緒に確認できます。出場回数は表示中の年度範囲ではなく、収録している全年度を横断して同一大会・同一年を1回として集計します。</p></div>
+      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>三大駅伝の大学在籍中の通算出走歴を選手ごとに統合し、PB・大会結果と一緒に確認できます。出場回数は表示中の年度範囲ではなく、選手の大学在籍期間全体を横断して同一大会・同一年を1回として集計します。2007年以降に登場する選手については2004年まで遡って補完しています。</p></div>
       <article class="data-card topic-feature directory-feature">
         <div class="topic-feature-head"><div><span class="topic-kicker">ATHLETE DATABASE</span><h2>大学長距離・全選手名鑑</h2></div><span class="topic-badge">三大駅伝 横断</span></div>
-        <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 箱根・出雲・全日本の成績、5000m/10000m/ハーフPB、収録済みトラック大会結果を優先して表示します。出場回数は各選手の大学在籍期間を通した通算回数で、同じ大会の同一年は1出場として数えます。駅伝偏差値は参考値として詳細下部に掲載します。</p>
+        <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 箱根・出雲・全日本の成績、5000m/10000m/ハーフPB、収録済みトラック大会結果を優先して表示します。出場回数は各選手の大学在籍期間を通した通算回数です。2007年以降に登場する選手は2004年まで遡って照合し、同じ大会の同一年は1出場として数えます。駅伝偏差値は参考値として詳細下部に掲載します。</p>
         ${controls()}<div id="allAthleteResults">${table()}</div>
       </article>
     </section>`;
