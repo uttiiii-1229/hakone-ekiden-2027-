@@ -11,6 +11,9 @@ on:
       - 'hakone2027-site 3/university-pb-expansion-20260907.js'
       - 'hakone2027-site 3/university-data-pages.js'
       - 'hakone2027-site 3/university-expanded-directory.js'
+      - 'hakone2027-site 3/current-athlete-pb-resolver.js'
+      - 'hakone2027-site 3/university-pb-expansion-remaining-20260907.js'
+      - 'hakone2027-site 3/index.html'
       - 'scripts/validate-athlete-identity-links.mjs'
       - '.github/workflows/validate-athlete-links.yml'
   workflow_dispatch:
@@ -23,5 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Check current PB resolver syntax
+        run: node --check 'hakone2027-site 3/current-athlete-pb-resolver.js'
       - name: Validate canonical athlete links
         run: node scripts/validate-athlete-identity-links.mjs
