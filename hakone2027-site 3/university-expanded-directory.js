@@ -8,8 +8,9 @@
   function isSelection(name=''){
     return /学生連合|学連選抜|関東学連|選抜/.test(String(name));
   }
-  function canonicalAthlete(name=''){
+  function canonicalAthlete(name='',context={}){
     const raw=String(name||'').trim();
+    if(typeof window.canonicalAthleteIdentity==='function') return window.canonicalAthleteIdentity(raw,context);
     return typeof window.canonicalAthleteName==='function' ? window.canonicalAthleteName(raw) : raw;
   }
   const hakone2026Order=['青山学院大学','國學院大學','順天堂大学','早稲田大学','中央大学','駒澤大学','城西大学','創価大学','帝京大学','日本大学','中央学院大学','東海大学','神奈川大学','東洋大学','日本体育大学','東京国際大学','山梨学院大学','東京農業大学','大東文化大学','立教大学'];
@@ -74,7 +75,7 @@
           const team=normalizeTeam(r?.[2]);
           if(!map.has(team)) return;
           map.get(team).runs++;
-          const athlete=canonicalAthlete(r?.[3]||'').replace(/[\s　]+/g,'');
+          const athlete=canonicalAthlete(r?.[3]||'',{race:'hakone',year,team:r?.[2]||''}).replace(/[\s　]+/g,'');
           if(athlete) map.get(team).athletes.add(athlete);
         });
       }
@@ -137,7 +138,7 @@
       for(let section=1;section<=10;section++){
         (db?.[year]?.[section]||[]).forEach(r=>{
           if(normalizeTeam(r?.[2])!==team) return;
-          const display=canonicalAthlete(r?.[3]||'');
+          const display=canonicalAthlete(r?.[3]||'',{race:'hakone',year,team:r?.[2]||''});
           const key=display.replace(/[\s　]+/g,'');
           if(!key)return;
           if(!map.has(key)) map.set(key,{name:display,runs:0,years:new Set(),sections:new Set()});
