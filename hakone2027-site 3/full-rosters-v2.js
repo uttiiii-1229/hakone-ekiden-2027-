@@ -49,7 +49,7 @@ function timeToSeconds(t){
 
 function rosterTable(name){
   const rows=(fullRosterData[name]||[]).slice().sort((a,b)=>timeToSeconds(a[2])-timeToSeconds(b[2]));
-  return `<div class="table-wrap compact"><table><thead><tr><th>選手</th><th>学年</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}年</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-wrap compact"><table><thead><tr><th>選手</th><th>学年</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>${rows.map(r=>{const g=/^[1-4]$/.test(String(r[1]||''))?r[1]+'年':'—';return `<tr><td><strong>${r[0]}</strong></td><td>${g}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`}).join('')}</tbody></table></div>`;
 }
 
 teamsTemplate=function(){
