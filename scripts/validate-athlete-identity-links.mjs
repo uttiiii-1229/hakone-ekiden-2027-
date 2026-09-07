@@ -48,3 +48,20 @@ for(const alias of ['"エティーリ":"リチャード エティーリ"','"RICH
 
 console.log('Athlete identity link validation passed.');
 console.log('Etiri official Hakone history:',history);
+
+
+const universityPbText=fs.readFileSync('hakone2027-site 3/university-pb-expansion-20260907.js','utf8');
+const universityViewText=fs.readFileSync('hakone2027-site 3/university-expanded-directory.js','utf8');
+
+for(const expected of [
+  "'田島 駿介':['13:46.12','28:11.41','1:02:04']",
+  "'平島 龍斗':['13:42.84','27:56.84','1:01:02']",
+  "'二村 昇太朗':['13:56.57','28:31.64','1:03:58']",
+  "'山崎 丞':['13:52.09','28:19.16','1:02:06']"
+]){
+  if(!universityPbText.includes(expected)) throw new Error('NSSU current PB snapshot is stale: '+expected);
+}
+if(!universityViewText.includes('window.verifiedCurrentPb2026?.[team]')){
+  throw new Error('University directory does not prioritize verified current PB overrides');
+}
+console.log('University current-PB priority validation passed.');
