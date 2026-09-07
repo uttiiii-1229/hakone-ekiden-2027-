@@ -132,3 +132,25 @@ for(const graduate of ['平島 龍斗','田島 駿介','二村 昇太朗','山�
 }
 if(!currentRosterText.includes("season:2026")) throw new Error('Current roster metadata must declare academic season 2026');
 console.log('Academic-year roster boundary validation passed.');
+
+const universityPageText=fs.readFileSync('hakone2027-site 3/university-data-pages.js','utf8');
+if(!universityViewText.includes('function gradeLabel(') || !universityPageText.includes('function gradeLabel(')){
+  throw new Error('University athlete views must use safe gradeLabel rendering');
+}
+if(universityViewText.includes("'+r[1]+'年")){
+  throw new Error('Unsafe unconditional grade suffix rendering remains in university directory');
+}
+if(!currentResolverText.includes('gradeCandidates') ||
+   !currentResolverText.includes('rememberGrade') ||
+   !currentResolverText.includes('normalizeGrade')){
+  throw new Error('Current athlete resolver is missing grade backfill/normalization');
+}
+for(const expected of [
+  "['天瀬 海斗','4']",
+  "['佐藤 大和','3']",
+  "['夏見 虹郎','2']",
+  "['宗像 琢馬','1']"
+]){
+  if(!currentRosterText.includes(expected)) throw new Error('Authoritative NSSU grade missing: '+expected);
+}
+console.log('Current athlete grade display/backfill validation passed.');
