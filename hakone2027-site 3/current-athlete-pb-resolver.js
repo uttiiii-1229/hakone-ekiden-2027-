@@ -31,6 +31,10 @@
     const s=String(v||'').trim();
     return timeSeconds(s)!==null?s:null;
   }
+  function normalizeGrade(v){
+    const s=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
+    return /^[1-4]$/.test(s)?s:'';
+  }
 
   function currentRows(team){
     team=teamNorm(team);
@@ -39,7 +43,8 @@
       if(!name) return;
       const key=norm(name);
       const prev=map.get(key)||{name:String(name).trim(),grade:'',pb5000:'—',pb10000:'—',half:'—',sources:new Set()};
-      if(data.grade) prev.grade=String(data.grade);
+      const g=normalizeGrade(data.grade);
+      if(g) prev.grade=g;
       if(data.pb5000&&data.pb5000!=='—') prev.pb5000=better(prev.pb5000,data.pb5000);
       if(data.pb10000&&data.pb10000!=='—') prev.pb10000=better(prev.pb10000,data.pb10000);
       if(data.half&&data.half!=='—') prev.half=better(prev.half,data.half);
@@ -52,6 +57,14 @@
     const legacyRoster=window.fullRosterData?.[team]||[];
     const authoritativeRoster=officialRoster.length?officialRoster:legacyRoster;
     const hasAuthoritativeRoster=authoritativeRoster.length>0;
+    const gradeCandidates=new Map();
+    const rememberGrade=(name,grade)=>{
+      const g=normalizeGrade(grade);
+      if(name&&g&&!gradeCandidates.has(norm(name))) gradeCandidates.set(norm(name),g);
+    };
+    officialRoster.forEach(r=>rememberGrade(r?.[0],r?.[1]));
+    legacyRoster.forEach(r=>rememberGrade(r?.[0],r?.[1]));
+    (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>rememberGrade(r?.[0],r?.[1]));
 
     authoritativeRoster.forEach(r=>upsert(r?.[0],{
       grade:r?.[1],
@@ -90,6 +103,7 @@
         rows.forEach(r=>{
           if(teamNorm(r?.[2])!==team) return;
           const name=r?.[1];
+          rememberGrade(name,r?.[3]);
           if(hasAuthoritativeRoster && !isKnownCurrent(name)) return;
           // A post-April 2026 official meet can prove current participation when no roster snapshot exists.
           if(!hasAuthoritativeRoster && !isKnownCurrent(name)) upsert(name,{grade:r?.[3],source:'2026 official meet membership'});
@@ -104,7 +118,17 @@
       });
     });
 
-    const arr=[...map.values()].map(r=>({...r,sources:[...r.sources]}));
+    // Backfill grade after all current athletes are known. This fixes athletes whose
+    // membership came from a meet row with a blank grade while another current source
+    // carries the academic year.
+    map.forEach((r,key)=>{
+      if(!normalizeGrade(r.grade)){
+        const g=gradeCandidates.get(key);
+        if(g) r.grade=g;
+      }
+    });
+
+    const arr=[...map.values()].map(r=>({...r,grade:normalizeGrade(r.grade),sources:[...r.sources]}));
     return arr.sort((a,b)=>{
       const a10=timeSeconds(a.pb10000),b10=timeSeconds(b.pb10000);
       const a5=timeSeconds(a.pb5000),b5=timeSeconds(b.pb5000);
@@ -112,5 +136,5 @@
     });
   }
 
-  window.currentAthletePbResolver={currentRows,timeSeconds,eventMetric};
+  window.currentAthletePbResolver={currentRows,timeSeconds,eventMetric,normalizeGrade};
 })();
