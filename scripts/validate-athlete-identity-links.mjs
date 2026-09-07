@@ -98,3 +98,20 @@ if(!resolverText.includes('verified current PB')||!resolverText.includes('2026 o
   throw new Error('Current PB resolver is missing verified/meet merge logic');
 }
 console.log('All 20 Hakone 2026 teams have a current-athlete PB source.');
+
+
+const currentRosterText=fs.readFileSync('hakone2027-site 3/current-roster-official-20260907.js','utf8');
+const currentResolverText=fs.readFileSync('hakone2027-site 3/current-athlete-pb-resolver.js','utf8');
+
+for(const active of ['本島 尚緒','田島 駿介','平島 龍斗','阿知和 優汰','藤原 大竜','今野 健太']){
+  if(!currentRosterText.includes(active)) throw new Error('NSSU active roster missing '+active);
+}
+for(const stale of ['植松 孝太','住原 聡太','杉本 訓也','高村 比呂飛','富永 椋太','溝上 賢伸','分須 尊紀']){
+  if(currentRosterText.includes(stale)) throw new Error('NSSU stale athlete leaked into official roster '+stale);
+}
+if(!currentResolverText.includes('PB snapshots are enrichment only') ||
+   !currentResolverText.includes('if(!mayEnrich') ||
+   !currentResolverText.includes('authoritativeRoster')){
+  throw new Error('Current resolver can re-create athletes from stale PB data');
+}
+console.log('Authoritative current-roster filtering validation passed.');
