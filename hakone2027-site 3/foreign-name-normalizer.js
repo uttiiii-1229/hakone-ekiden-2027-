@@ -101,37 +101,42 @@
     return s;
   }
 
+  // Some official race tables intentionally use only a surname.
+  // Never turn those ambiguous labels into a global athlete ID without context.
+  // Identity resolution must include at least team/year/race where available.
+  const ambiguousBareAliases = new Set(['エティーリ','キムタイ','ムチーニ']);
+  const contextAliases = [
+    {team:'東京国際大学',from:2023,to:2026,aliases:['エティーリ'],canonical:'リチャード エティーリ'},
+    {team:'城西大学',from:2023,to:2026,aliases:['キムタイ'],canonical:'ヴィクター キムタイ'},
+    {team:'創価大学',from:2024,to:2026,aliases:['ムチーニ'],canonical:'スティーブン ムチーニ'}
+  ];
+  const contextKey=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
+
+  function canonicalIdentity(name,context={}){
+    const raw=String(name||'').normalize('NFKC').replace(/[\u3099\u309A](?=\s|$)/g,'').replace(/\s+/g,' ').trim();
+    if(!raw) return raw;
+    const team=contextKey(context.team);
+    const year=Number(context.year);
+    const alias=contextAliases.find(a=>
+      contextKey(a.team)===team &&
+      a.aliases.some(x=>contextKey(x)===contextKey(raw)) &&
+      (!Number.isFinite(year)||(year>=a.from&&year<=a.to))
+    );
+    if(alias) return alias.canonical;
+
+    // Initial + surname or a full romanized/kana name is explicit enough to use
+    // the ordinary display normalizer. Bare surnames remain bare unless the
+    // team/year context above proves the identity.
+    if(ambiguousBareAliases.has(contextKey(raw))) return raw;
+    return cleanupLegacy(raw);
+  }
+
   window.normalizeForeignAthleteName = cleanupLegacy;
   window.canonicalAthleteName = cleanupLegacy;
+  window.canonicalAthleteIdentity = canonicalIdentity;
 
-  // Canonicalize athlete identities in every race DB that is already loaded.
-  // This is intentionally done at the DB layer (not only at display time) so
-  // current PB rows, athlete directories and historical race results join on
-  // the same athlete key. Example: "エティーリ" and "Ｒ.エティーリ" both
-  // become "リチャード エティーリ" before any player index is built.
-  const hakone=window.hakonePhase2StaticDB||{};
-  Object.values(hakone).forEach(yearDb=>{
-    for(let section=1;section<=10;section++){
-      (yearDb?.[section]||[]).forEach(r=>{ if(r?.[3]) r[3]=cleanupLegacy(r[3]); });
-    }
-  });
-
-  if(typeof hakone2026SectionDB!=='undefined'){
-    for(let section=1;section<=10;section++){
-      (hakone2026SectionDB?.[section]||[]).forEach(r=>{ if(r?.[3]) r[3]=cleanupLegacy(r[3]); });
-    }
-  }
-
-  const db=window.threeEkidenSectionsDB||{};
-  Object.values(db).forEach(race=>Object.values(race||{}).forEach(yd=>{
-    Object.values(yd?.sections||{}).forEach(rows=>(rows||[]).forEach(r=>{
-      if(r?.athlete) r.athlete=cleanupLegacy(r.athlete);
-    }));
-  }));
-
-  if(typeof expandedTopAthletes2027!=='undefined'){
-    Object.values(expandedTopAthletes2027).forEach(rows=>(rows||[]).forEach(r=>{
-      if(r?.[0]) r[0]=cleanupLegacy(r[0]);
-    }));
-  }
+  // IMPORTANT: do not mutate race DB rows here.
+  // Historical source labels are evidence and must remain intact. Mutating them
+  // at load time destroyed the distinction between "display normalization" and
+  // "athlete identity", which could merge a future athlete sharing a surname.
 })();
