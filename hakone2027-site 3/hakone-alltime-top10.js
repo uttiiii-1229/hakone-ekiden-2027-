@@ -26,3 +26,12 @@ window.renderHakoneAlltimeTop10=function(section){
  const d=window.hakoneAlltimeTop10.sections.find(x=>x.section===Number(section)); if(!d)return '';
  return `<section class="alltime-top10" data-alltime-section="${d.section}"><div class="alltime-head"><div><span class="alltime-kicker">ALL-TIME TOP 10</span><h3>${d.section}区 歴代BEST10</h3><p>${d.route}・${d.distanceKm}km</p></div><div class="alltime-updated">第102回（2026年）まで</div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>学年</th><th>記録</th><th>年</th><th>大会</th></tr></thead><tbody>${d.records.map(r=>`<tr><td><strong>${r[0]}</strong></td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td>${r[3]}年</td><td class="alltime-time">${r[4]}</td><td>${r[5]}</td><td>第${r[6]}回</td></tr>`).join('')}</tbody></table></div><div class="notice">${window.hakoneAlltimeTop10.rankingRule}</div></section>`;
 };
+
+// Keep historical ranking names aligned with the canonical athlete identity registry.
+if (typeof window.canonicalAthleteName === 'function') {
+  window.hakoneAlltimeTop10?.sections?.forEach(section => {
+    (section.records || []).forEach(record => {
+      if (record?.[1]) record[1] = window.canonicalAthleteName(record[1]);
+    });
+  });
+}
