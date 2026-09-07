@@ -102,22 +102,14 @@
     });
   }
   function pbRows(team){
-    const base=typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
-    const verified=window.verifiedCurrentPb2026?.[team]||{};
-    const map=new Map(base.map(r=>[String(r[0]).replace(/[\\s　]+/g,''),r.slice()]));
-    Object.entries(verified).forEach(([name,pb])=>{
-      const key=String(name).replace(/[\\s　]+/g,'');
-      const prev=map.get(key)||[name,'','—','—','—'];
-      map.set(key,[
-        prev[0]||name,
-        prev[1]||'',
-        (pb?.[0]&&pb[0]!=='—')?pb[0]:(prev[2]||'—'),
-        (pb?.[1]&&pb[1]!=='—')?pb[1]:(prev[3]||'—'),
-        (pb?.[2]&&pb[2]!=='—')?pb[2]:(prev[4]||'—')
+    if(window.currentAthletePbResolver?.currentRows){
+      return window.currentAthletePbResolver.currentRows(team).map(r=>[
+        r.name,r.grade||'',r.pb5000||'—',r.pb10000||'—',r.half||'—'
       ]);
-    });
-    return [...map.values()].sort((a,b)=>timeToSeconds(a[2])-timeToSeconds(b[2])||String(a[0]).localeCompare(String(b[0]),'ja'));
+    }
+    return typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
   }
+
   function averageRanks(stats){
     const ranks={};
     ['5000m','10000m','ハーフ'].forEach(metric=>{
@@ -130,17 +122,8 @@
     return ranks;
   }
   function mergedCurrentRows(team){
-    const top=pbRows(team);
-    const seen=new Set(top.map(r=>String(r[0]).replace(/[\\s　]+/g,'')));
-    const extra=[];
-    if(typeof fullRosterData!=='undefined'){
-      (fullRosterData[team]||[]).forEach(r=>{
-        const key=String(r[0]).replace(/[\\s　]+/g,'');
-        if(seen.has(key))return;
-        extra.push([r[0],r[1],'—',r[2]||'—',r[3]||'—']);
-      });
-    }
-    return {top,extra};
+    // pbRows already represents the unified 2026 current roster/PB view.
+    return {top:pbRows(team),extra:[]};
   }
   function pbTableRows(rows){
     return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+r[1]+'年</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
@@ -165,7 +148,7 @@
   function athleteDataBlock(team){
     const merged=mergedCurrentRows(team);
     const top=merged.top,extra=merged.extra;
-    let pb='<div class="notice">現行選手PBは確認できたデータから順次追加しています。</div>';
+    let pb='<div class="notice">2026年度の現役選手を対象に、確認済みの最新PBを表示しています。</div>';
     if(top.length||extra.length){
       pb='<h3>現行選手PB</h3>'+
         '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(top.slice(0,10))+'</tbody></table></div>'+
@@ -203,7 +186,7 @@
       <div class="average-top3-overview">
         ${top3.map(group=>`<article class="data-card average-top3-card"><div class="average-top3-head"><span>TOP10平均</span><h2>${group.metric}</h2></div><div class="average-top3-list">${group.list.map((x,i)=>`<div><b>${i+1}</b><span>${teamIcon(x.team)}<strong>${x.team}</strong></span><em>${x.value}</em></div>`).join('')}</div></article>`).join('')}
       </div>
-      <div class="notice"><strong>データ範囲:</strong> 出場回数は第1回〜第102回（2026年）までの大学別通算回数を表示します。直近出場・区間走数・歴代出走選手数は、サイト収録範囲の2007〜2026年を対象にしています。現行選手PBは確認できた大学から順次追加します。</div>
+      <div class="notice"><strong>データ範囲:</strong> 出場回数は第1回〜第102回（2026年）までの大学別通算回数を表示します。直近出場・区間走数・歴代出走選手数は、サイト収録範囲の2007〜2026年を対象にしています。現行選手PBは2026年度の現役名簿・公式PB・2026年公式大会結果を統合し、確認できた最速記録を表示します。</div>
       <div class="university-directory-grid">
         ${stats.map(s=>`<article class="data-card university-history-card">
           <div class="university-history-head"><div class="university-title-with-icon">${teamIcon(s.team)}<div><span class="topic-kicker">${hakone2026Order.includes(s.team)?'2026 HAKONE '+(hakone2026Order.indexOf(s.team)+1)+'位':'HAKONE HISTORY'}</span><h2>${s.team}</h2></div></div><span class="topic-badge">通算 ${s.appearances}回出場</span></div>
