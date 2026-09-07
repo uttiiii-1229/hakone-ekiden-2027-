@@ -154,3 +154,22 @@ for(const expected of [
   if(!currentRosterText.includes(expected)) throw new Error('Authoritative NSSU grade missing: '+expected);
 }
 console.log('Current athlete grade display/backfill validation passed.');
+
+const gradeDbText=fs.readFileSync('hakone2027-site 3/current-athlete-grade-db-2026.js','utf8');
+if(!gradeDbText.includes('currentAthleteGrade2026') ||
+   !gradeDbText.includes('official meet') ||
+   !gradeDbText.includes('2026 official roster')){
+  throw new Error('Dedicated 2026 athlete grade DB is missing required sources');
+}
+if(!resolverText.includes('currentAthleteGradeResolver2026')){
+  throw new Error('Current PB resolver is not connected to the dedicated grade DB');
+}
+if(!indexText.includes('current-athlete-grade-db-2026.js')){
+  throw new Error('Dedicated grade DB is not loaded by index.html');
+}
+for(const unsafe of ["'+r[1]+'年",'${r.grade}年','${r[3]}年']){
+  if(universityViewText.includes(unsafe) || universityPageText.includes(unsafe)){
+    throw new Error('Unsafe bare year rendering remains: '+unsafe);
+  }
+}
+console.log('Dedicated athlete grade DB wiring validation passed.');
