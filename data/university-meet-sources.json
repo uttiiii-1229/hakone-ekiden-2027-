@@ -96,6 +96,30 @@
     "includeGenders": ["男子", "女子"]
   },
   {
+    "id": "kanto-ic-103-2024",
+    "year": 2024,
+    "name": "第103回関東学生陸上競技対校選手権大会",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://www.kgrr.org/event/event/2024/the103rd/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
+    "id": "kanto-ic-102-2023",
+    "year": 2023,
+    "name": "第102回関東学生陸上競技対校選手権大会",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://www.kgrr.org/event/event/2023/102ic/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
+    "id": "kanto-ic-101-2022",
+    "year": 2022,
+    "name": "第101回関東学生陸上競技対校選手権大会",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://www.kgrr.org/event/2022/kgrr/101ic/hp/kyougi.html",
+    "includeGenders": ["男子", "女子"]
+  },
+  {
     "id": "abashiri-summer-2026",
     "year": 2026,
     "name": "関東学生網走夏季記録挑戦競技会",
