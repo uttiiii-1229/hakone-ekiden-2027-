@@ -55,6 +55,7 @@
     // Authoritative membership must come from an official/current roster when available.
     const officialRoster=window.currentRosterOfficial2026?.[team]||[];
     const legacyRoster=window.fullRosterData?.[team]||[];
+    const gradeResolver=window.currentAthleteGradeResolver2026;
     const authoritativeRoster=officialRoster.length?officialRoster:legacyRoster;
     const hasAuthoritativeRoster=authoritativeRoster.length>0;
     const gradeCandidates=new Map();
@@ -67,11 +68,20 @@
     (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>rememberGrade(r?.[0],r?.[1]));
 
     authoritativeRoster.forEach(r=>upsert(r?.[0],{
-      grade:r?.[1],
+      grade:gradeResolver?.get(team,r?.[0])||r?.[1],
       pb10000:officialRoster.length?'—':r?.[2],
       half:officialRoster.length?'—':r?.[3],
       source:officialRoster.length?'official current roster':'2026 roster'
     }));
+
+    // For universities without a full current roster snapshot, an athlete is still
+    // eligible when the dedicated grade DB has 2026 academic-year evidence.
+    if(!hasAuthoritativeRoster){
+      Object.keys(window.verifiedCurrentPb2026?.[team]||{}).forEach(name=>{
+        const g=gradeResolver?.get(team,name)||'';
+        if(g) upsert(name,{grade:g,source:'2026 grade DB membership'});
+      });
+    }
 
     const isKnownCurrent=name=>map.has(norm(name));
 
@@ -122,7 +132,9 @@
     // membership came from a meet row with a blank grade while another current source
     // carries the academic year.
     map.forEach((r,key)=>{
-      if(!normalizeGrade(r.grade)){
+      const dbGrade=gradeResolver?.get(team,r.name)||'';
+      if(dbGrade) r.grade=dbGrade;
+      else if(!normalizeGrade(r.grade)){
         const g=gradeCandidates.get(key);
         if(g) r.grade=g;
       }
