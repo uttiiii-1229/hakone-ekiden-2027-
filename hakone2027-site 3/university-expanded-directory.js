@@ -184,7 +184,7 @@
       <div class="average-top3-overview">
         ${top3.map(group=>`<article class="data-card average-top3-card"><div class="average-top3-head"><span>TOP10平均</span><h2>${group.metric}</h2></div><div class="average-top3-list">${group.list.map((x,i)=>`<div><b>${i+1}</b><span>${teamIcon(x.team)}<strong>${x.team}</strong></span><em>${x.value}</em></div>`).join('')}</div></article>`).join('')}
       </div>
-      <div class="notice"><strong>データ範囲:</strong> 出場回数は第1回〜第102回（2026年）までの大学別通算回数を表示します。出場年度・直近出場・区間走数・歴代出走選手数は、サイト収録範囲の2007〜2026年を対象にしています。現行選手PBは確認できた大学から順次追加します。</div>
+      <div class="notice"><strong>データ範囲:</strong> 出場回数は第1回〜第102回（2026年）までの大学別通算回数を表示します。直近出場・区間走数・歴代出走選手数は、サイト収録範囲の2007〜2026年を対象にしています。現行選手PBは確認できた大学から順次追加します。</div>
       <div class="university-directory-grid">
         ${stats.map(s=>`<article class="data-card university-history-card">
           <div class="university-history-head"><div class="university-title-with-icon">${teamIcon(s.team)}<div><span class="topic-kicker">${hakone2026Order.includes(s.team)?'2026 HAKONE '+(hakone2026Order.indexOf(s.team)+1)+'位':'HAKONE HISTORY'}</span><h2>${s.team}</h2></div></div><span class="topic-badge">通算 ${s.appearances}回出場</span></div>
@@ -195,7 +195,6 @@
             <div><span>収録選手</span><strong>${s.athleteCount}</strong></div>
           </div>
           ${pbRows(s.team).length?`<div class="top10-average-block"><h3>TOP10選手 平均タイム</h3><div class="top10-average-grid">${top10Averages(s.team).map(a=>`<div><span>${a.label}</span><strong>${a.value}${avgRanks[s.team]?.[a.key]?` <em>${avgRanks[s.team][a.key]}位</em>`:''}</strong><small>${a.count===10?'10名平均':a.count+'名確認平均'}</small></div>`).join('')}</div></div>`:''}
-          <p class="muted university-years"><strong>出場年度:</strong> ${s.years.join('・')}</p>
           <details class="university-pb-details">
             <summary>選手データを見る</summary>
             ${athleteDataBlock(s.team)}
