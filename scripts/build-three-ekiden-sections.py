@@ -204,7 +204,7 @@ def parse_izumo_overall(url):
 
 def build_izumo():
     db={}
-    for year in range(2007,2027):
+    for year in range(2004,2027):
         ed=year-1988
         if year in (2014,2020):db[str(year)]={'edition':ed,'status':'中止','sections':{}};continue
         if year==2026:db[str(year)]={'edition':ed,'status':'未開催','sections':{}};continue
@@ -338,17 +338,12 @@ def parse_zennihon_web(year,ed):
             raise RuntimeError(f'Zennihon {year} {sec}: table not found')
 
         rows=[]
-        saw_header=False
         for tr in table.find_all('tr'):
             cells=[clean(x.get_text(' ',strip=True)) for x in tr.find_all(['th','td'])]
-            if not cells:
+            if not cells or len(cells)<6:
                 continue
-            joined=' '.join(cells)
-            if not saw_header:
-                if '大学' in joined and '選手' in joined and '区間' in joined and '順位' in joined:
-                    saw_header=True
-                continue
-            if len(cells)<6:
+            first=rank_value(cells[0])
+            if not isinstance(first,int) and first!='OPN':
                 continue
 
             team_i=next((i for i,x in enumerate(cells) if looks_team(x)),None)
@@ -400,7 +395,7 @@ def parse_zennihon_web(year,ed):
 
 def build_zennihon():
     db={}
-    for year in range(2007,2027):
+    for year in range(2004,2027):
         ed=year-1968
         if year==2026:
             db[str(year)]={'edition':ed,'status':'未開催','sections':{}}
