@@ -18,6 +18,10 @@
   function normText(s){
     return String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
   }
+  function canonicalAthlete(name=''){
+    const raw=String(name||'').trim();
+    return typeof window.canonicalAthleteName==='function' ? window.canonicalAthleteName(raw) : raw;
+  }
   function hakoneRows(){
     const out=[];
     const db=window.hakonePhase2StaticDB||{};
@@ -26,7 +30,7 @@
         (sections?.[sec]||[]).forEach(r=>{
           const seconds=toSeconds(r?.[4]);
           if(seconds===null) return;
-          out.push({year:Number(year),section:sec,team:r?.[2]||'',athlete:r?.[3]||'',time:r?.[4]||'',seconds});
+          out.push({year:Number(year),section:sec,team:r?.[2]||'',athlete:canonicalAthlete(r?.[3]||''),time:r?.[4]||'',seconds});
         });
       }
     });
@@ -42,7 +46,7 @@
         (yd?.sections?.[sec]||[]).forEach(r=>{
           const seconds=toSeconds(r?.time);
           if(seconds===null) return;
-          out.push({year:Number(year),section:sec,team:r?.team||'',athlete:r?.athlete||'',time:r?.time||'',seconds});
+          out.push({year:Number(year),section:sec,team:r?.team||'',athlete:canonicalAthlete(r?.athlete||''),time:r?.time||'',seconds});
         });
       }
     });
