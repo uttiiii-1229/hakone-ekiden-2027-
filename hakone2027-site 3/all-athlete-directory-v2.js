@@ -160,6 +160,16 @@
     pbsByName.get(nameKey).push(pb);
   });
   function pbFor(name,team){
+    if(window.currentAthletePbResolver?.currentRows){
+      const current=window.currentAthletePbResolver.currentRows(team)
+        .find(r=>norm(athleteDisplayName(r.name,{team}))===norm(name));
+      if(current) return {
+        grade:current.grade||'',
+        pb5000:current.pb5000||'—',
+        pb10000:current.pb10000||'—',
+        half:current.half||'—'
+      };
+    }
     const exact=pbs.get(norm(name)+'|'+norm(team));
     if(exact) return exact;
     const candidates=pbsByName.get(norm(name))||[];
