@@ -125,8 +125,12 @@
     // pbRows already represents the unified 2026 current roster/PB view.
     return {top:pbRows(team),extra:[]};
   }
+  function gradeLabel(v){
+    const g=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
+    return /^[1-4]$/.test(g)?g+'年':'—';
+  }
   function pbTableRows(rows){
-    return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+r[1]+'年</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
+    return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+gradeLabel(r[1])+'</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
   }
   function historicalAthletes(team){
     const db=window.hakonePhase2StaticDB||{};
