@@ -170,10 +170,18 @@
     }));
     return [...map.values()].map(p=>{
       const pb=pbFor(p.name,p.team);
-      return {...p,pb,totalRuns:Object.values(p.runs).reduce((n,a)=>n+a.length,0)};
+      return {...p,pb,totalRuns:totalCareerAppearances(p)};
     });
   }
   const allPlayers=players();
+
+  function careerAppearanceCount(p,race){
+    const years=new Set((p.runs?.[race]||[]).map(r=>Number(r.year)).filter(Number.isFinite));
+    return years.size;
+  }
+  function totalCareerAppearances(p){
+    return Object.keys(races).reduce((n,race)=>n+careerAppearanceCount(p,race),0);
+  }
 
   function teams(){
     return [...new Set(allPlayers.map(p=>p.team).filter(Boolean))].sort((a,b)=>teamCollator.compare(teamSortKey(a),teamSortKey(b))||teamCollator.compare(a,b));
@@ -224,7 +232,7 @@
     return `<div class="all-athlete-detail">
       ${pbCards(p)}
       <div class="athlete-race-grid">
-        ${Object.entries(races).map(([k,label])=>`<section><h4>${label} <span>${p.runs[k].length}回</span></h4>${runSummary(p,k)}</section>`).join('')}
+        ${Object.entries(races).map(([k,label])=>`<section><h4>${label} <span>${careerAppearanceCount(p,k)}回</span></h4>${runSummary(p,k)}</section>`).join('')}
       </div>
       <section class="athlete-track-results"><h4>トラック・ロード大会結果</h4>
         ${track.length?track.map(t=>`<div class="athlete-track-line"><span>${t.year}</span><strong>${t.event}</strong><span>${t.time||'—'}</span><span>${t.rank?String(t.rank)+'位':''}</span></div>`).join(''):'<p class="muted">現在の大会DBでは該当結果を確認できていません。</p>'}
@@ -247,17 +255,17 @@
     const slice=list.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
     return `<div class="directory-result-head"><strong>${list.length.toLocaleString()}名</strong><span>該当</span></div>
       <div class="table-wrap directory-table all-athlete-table"><table><thead><tr><th>選手</th><th>大学</th><th>箱根</th><th>出雲</th><th>全日本</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>
-      ${slice.map(p=>`<tr><td><button class="directory-player-name" data-all-athlete-player="${p.key}" aria-expanded="false">${p.name}</button></td><td>${p.team}</td><td>${p.runs.hakone.length}回</td><td>${p.runs.izumo.length}回</td><td>${p.runs.zennihon.length}回</td><td>${p.pb?.pb5000||'—'}</td><td>${p.pb?.pb10000||'—'}</td><td>${p.pb?.half||'—'}</td></tr><tr class="topic-player-detail-row" data-all-athlete-detail="${p.key}" hidden><td colspan="8">${detail(p)}</td></tr>`).join('')}
+      ${slice.map(p=>`<tr><td><button class="directory-player-name" data-all-athlete-player="${p.key}" aria-expanded="false">${p.name}</button></td><td>${p.team}</td><td>${careerAppearanceCount(p,'hakone')}回</td><td>${careerAppearanceCount(p,'izumo')}回</td><td>${careerAppearanceCount(p,'zennihon')}回</td><td>${p.pb?.pb5000||'—'}</td><td>${p.pb?.pb10000||'—'}</td><td>${p.pb?.half||'—'}</td></tr><tr class="topic-player-detail-row" data-all-athlete-detail="${p.key}" hidden><td colspan="8">${detail(p)}</td></tr>`).join('')}
       </tbody></table></div>
       <div class="directory-pagination"><button data-all-athlete-page="${state.page-1}" ${state.page<=1?'disabled':''}>‹ 前へ</button><span>${state.page} / ${pages} ページ</span><button data-all-athlete-page="${state.page+1}" ${state.page>=pages?'disabled':''}>次へ ›</button></div>`;
   }
 
   function template(){
     return `<section class="container page topics-page">
-      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>三大駅伝の出走歴を選手ごとに統合し、収録済みのトラックPB・大会結果と一緒に確認できます。</p></div>
+      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>三大駅伝の大学在籍中の通算出走歴を選手ごとに統合し、PB・大会結果と一緒に確認できます。出場回数は表示中の年度範囲ではなく、収録している全年度を横断して同一大会・同一年を1回として集計します。</p></div>
       <article class="data-card topic-feature directory-feature">
         <div class="topic-feature-head"><div><span class="topic-kicker">ATHLETE DATABASE</span><h2>大学長距離・全選手名鑑</h2></div><span class="topic-badge">三大駅伝 横断</span></div>
-        <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 箱根・出雲・全日本の成績、5000m/10000m/ハーフPB、収録済みトラック大会結果を優先して表示し、駅伝偏差値は参考値として詳細下部に掲載します。</p>
+        <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 箱根・出雲・全日本の成績、5000m/10000m/ハーフPB、収録済みトラック大会結果を優先して表示します。出場回数は各選手の大学在籍期間を通した通算回数で、同じ大会の同一年は1出場として数えます。駅伝偏差値は参考値として詳細下部に掲載します。</p>
         ${controls()}<div id="allAthleteResults">${table()}</div>
       </article>
     </section>`;
