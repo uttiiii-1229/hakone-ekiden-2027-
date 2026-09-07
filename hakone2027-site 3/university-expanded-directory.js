@@ -102,7 +102,21 @@
     });
   }
   function pbRows(team){
-    return typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
+    const base=typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
+    const verified=window.verifiedCurrentPb2026?.[team]||{};
+    const map=new Map(base.map(r=>[String(r[0]).replace(/[\\s　]+/g,''),r.slice()]));
+    Object.entries(verified).forEach(([name,pb])=>{
+      const key=String(name).replace(/[\\s　]+/g,'');
+      const prev=map.get(key)||[name,'','—','—','—'];
+      map.set(key,[
+        prev[0]||name,
+        prev[1]||'',
+        (pb?.[0]&&pb[0]!=='—')?pb[0]:(prev[2]||'—'),
+        (pb?.[1]&&pb[1]!=='—')?pb[1]:(prev[3]||'—'),
+        (pb?.[2]&&pb[2]!=='—')?pb[2]:(prev[4]||'—')
+      ]);
+    });
+    return [...map.values()].sort((a,b)=>timeToSeconds(a[2])-timeToSeconds(b[2])||String(a[0]).localeCompare(String(b[0]),'ja'));
   }
   function averageRanks(stats){
     const ranks={};
