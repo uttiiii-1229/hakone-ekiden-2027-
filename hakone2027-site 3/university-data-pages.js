@@ -1,5 +1,9 @@
 // University Data subpages: in-site meet DB, PB updates, grade rankings
 (() => {
+  function gradeLabel(v){
+    const g=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
+    return /^[1-4]$/.test(g)?g+'年':'—';
+  }
   function sec(v){
     const s=String(v||'').trim();
     if(!s||s==='—') return Number.POSITIVE_INFINITY;
@@ -159,7 +163,7 @@
     const d=meetResults[meetId];
     const rows=d?.events?.[event]||[];
     if(!rows.length) return '<div class="notice">この大会・種目は結果確認中です。確認できた公式記録から順次追加します。</div>';
-    return `<div class="table-wrap meet-result-table"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>学年</th><th>記録</th><th>備考</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td>${r[3]}年</td><td>${r[4]}</td><td>${r[5]||''}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="table-wrap meet-result-table"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>学年</th><th>記録</th><th>備考</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td>${gradeLabel(r[3])}</td><td>${r[4]}</td><td>${r[5]||''}</td></tr>`).join('')}</tbody></table></div>`;
   }
 
   function meetResultPanel(meetId){
@@ -196,7 +200,7 @@
   function pbUpdatesTemplate(){
     const rows=athleteRows();
     const by5000=rows.filter(r=>Number.isFinite(sec(r.pb5000))).sort((a,b)=>sec(a.pb5000)-sec(b.pb5000)).slice(0,20);
-    return `<section class="container page university-subpage"><div class="page-header"><div class="eyebrow">UNIVERSITY DATA / PB UPDATE</div><h1>PB更新ランキング</h1><p>選手ごとのPB更新を時系列で追い、「最近伸びている選手」を見つけるページです。</p></div><div class="university-note"><strong>現在の状態:</strong> 2026年8月時点のPBを基準スナップショットとして使用します。今後の大会DB追加時に旧PBとの差分を保存し、更新幅・更新回数でランキング化します。</div><article class="data-card"><h2>基準データ：5000m上位20名</h2><div class="table-wrap"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>学年</th><th>5000m PB</th></tr></thead><tbody>${by5000.map((r,i)=>`<tr><td><strong>${i+1}</strong></td><td><strong>${r.name}</strong></td><td>${r.team}</td><td>${r.grade}年</td><td>${r.pb5000}</td></tr>`).join('')}</tbody></table></div></article><div class="pb-plan-grid"><article class="data-card"><h3>更新幅ランキング</h3><p>旧PBとの差を秒単位で集計します。</p></article><article class="data-card"><h3>更新回数ランキング</h3><p>シーズン中のPB更新回数を集計します。</p></article><article class="data-card"><h3>大学別PB更新人数</h3><p>大学ごとのPB更新人数も集計します。</p></article></div></section>`;
+    return `<section class="container page university-subpage"><div class="page-header"><div class="eyebrow">UNIVERSITY DATA / PB UPDATE</div><h1>PB更新ランキング</h1><p>選手ごとのPB更新を時系列で追い、「最近伸びている選手」を見つけるページです。</p></div><div class="university-note"><strong>現在の状態:</strong> 2026年8月時点のPBを基準スナップショットとして使用します。今後の大会DB追加時に旧PBとの差分を保存し、更新幅・更新回数でランキング化します。</div><article class="data-card"><h2>基準データ：5000m上位20名</h2><div class="table-wrap"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>学年</th><th>5000m PB</th></tr></thead><tbody>${by5000.map((r,i)=>`<tr><td><strong>${i+1}</strong></td><td><strong>${r.name}</strong></td><td>${r.team}</td><td>${gradeLabel(r.grade)}</td><td>${r.pb5000}</td></tr>`).join('')}</tbody></table></div></article><div class="pb-plan-grid"><article class="data-card"><h3>更新幅ランキング</h3><p>旧PBとの差を秒単位で集計します。</p></article><article class="data-card"><h3>更新回数ランキング</h3><p>シーズン中のPB更新回数を集計します。</p></article><article class="data-card"><h3>大学別PB更新人数</h3><p>大学ごとのPB更新人数も集計します。</p></article></div></section>`;
   }
 
   function gradeRankTable(metric,label,grade){
