@@ -47,22 +47,38 @@
       map.set(key,prev);
     };
 
-    // 2026 current roster is the strongest membership signal.
-    (window.fullRosterData?.[team]||[]).forEach(r=>upsert(r?.[0],{
-      grade:r?.[1],pb10000:r?.[2],half:r?.[3],source:'2026 roster'
+    // Authoritative membership must come from an official/current roster when available.
+    const officialRoster=window.currentRosterOfficial2026?.[team]||[];
+    const legacyRoster=window.fullRosterData?.[team]||[];
+    const authoritativeRoster=officialRoster.length?officialRoster:legacyRoster;
+    const hasAuthoritativeRoster=authoritativeRoster.length>0;
+
+    authoritativeRoster.forEach(r=>upsert(r?.[0],{
+      grade:r?.[1],
+      pb10000:officialRoster.length?'—':r?.[2],
+      half:officialRoster.length?'—':r?.[3],
+      source:officialRoster.length?'official current roster':'2026 roster'
     }));
 
-    // Selected current athletes carry 5000m and may cover schools without a full roster.
-    (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>upsert(r?.[0],{
-      grade:r?.[1],pb5000:r?.[2],pb10000:r?.[3],half:r?.[4],source:'current selected'
-    }));
+    const mayEnrich=name=>!hasAuthoritativeRoster||map.has(norm(name));
 
-    // Officially audited current PBs always override older slower snapshots.
-    Object.entries(window.verifiedCurrentPb2026?.[team]||{}).forEach(([name,pb])=>upsert(name,{
-      pb5000:pb?.[0],pb10000:pb?.[1],half:pb?.[2],source:'verified current PB'
-    }));
+    // PB snapshots are enrichment only. They must never create a "current" athlete
+    // when an authoritative roster exists.
+    (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>{
+      if(!mayEnrich(r?.[0])) return;
+      upsert(r?.[0],{
+        grade:r?.[1],pb5000:r?.[2],pb10000:r?.[3],half:r?.[4],source:'current selected PB'
+      });
+    });
 
-    // Any athlete representing the university in a 2026 official result is current.
+    Object.entries(window.verifiedCurrentPb2026?.[team]||{}).forEach(([name,pb])=>{
+      if(!mayEnrich(name)) return;
+      upsert(name,{
+        pb5000:pb?.[0],pb10000:pb?.[1],half:pb?.[2],source:'verified current PB'
+      });
+    });
+
+    // 2026 meet results can update records, but cannot bypass an authoritative roster.
     const meets=window.universityMeetResultsAutoDB?.meets||{};
     Object.values(meets).forEach(meet=>{
       if(Number(meet?.year)!==2026) return;
@@ -70,7 +86,7 @@
         const metric=eventMetric(eventName);
         const rows=Array.isArray(event)?event:event?.rows||[];
         rows.forEach(r=>{
-          if(teamNorm(r?.[2])!==team) return;
+          if(teamNorm(r?.[2])!==team||!mayEnrich(r?.[1])) return;
           const val=metric?recordCandidate(r?.[4]):null;
           const data={grade:r?.[3],source:'2026 official meet'};
           if(metric&&val) data[metric]=val;
