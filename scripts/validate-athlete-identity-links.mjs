@@ -65,3 +65,36 @@ if(!universityViewText.includes('window.verifiedCurrentPb2026?.[team]')){
   throw new Error('University directory does not prioritize verified current PB overrides');
 }
 console.log('University current-PB priority validation passed.');
+
+
+const officialPbText=fs.readFileSync('hakone2027-site 3/current-pb-official-overrides-20260907.js','utf8');
+const remainingPbText=fs.readFileSync('hakone2027-site 3/university-pb-expansion-remaining-20260907.js','utf8');
+const rosterText=fs.readFileSync('hakone2027-site 3/full-rosters-v2.js','utf8');
+const indexText=fs.readFileSync('hakone2027-site 3/index.html','utf8');
+const resolverText=fs.readFileSync('hakone2027-site 3/current-athlete-pb-resolver.js','utf8');
+
+const hakone2026Teams=[
+  '青山学院大学','國學院大學','順天堂大学','早稲田大学','中央大学','駒澤大学','城西大学','創価大学','帝京大学','日本大学',
+  '中央学院大学','東海大学','神奈川大学','東洋大学','日本体育大学','東京国際大学','山梨学院大学','東京農業大学','大東文化大学','立教大学'
+];
+const allCurrentSourceText=[officialPbText,universityPbText,remainingPbText,rosterText].join('\n');
+for(const team of hakone2026Teams){
+  if(!allCurrentSourceText.includes(team)) throw new Error('Missing current-athlete source for '+team);
+}
+for(const expected of [
+  "'前田 和摩':['13:46.71','27:21.52','1:01:42']",
+  "'井坂 光':['14:11.59','28:50.80','1:03:45']",
+  "'内田 温規':['14:00.09','29:30.98','1:02:13']"
+]){
+  if(!remainingPbText.includes(expected)) throw new Error('Tokyo University of Agriculture current PB is missing: '+expected);
+}
+const meetPos=indexText.indexOf('university-meet-results-auto.js');
+const resolverPos=indexText.indexOf('current-athlete-pb-resolver.js');
+const athletePos=indexText.indexOf('all-athlete-directory-v2.js');
+if(!(meetPos>=0&&resolverPos>meetPos&&athletePos>resolverPos)){
+  throw new Error('Current PB scripts are loaded in the wrong order');
+}
+if(!resolverText.includes('verified current PB')||!resolverText.includes('2026 official meet')){
+  throw new Error('Current PB resolver is missing verified/meet merge logic');
+}
+console.log('All 20 Hakone 2026 teams have a current-athlete PB source.');
