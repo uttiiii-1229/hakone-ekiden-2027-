@@ -11,19 +11,18 @@
   function athleteRows(){
     const out=[];
     const teams=new Set([
-      ...Object.keys(typeof expandedTopAthletes2027!=='undefined'?expandedTopAthletes2027:{}),
+      ...Object.keys(window.fullRosterData||{}),
+      ...Object.keys(window.expandedTopAthletes2027||{}),
       ...Object.keys(window.verifiedCurrentPb2026||{})
     ]);
     teams.forEach(team=>{
-      const base=(typeof expandedTopAthletes2027!=='undefined'&&expandedTopAthletes2027[team])||[];
-      const verified=window.verifiedCurrentPb2026?.[team]||{};
-      const map=new Map(base.map(r=>[String(r[0]).replace(/[\\s　]+/g,''),r.slice()]));
-      Object.entries(verified).forEach(([name,pb])=>{
-        const key=String(name).replace(/[\\s　]+/g,'');
-        const prev=map.get(key)||[name,'','—','—','—'];
-        map.set(key,[prev[0]||name,prev[1]||'',(pb?.[0]&&pb[0]!=='—')?pb[0]:(prev[2]||'—'),(pb?.[1]&&pb[1]!=='—')?pb[1]:(prev[3]||'—'),(pb?.[2]&&pb[2]!=='—')?pb[2]:(prev[4]||'—')]);
-      });
-      map.forEach(r=>out.push({team,name:r[0],grade:Number(r[1])||0,pb5000:r[2],pb10000:r[3],half:r[4]}));
+      const rows=window.currentAthletePbResolver?.currentRows
+        ? window.currentAthletePbResolver.currentRows(team)
+        : [];
+      rows.forEach(r=>out.push({
+        team,name:r.name,grade:Number(r.grade)||0,
+        pb5000:r.pb5000||'—',pb10000:r.pb10000||'—',half:r.half||'—'
+      }));
     });
     return out;
   }
