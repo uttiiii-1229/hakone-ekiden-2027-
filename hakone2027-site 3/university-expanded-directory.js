@@ -121,11 +121,6 @@
     });
     return ranks;
   }
-  function mergedCurrentRows(team){
-    // Show all current athletes: first 10 immediately, the remainder in the expandable list.
-    const rows=pbRows(team);
-    return {top:rows.slice(0,10),extra:rows.slice(10)};
-  }
   function gradeLabel(v){
     const g=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
     return /^[1-5]$/.test(g)?g+'年':'—';
@@ -151,13 +146,11 @@
     return [...map.values()].map(a=>({...a,years:[...a.years].sort((x,y)=>x-y),sections:[...a.sections].sort((x,y)=>x-y)})).sort((a,b)=>b.runs-a.runs||a.name.localeCompare(b.name,'ja'));
   }
   function athleteDataBlock(team){
-    const merged=mergedCurrentRows(team);
-    const top=merged.top,extra=merged.extra;
-    let pb='<div class="notice">2026年度の現役選手を対象に、確認済みの最新PBを表示しています。</div>';
-    if(top.length||extra.length){
-      pb='<h3>現行選手PB</h3>'+
-        '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(top)+'</tbody></table></div>'+
-        (extra.length?'<details class="other-current-athletes"><summary>その他の選手（'+extra.length+'名）</summary><div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(extra)+'</tbody></table></div></details>':'');
+    const rows=pbRows(team);
+    let pb='<div class="notice">2026年度の現役選手を、学年ごと・同学年内は五十音順でまとめて表示しています。</div>';
+    if(rows.length){
+      pb='<h3>現行選手PB <span class="muted">（'+rows.length+'名）</span></h3>'+
+        '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(rows)+'</tbody></table></div>';
     }
     const hist=historicalAthletes(team);
     const history='<details class="historical-athletes-details"><summary>箱根歴代出走選手（2007〜2026）</summary><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>'+hist.map(a=>'<tr><td><strong>'+a.name+'</strong></td><td>'+a.runs+'回</td><td>'+a.years.join('・')+'</td><td>'+a.sections.map(s=>s+'区').join('・')+'</td></tr>').join('')+'</tbody></table></div></details>';
