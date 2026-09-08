@@ -61,11 +61,10 @@
         if(pb?.[2]&&pb[2]!=='—') r.half=better(r.half,pb[2]);
         r.sources.push('verified current PB audit');
       });
-      return rows.sort((a,b)=>{
-        const a10=timeSeconds(a.pb10000),b10=timeSeconds(b.pb10000);
-        const a5=timeSeconds(a.pb5000),b5=timeSeconds(b.pb5000);
-        return (a10??Infinity)-(b10??Infinity)||(a5??Infinity)-(b5??Infinity)||a.name.localeCompare(b.name,'ja');
-      });
+      // Group by academic year while preserving the supplied order inside each
+      // year. The source JSON is ordered in Japanese syllabary order within a grade.
+      // JavaScript's stable sort keeps that within-grade order unchanged.
+      return rows.sort((a,b)=>(Number(b.grade)||0)-(Number(a.grade)||0));
     }
 
     const map=new Map();
@@ -165,9 +164,8 @@
 
     const arr=[...map.values()].map(r=>({...r,grade:normalizeGrade(r.grade),sources:[...r.sources]}));
     return arr.sort((a,b)=>{
-      const a10=timeSeconds(a.pb10000),b10=timeSeconds(b.pb10000);
-      const a5=timeSeconds(a.pb5000),b5=timeSeconds(b.pb5000);
-      return (a10??Infinity)-(b10??Infinity)||(a5??Infinity)-(b5??Infinity)||a.name.localeCompare(b.name,'ja');
+      const ag=Number(a.grade)||0,bg=Number(b.grade)||0;
+      return bg-ag||a.name.localeCompare(b.name,'ja',{sensitivity:'base'});
     });
   }
 
