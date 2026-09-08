@@ -207,8 +207,16 @@
     const rows=athleteRows().filter(r=>r.grade===grade&&Number.isFinite(sec(r[metric]))).sort((a,b)=>sec(a[metric])-sec(b[metric])).slice(0,20);
     return `<div class="table-wrap"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>${label}</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td><strong>${i+1}</strong></td><td><strong>${r.name}</strong></td><td>${r.team}</td><td>${r[metric]}</td></tr>`).join('')}</tbody></table></div>`;
   }
+  const gradeRankingState={grade:1,metric:'pb5000'};
+  const gradeMetricLabels={pb5000:'5000m PB',pb10000:'10000m PB',half:'ハーフ PB'};
+
+  function gradeRankingPanel(){
+    const g=gradeRankingState.grade,metric=gradeRankingState.metric;
+    return `<article class="data-card grade-block"><div class="grade-head"><h2>${g}年生ランキング</h2><span class="topic-badge">TOP 20</span></div><div class="tabs grade-metric-tabs"><button class="tab ${metric==='pb5000'?'active':''}" data-grade-metric="pb5000">5000m</button><button class="tab ${metric==='pb10000'?'active':''}" data-grade-metric="pb10000">10000m</button><button class="tab ${metric==='half'?'active':''}" data-grade-metric="half">ハーフ</button></div><div data-grade-result>${gradeRankTable(metric,gradeMetricLabels[metric],g)}</div></article>`;
+  }
+
   function gradeRankingsTemplate(){
-    return `<section class="container page university-subpage"><div class="page-header"><div class="eyebrow">UNIVERSITY DATA / GRADE RANKING</div><h1>学年別ランキング</h1><p>現在PBを収録している選手を、学年別・種目別に比較します。</p></div>${[1,2,3,4].map(g=>`<article class="data-card grade-block"><div class="grade-head"><h2>${g}年生ランキング</h2><span class="topic-badge">TOP 20</span></div><div class="tabs grade-metric-tabs"><button class="tab active" data-grade-metric="pb5000" data-grade="${g}">5000m</button><button class="tab" data-grade-metric="pb10000" data-grade="${g}">10000m</button><button class="tab" data-grade-metric="half" data-grade="${g}">ハーフ</button></div><div data-grade-result="${g}">${gradeRankTable('pb5000','5000m PB',g)}</div></article>`).join('')}<div class="notice">大学データ対象は箱根直近20年の出場校へ拡張済みです。PBランキングは確認できた現行選手から順次対象校を増やします。</div></section>`;
+    return `<section class="container page university-subpage"><div class="page-header"><div class="eyebrow">UNIVERSITY DATA / GRADE RANKING</div><h1>学年別ランキング</h1><p>1年生から4年生まで学年を選び、5000m・10000m・ハーフのPBを比較できます。</p></div><div class="grade-selector" role="tablist" aria-label="学年を選択">${[1,2,3,4].map(g=>`<button class="grade-selector-button ${g===gradeRankingState.grade?'active':''}" data-grade-select="${g}" role="tab" aria-selected="${g===gradeRankingState.grade}">${g}年生</button>`).join('')}</div><div id="gradeRankingPanel">${gradeRankingPanel()}</div><div class="notice">大学データ対象は箱根直近20年の出場校へ拡張済みです。PBランキングは確認できた現行選手から順次対象校を増やします。</div></section>`;
   }
 
   document.addEventListener('change',e=>{
@@ -225,14 +233,26 @@
     if(meetBtn){activeMeet=meetBtn.dataset.meetId;const d=meetResults[activeMeet];if(d)activeMeetEvent=Object.keys(d.events)[0];const host=document.querySelector('#meetDatabaseResult');if(host)host.innerHTML=meetResultPanel(activeMeet);document.querySelectorAll('[data-meet-id]').forEach(b=>b.classList.toggle('active',b===meetBtn));return;}
     const eventBtn=e.target.closest('[data-meet-event]');
     if(eventBtn){activeMeetEvent=eventBtn.dataset.meetEvent;eventBtn.closest('.meet-db-panel').querySelectorAll('[data-meet-event]').forEach(b=>b.classList.toggle('active',b===eventBtn));const host=document.querySelector('#meetEventResult');if(host)host.innerHTML=meetResultTable(activeMeet,activeMeetEvent);return;}
+    const gradeBtn=e.target.closest('[data-grade-select]');
+    if(gradeBtn){
+      gradeRankingState.grade=Number(gradeBtn.dataset.gradeSelect)||1;
+      gradeRankingState.metric='pb5000';
+      const panel=document.querySelector('#gradeRankingPanel');
+      if(panel) panel.innerHTML=gradeRankingPanel();
+      document.querySelectorAll('[data-grade-select]').forEach(b=>{
+        const active=Number(b.dataset.gradeSelect)===gradeRankingState.grade;
+        b.classList.toggle('active',active);
+        b.setAttribute('aria-selected',String(active));
+      });
+      return;
+    }
     const btn=e.target.closest('[data-grade-metric]');
     if(!btn)return;
-    const grade=Number(btn.dataset.grade),metric=btn.dataset.gradeMetric;
-    const host=document.querySelector(`[data-grade-result="${grade}"]`);
+    gradeRankingState.metric=btn.dataset.gradeMetric;
+    const host=document.querySelector('[data-grade-result]');
     if(!host)return;
     btn.closest('.grade-block').querySelectorAll('[data-grade-metric]').forEach(b=>b.classList.toggle('active',b===btn));
-    const labels={pb5000:'5000m PB',pb10000:'10000m PB',half:'ハーフ PB'};
-    host.innerHTML=gradeRankTable(metric,labels[metric],grade);
+    host.innerHTML=gradeRankTable(gradeRankingState.metric,gradeMetricLabels[gradeRankingState.metric],gradeRankingState.grade);
   });
 
   if(typeof templates!=='undefined'){

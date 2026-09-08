@@ -222,7 +222,7 @@ html,body{scroll-padding-top:calc(82px + env(safe-area-inset-top,0px))}
 .brand-mark{flex:0 0 82px;min-width:82px;max-width:82px}
 .brand-mark svg{display:block}
 @media(max-width:980px){
-  .site-header{position:sticky;top:0}
+  .site-header{position:fixed;top:0;left:0;right:0}
   .header-inner{min-height:72px}
   .brand{min-width:0}
   .brand-mark{width:64px;height:42px;flex-basis:64px;min-width:64px;max-width:64px}
@@ -243,4 +243,11 @@ body { padding-top: calc(82px + env(safe-area-inset-top, 0px)); }
 @media(max-width:980px){
   body { padding-top: calc(72px + env(safe-area-inset-top, 0px)); }
   .site-header .header-inner { min-height:72px; height:72px; }
+}
+
+
+/* Keep the top navigation flush with the viewport while scrolling on mobile Safari. */
+.site-header{inset:0 0 auto 0;transform:translateZ(0)}
+@media(max-width:980px){
+  .site-header{inset:0 0 auto 0}
 }
