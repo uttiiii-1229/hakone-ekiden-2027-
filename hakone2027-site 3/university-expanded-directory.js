@@ -53,10 +53,10 @@
     return `${m}:${(remain/100).toFixed(2).padStart(5,'0')}`;
   }
   function top10Averages(team){
-    const rows=pbRows(team).slice(0,10);
+    const rows=pbRows(team);
     const metrics=[['5000m',2,'track'],['10000m',3,'track'],['ハーフ',4,'half']];
     return metrics.map(([label,idx,kind])=>{
-      const vals=rows.map(r=>timeToSeconds(r[idx])).filter(Number.isFinite);
+      const vals=rows.map(r=>timeToSeconds(r[idx])).filter(Number.isFinite).sort((a,b)=>a-b).slice(0,10);
       const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
       return {label,key:label,value:formatAverage(avg,kind),seconds:avg,count:vals.length};
     });
