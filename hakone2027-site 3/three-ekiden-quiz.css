@@ -1,5 +1,5 @@
 .quiz-page{padding-bottom:48px}
-.quiz-level-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0 24px}
+.quiz-level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:18px 0 24px}
 .quiz-level-card{appearance:none;border:1px solid #d9e5ef;background:#fff;border-radius:14px;padding:16px;text-align:left;cursor:pointer;box-shadow:0 4px 14px rgba(15,52,84,.05);transition:.18s ease}
 .quiz-level-card:hover,.quiz-level-card.active{border-color:#1d5f94;transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,52,84,.1)}
 .quiz-level-card span{display:inline-block;font-size:.78rem;font-weight:800;color:#1d5f94;margin-bottom:8px}
@@ -24,3 +24,10 @@
 .quiz-result{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;padding:14px;border-radius:12px;background:#163f61;color:#fff}.quiz-result span{font-size:.78rem;opacity:.8}.quiz-result strong{font-size:1.15rem}.quiz-result button{margin-left:auto;border:0;border-radius:8px;padding:8px 12px;background:#fff;color:#163f61;font-weight:800;cursor:pointer}
 @media(max-width:900px){.quiz-level-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.quiz-level-grid{grid-template-columns:1fr 1fr;gap:8px}.quiz-level-card{padding:12px}.quiz-stage{padding:12px}.quiz-stage-head{flex-direction:column}.quiz-progress{align-self:stretch}.quiz-choice-grid{grid-template-columns:1fr}.quiz-result button{width:100%;margin-left:0}}
+
+.quiz-random-note{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:10px 13px;border:1px solid #dce7ef;border-radius:12px;background:#f7fbfe;color:#577188;font-size:.78rem}
+.quiz-random-note strong{flex:0 0 auto;border-radius:999px;background:#163f61;color:#fff;padding:4px 9px;font-size:.7rem;letter-spacing:.06em}
+.quiz-level-card[data-quiz-level="mania"]{background:linear-gradient(160deg,#fff,#f6f0ff);border-color:#d9c8ee}
+.quiz-level-card[data-quiz-level="mania"] span{color:#6c3e9d}
+@media(max-width:1100px){.quiz-level-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.quiz-random-note{align-items:flex-start;flex-direction:column}}
