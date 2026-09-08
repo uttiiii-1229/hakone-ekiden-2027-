@@ -137,4 +137,6 @@
       rerender();
     }
   });
+
+  if((location.hash.replace('#','')||'home')==='quiz' && typeof render==='function') render('quiz');
 })();
