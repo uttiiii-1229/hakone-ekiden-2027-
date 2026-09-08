@@ -256,7 +256,7 @@
         ${Object.entries(races).map(([k,label])=>`<section><h4>${label} <span>${careerAppearanceCount(p,k)}回</span></h4>${runSummary(p,k)}</section>`).join('')}
       </div>
       <section class="athlete-track-results"><h4>トラック・ロード大会結果</h4>
-        ${track.length?track.map(t=>`<div class="athlete-track-line"><span>${t.year}</span><strong>${t.event}</strong><span>${t.time||'—'}</span><span>${t.rank?String(t.rank)+'位':''}</span></div>`).join(''):'<p class="muted">現在の大会DBでは該当結果を確認できていません。</p>'}
+        ${track.length?track.map(t=>`<div class="athlete-track-line"><span>${t.year}</span><span class="athlete-track-meet">${t.meet||'大会名未登録'}</span><strong>${t.event}</strong><span>${t.time||'—'}</span><span>${t.rank?String(t.rank)+'位':''}</span></div>`).join(''):'<p class="muted">現在の大会DBでは該当結果を確認できていません。</p>'}
       </section>
       ${deviationCards(p)}
     </div>`;
