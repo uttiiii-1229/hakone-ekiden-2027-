@@ -1,0 +1,39 @@
+name: Validate work branch
+
+on:
+  push:
+    branches:
+      - work-20260908-track-hero-quiz
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax checks
+        run: |
+          node --check "hakone2027-site 3/all-athlete-directory-v2.js"
+          node --check "hakone2027-site 3/home-redesign-v2.js"
+          node --check "hakone2027-site 3/three-ekiden-quiz.js"
+          node --check "hakone2027-site 3/race-dropdown.js"
+      - name: Integration assertions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          root=Path("hakone2027-site 3")
+          index=(root/"index.html").read_text()
+          home=(root/"home-redesign-v2.js").read_text()
+          athletes=(root/"all-athlete-directory-v2.js").read_text()
+          quiz=(root/"three-ekiden-quiz.js").read_text()
+          assert 'hero-five-runners.js' not in index
+          assert 'home-hero-final.js' not in index
+          assert 'data-initial-render-guard' in index
+          assert 'data-initial-render-ready' in index
+          assert 'home-hero-stable.jpg?v=20260908-direct1' in home
+          assert '${runnerScene()}' not in home
+          assert 't.meet' in athletes and 'athlete-track-meet' in athletes
+          assert 'data-route="quiz"' in index
+          assert all(x in quiz for x in ["beginner","intermediate","advanced","expert"])
+          assert quiz.count("questions:[") == 4
+          print("integration assertions passed")
+          PY
