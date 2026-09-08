@@ -39,18 +39,29 @@
   function currentRows(team){
     team=teamNorm(team);
 
-    // The user-supplied 2026 JSON is the authoritative current-roster/PB snapshot.
-    // Preserve null as an unconfirmed PB and display it as "—".
+    // The supplied 2026 JSON is the current-roster/PB baseline. Officially verified
+    // audit overrides must still be merged on top; otherwise later official PB fixes
+    // would never reach University Data / All Athlete Directory for JSON-backed teams.
     const supplied=window.currentAthletePbJson2026?.[team]||[];
     if(supplied.length){
-      return supplied.map(r=>({
+      const rows=supplied.map(r=>({
         name:String(r.name||'').trim(),
         grade:normalizeGrade(r.grade),
         pb5000:r.pb5000||'—',
         pb10000:r.pb10000||'—',
         half:r.half||'—',
-        sources:['user supplied 2026 PB JSON']
-      })).sort((a,b)=>{
+        sources:['2026 PB JSON baseline']
+      }));
+      const byName=new Map(rows.map(r=>[norm(r.name),r]));
+      Object.entries(window.verifiedCurrentPb2026?.[team]||{}).forEach(([name,pb])=>{
+        const r=byName.get(norm(name));
+        if(!r) return; // PB snapshot must not create current membership.
+        if(pb?.[0]&&pb[0]!=='—') r.pb5000=better(r.pb5000,pb[0]);
+        if(pb?.[1]&&pb[1]!=='—') r.pb10000=better(r.pb10000,pb[1]);
+        if(pb?.[2]&&pb[2]!=='—') r.half=better(r.half,pb[2]);
+        r.sources.push('verified current PB audit');
+      });
+      return rows.sort((a,b)=>{
         const a10=timeSeconds(a.pb10000),b10=timeSeconds(b.pb10000);
         const a5=timeSeconds(a.pb5000),b5=timeSeconds(b.pb5000);
         return (a10??Infinity)-(b10??Infinity)||(a5??Infinity)-(b5??Infinity)||a.name.localeCompare(b.name,'ja');
@@ -107,7 +118,6 @@
     // PB snapshots are enrichment only. They must never create a "current" athlete
     // when an authoritative roster exists.
     (window.expandedTopAthletes2027?.[team]||[]).forEach(r=>{
-      // Legacy ranking data is never proof of current membership.
       if(!isKnownCurrent(r?.[0])) return;
       upsert(r?.[0],{
         grade:r?.[1],pb5000:r?.[2],pb10000:r?.[3],half:r?.[4],source:'legacy selected PB enrichment'
@@ -115,7 +125,6 @@
     });
 
     Object.entries(window.verifiedCurrentPb2026?.[team]||{}).forEach(([name,pb])=>{
-      // A PB snapshot never proves current enrollment.
       if(!isKnownCurrent(name)) return;
       upsert(name,{
         pb5000:pb?.[0],pb10000:pb?.[1],half:pb?.[2],source:'verified current PB'
@@ -134,12 +143,10 @@
           const name=r?.[1];
           rememberGrade(name,r?.[3]);
           if(hasAuthoritativeRoster && !isKnownCurrent(name)) return;
-          // A post-April 2026 official meet can prove current participation when no roster snapshot exists.
           if(!hasAuthoritativeRoster && !isKnownCurrent(name)) upsert(name,{grade:r?.[3],source:'2026 official meet membership'});
           const comment=String(r?.[5]||'');
           const val=metric&&/\bPB\b|自己ベスト|自己新/i.test(comment)?recordCandidate(r?.[4]):null;
           const data={source:'2026 official meet PB'};
-          // Never overwrite an authoritative roster grade with stale race-page grade labels.
           if(!hasAuthoritativeRoster && r?.[3]) data.grade=r?.[3];
           if(metric&&val) data[metric]=val;
           upsert(name,data);
@@ -147,9 +154,6 @@
       });
     });
 
-    // Backfill grade after all current athletes are known. This fixes athletes whose
-    // membership came from a meet row with a blank grade while another current source
-    // carries the academic year.
     map.forEach((r,key)=>{
       const dbGrade=gradeResolver?.get(team,r.name)||'';
       if(dbGrade) r.grade=dbGrade;
