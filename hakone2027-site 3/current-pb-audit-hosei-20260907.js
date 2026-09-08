@@ -139,3 +139,17 @@
   };
   resolver.__senshuOfficialAudit20260908=true;
 })();
+
+// Current-athlete PB audit: Meiji University — 2026-09-09
+// Sources: Meiji University Track & Field official 2026 competition results.
+// Only officially PB-labelled results that improve the current site baseline are merged.
+(() => {
+  const team='明治大学';
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  const meta=window.currentRosterOfficialMeta2026=window.currentRosterOfficialMeta2026||{};
+  verified[team]=Object.assign(verified[team]||{}, {
+    '小松 映智':['—','30:45.45','—'],
+    '大江 秀弥':['—','29:45.19','—']
+  });
+  meta[team]={season:2026,asOf:'2026-09-09',source:'明治大学体育会競走部 2026公式結果（第327回日体大長距離競技会／ホクレンDC網走）'};
+})();
