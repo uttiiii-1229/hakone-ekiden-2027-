@@ -65,13 +65,13 @@
   if(typeof previousRender==='function'){
     window.render=function(route='home'){
       previousRender(route);
-      const topicRoutes=['topics','athletes'];
+      const topicRoutes=['topics','athletes','quiz'];
       dropdown.classList.toggle('active',topicRoutes.includes(route));
       dropdown.querySelectorAll('.topic-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['topics','athletes'].includes(route));
+    dropdown.classList.toggle('active',['topics','athletes','quiz'].includes(route));
     dropdown.querySelectorAll('.topic-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
