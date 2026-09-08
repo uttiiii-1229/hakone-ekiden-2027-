@@ -122,12 +122,13 @@
     return ranks;
   }
   function mergedCurrentRows(team){
-    // pbRows already represents the unified 2026 current roster/PB view.
-    return {top:pbRows(team),extra:[]};
+    // Show all current athletes: first 10 immediately, the remainder in the expandable list.
+    const rows=pbRows(team);
+    return {top:rows.slice(0,10),extra:rows.slice(10)};
   }
   function gradeLabel(v){
     const g=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
-    return /^[1-4]$/.test(g)?g+'年':'—';
+    return /^[1-5]$/.test(g)?g+'年':'—';
   }
   function pbTableRows(rows){
     return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+gradeLabel(r[1])+'</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
@@ -155,7 +156,7 @@
     let pb='<div class="notice">2026年度の現役選手を対象に、確認済みの最新PBを表示しています。</div>';
     if(top.length||extra.length){
       pb='<h3>現行選手PB</h3>'+
-        '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(top.slice(0,10))+'</tbody></table></div>'+
+        '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(top)+'</tbody></table></div>'+
         (extra.length?'<details class="other-current-athletes"><summary>その他の選手（'+extra.length+'名）</summary><div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(extra)+'</tbody></table></div></details>':'');
     }
     const hist=historicalAthletes(team);
