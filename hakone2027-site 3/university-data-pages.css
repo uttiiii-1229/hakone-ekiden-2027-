@@ -8,3 +8,9 @@
 .meet-db-panel{min-width:0}.meet-event-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.meet-result-table table{min-width:720px}
 @media(max-width:900px){.meet-db-layout{grid-template-columns:1fr}.meet-db-list{position:static;grid-template-columns:1fr 1fr}.meet-year-label{grid-column:1/-1}}
 @media(max-width:600px){.meet-db-list{grid-template-columns:1fr}}
+
+.grade-selector{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.grade-selector-button{border:1px solid #d7e3ee;background:#fff;color:#345873;border-radius:12px;padding:13px 10px;font-weight:900;cursor:pointer;box-shadow:0 4px 14px rgba(20,53,86,.05)}
+.grade-selector-button.active{background:#0b376d;color:#fff;border-color:#0b376d}
+.grade-selector-button:focus-visible{outline:3px solid rgba(23,105,209,.25);outline-offset:2px}
+@media(max-width:600px){.grade-selector{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.grade-selector-button{padding:11px 8px}}
