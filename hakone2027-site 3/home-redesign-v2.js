@@ -88,7 +88,7 @@
             <h2>その一歩が、歴史をつくる。</h2>
             <p>箱根・出雲・全日本の三大駅伝実績と最新の選手データをもとに、大学駅伝の現在地と次のレースを読み解く。</p>
           </div>
-          <div class="home-v2-art">${runnerScene()}</div>
+          <div class="home-v2-art"><img class="uploaded-home-hero home-hero-stable" src="home-hero-stable.jpg?v=20260908-direct1" alt="大学駅伝のスタートを描いた鉛筆画イラスト" loading="eager" decoding="sync"></div>
         </section>
 
         <section class="featured-panel">
