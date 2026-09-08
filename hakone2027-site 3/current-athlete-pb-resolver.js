@@ -33,11 +33,30 @@
   }
   function normalizeGrade(v){
     const s=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
-    return /^[1-4]$/.test(s)?s:'';
+    return /^[1-5]$/.test(s)?s:'';
   }
 
   function currentRows(team){
     team=teamNorm(team);
+
+    // The user-supplied 2026 JSON is the authoritative current-roster/PB snapshot.
+    // Preserve null as an unconfirmed PB and display it as "—".
+    const supplied=window.currentAthletePbJson2026?.[team]||[];
+    if(supplied.length){
+      return supplied.map(r=>({
+        name:String(r.name||'').trim(),
+        grade:normalizeGrade(r.grade),
+        pb5000:r.pb5000||'—',
+        pb10000:r.pb10000||'—',
+        half:r.half||'—',
+        sources:['user supplied 2026 PB JSON']
+      })).sort((a,b)=>{
+        const a10=timeSeconds(a.pb10000),b10=timeSeconds(b.pb10000);
+        const a5=timeSeconds(a.pb5000),b5=timeSeconds(b.pb5000);
+        return (a10??Infinity)-(b10??Infinity)||(a5??Infinity)-(b5??Infinity)||a.name.localeCompare(b.name,'ja');
+      });
+    }
+
     const map=new Map();
     const upsert=(name,data={})=>{
       if(!name) return;
