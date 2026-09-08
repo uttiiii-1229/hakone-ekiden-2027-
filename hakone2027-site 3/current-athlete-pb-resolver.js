@@ -61,9 +61,10 @@
         if(pb?.[2]&&pb[2]!=='—') r.half=better(r.half,pb[2]);
         r.sources.push('verified current PB audit');
       });
-      // The supplied JSON is already grouped by academic year and ordered
-      // in Japanese syllabary order within each year. Preserve that roster order.
-      return rows;
+      // Group by academic year while preserving the supplied order inside each
+      // year. The source JSON is ordered in Japanese syllabary order within a grade.
+      // JavaScript's stable sort keeps that within-grade order unchanged.
+      return rows.sort((a,b)=>(Number(b.grade)||0)-(Number(a.grade)||0));
     }
 
     const map=new Map();
