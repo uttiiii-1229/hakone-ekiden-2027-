@@ -22,5 +22,8 @@
 {"id":"kanto-10000-2024","year":2024,"name":"10000m記録挑戦競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2024/10000m/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"kanto-10000-2022","year":2022,"name":"10000m記録挑戦競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/2022/kgrr/10000/hp/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"alljapan-kanto-selection-2026","year":2026,"name":"秩父宮賜杯第58回全日本大学駅伝対校選手権大会関東学生陸上競技連盟推薦校選考会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2026/osejinukideisejihe/kyougi.html","includeGenders":["男子"]},
-{"id":"alljapan-kanto-selection-2025","year":2025,"name":"秩父宮賜杯第57回全日本大学駅伝対校選手権大会関東学生陸上競技連盟推薦校選考会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2025/LetsGo57Zennichi/kyougi.html","includeGenders":["男子"]}
+{"id":"alljapan-kanto-selection-2025","year":2025,"name":"秩父宮賜杯第57回全日本大学駅伝対校選手権大会関東学生陸上競技連盟推薦校選考会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2025/LetsGo57Zennichi/kyougi.html","includeGenders":["男子"]},
+{"id":"alljapan-kanto-selection-2024","year":2024,"name":"秩父宮賜杯第56回全日本大学駅伝対校選手権大会関東学生陸上競技連盟推薦校選考会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2024/56chichibunomiya/kyougi.html","includeGenders":["男子"]},
+{"id":"alljapan-kanto-selection-2023","year":2023,"name":"秩父宮賜杯第55回全日本大学駅伝対校選手権大会関東学生陸上競技連盟推薦校選考会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2023/55chichibunomiya/kyougi.html","includeGenders":["男子"]},
+{"id":"alljapan-kanto-selection-2022","year":2022,"name":"秩父宮賜杯第54回全日本大学駅伝対校選手権大会関東学生陸上競技連盟推薦校選考会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/2022/kgrr/54zennichi/hp/kyougi.html","includeGenders":["男子"]}
 ]
