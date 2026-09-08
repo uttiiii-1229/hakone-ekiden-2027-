@@ -181,14 +181,26 @@
     const map=new Map();
     Object.entries(rowsByRace).forEach(([race,rows])=>rows.forEach(r=>{
       const key=norm(r.athlete)+'|'+norm(r.team); if(!norm(r.athlete))return;
-      if(!map.has(key))map.set(key,{key,name:r.athlete,team:r.team,runs:{hakone:[],izumo:[],zennihon:[]}});
+      if(!map.has(key))map.set(key,{key,name:r.athlete,team:r.team,current2026:false,runs:{hakone:[],izumo:[],zennihon:[]}});
       map.get(key).runs[race].push(r);
     }));
-    // The public directory remains the 2007+ cohort, but career totals can look back
-    // to 2004. This captures the complete four-year university career for athletes
-    // who first appear in the site's original 2007+ race database.
+
+    // Add every athlete in the supplied 2026 current-roster JSON, including athletes
+    // who have never appeared in Hakone / Izumo / Zennihon.
+    Object.entries(window.currentAthletePbJson2026||{}).forEach(([rawTeam,currentRows])=>{
+      const team=teamNorm(rawTeam);
+      (currentRows||[]).forEach(r=>{
+        const name=athleteDisplayName(r?.name||'',{team});
+        const key=norm(name)+'|'+norm(team); if(!norm(name))return;
+        if(!map.has(key)) map.set(key,{key,name,team,current2026:true,runs:{hakone:[],izumo:[],zennihon:[]}});
+        else map.get(key).current2026=true;
+      });
+    });
+
+    // Keep the historical 2007+ directory while guaranteeing every 2026 current
+    // athlete is present even without a three-ekiden appearance.
     return [...map.values()]
-      .filter(p=>Object.values(p.runs).some(rows=>rows.some(r=>Number(r.year)>=2007)))
+      .filter(p=>p.current2026||Object.values(p.runs).some(rows=>rows.some(r=>Number(r.year)>=2007)))
       .map(p=>{
         const pb=pbFor(p.name,p.team);
         return {...p,pb,totalRuns:totalCareerAppearances(p)};
