@@ -128,6 +128,19 @@
   function pbTableRows(rows){
     return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+gradeLabel(r[1])+'</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
   }
+  function splitFeaturedRows(team,rows){
+    const key=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'');
+    const selected=window.expandedTopAthletes2027?.[team]||[];
+    const rowMap=new Map(rows.map(r=>[key(r[0]),r]));
+    const top=[];
+    selected.forEach(r=>{
+      const hit=rowMap.get(key(r?.[0]));
+      if(hit&&!top.includes(hit)&&top.length<10) top.push(hit);
+    });
+    rows.forEach(r=>{if(top.length<10&&!top.includes(r)) top.push(r);});
+    const topSet=new Set(top);
+    return {top,rest:rows.filter(r=>!topSet.has(r))};
+  }
   function historicalAthletes(team){
     const db=window.hakonePhase2StaticDB||{};
     const map=new Map();
@@ -147,10 +160,13 @@
   }
   function athleteDataBlock(team){
     const rows=pbRows(team);
-    let pb='<div class="notice">2026年度の現役選手を、学年ごと・同学年内は五十音順でまとめて表示しています。</div>';
+    let pb='<div class="notice">2026年度の現役選手を、TOP10とその他の選手に分けて表示しています。</div>';
     if(rows.length){
+      const split=splitFeaturedRows(team,rows);
+      const tableHead='<table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead>';
       pb='<h3>現行選手PB <span class="muted">（'+rows.length+'名）</span></h3>'+
-        '<div class="table-wrap compact university-pb-table"><table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>'+pbTableRows(rows)+'</tbody></table></div>';
+        '<div class="table-wrap compact university-pb-table">'+tableHead+'<tbody>'+pbTableRows(split.top)+'</tbody></table></div>'+
+        (split.rest.length?'<details class="university-other-athletes"><summary>その他の選手（'+split.rest.length+'名）</summary><div class="table-wrap compact university-pb-table">'+tableHead+'<tbody>'+pbTableRows(split.rest)+'</tbody></table></div></details>':'');
     }
     const hist=historicalAthletes(team);
     const history='<details class="historical-athletes-details"><summary>箱根歴代出走選手（2007〜2026）</summary><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>'+hist.map(a=>'<tr><td><strong>'+a.name+'</strong></td><td>'+a.runs+'回</td><td>'+a.years.join('・')+'</td><td>'+a.sections.map(s=>s+'区').join('・')+'</td></tr>').join('')+'</tbody></table></div></details>';
