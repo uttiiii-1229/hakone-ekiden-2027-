@@ -65,4 +65,12 @@
     '玉澤 大夢':['15:18.16','33:39.39','—'],
     '吉田 翼':['15:12.85','—','—']
   };
+
+  // All Athlete Directory enumerates current athletes from this baseline object.
+  // Mirror the official roster/PBs here so every verified current athlete is discoverable.
+  const supplied=window.currentAthletePbJson2026=window.currentAthletePbJson2026||{};
+  supplied[team]=rosters[team].map(([name,grade])=>{
+    const pb=verified[team][name]||['—','—','—'];
+    return {name,grade,pb5000:pb[0],pb10000:pb[1],half:pb[2]};
+  });
 })();
