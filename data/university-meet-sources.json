@@ -34,5 +34,6 @@
 {"id":"kanto-rookies-36-2025","year":2025,"name":"第36回関東学生新人陸上競技選手権大会兼関東学生リレー競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2025/36rookies/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"kanto-rookies-35-2024","year":2024,"name":"第35回関東学生新人陸上競技選手権大会兼関東学生リレー競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2024/35newcaledonia/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"kanto-rookies-34-2023","year":2023,"name":"第34回関東学生新人陸上競技選手権大会兼関東学生リレー競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/event/2023/34rookies/kyougi.html","includeGenders":["男子","女子"]},
-{"id":"kanto-rookies-33-2022","year":2022,"name":"第33回関東学生新人陸上競技選手権大会兼関東学生リレー競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/2022/kgrr/33shinjin/hp/kyougi.html","includeGenders":["男子","女子"]}
+{"id":"kanto-rookies-33-2022","year":2022,"name":"第33回関東学生新人陸上競技選手権大会兼関東学生リレー競技会","adapter":"kgrr-web-results","indexUrl":"https://www.kgrr.org/event/2022/kgrr/33shinjin/hp/kyougi.html","includeGenders":["男子","女子"]},
+{"id":"tokyo-big6-59-2026","year":2026,"name":"第59回東京六大学対校陸上競技大会","adapter":"kgrr-web-results","indexUrl":"https://keiotf-result.capoo.jp/tokyobig6_2026/kyougi.html","includeGenders":["男子","女子"]}
 ]
