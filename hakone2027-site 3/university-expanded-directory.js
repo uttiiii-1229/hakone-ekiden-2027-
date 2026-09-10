@@ -14,8 +14,6 @@
     return typeof window.canonicalAthleteName==='function' ? window.canonicalAthleteName(raw) : raw;
   }
   const hakone2026Order=['青山学院大学','國學院大學','順天堂大学','早稲田大学','中央大学','駒澤大学','城西大学','創価大学','帝京大学','日本大学','中央学院大学','東海大学','神奈川大学','東洋大学','日本体育大学','東京国際大学','山梨学院大学','東京農業大学','大東文化大学','立教大学'];
-  // 第102回（2026年）終了時点の箱根駅伝・大学別通算出場回数。
-  // 2007〜2026のサイト収録期間だけでなく、第1回からの通算回数を表示する。
   const hakoneAllTimeAppearances={
     '中央大学':99,'早稲田大学':95,'日本大学':92,'法政大学':85,'東洋大学':84,'日本体育大学':78,
     '専修大学':72,'東京農業大学':71,'順天堂大学':67,'明治大学':65,'筑波大学':61,'駒澤大学':60,
@@ -52,6 +50,13 @@
     const remain=centiseconds-m*6000;
     return `${m}:${(remain/100).toFixed(2).padStart(5,'0')}`;
   }
+  function sortCurrentRows(rows){
+    return rows.slice().sort((a,b)=>{
+      const ag=Number(String(a?.[1]??'').replace(/[^0-9]/g,''))||0;
+      const bg=Number(String(b?.[1]??'').replace(/[^0-9]/g,''))||0;
+      return bg-ag||String(a?.[0]||'').localeCompare(String(b?.[0]||''),'ja',{sensitivity:'base'});
+    });
+  }
   function top10Averages(team){
     const rows=pbRows(team);
     const metrics=[['5000m',2,'track'],['10000m',3,'track'],['ハーフ',4,'half']];
@@ -82,16 +87,7 @@
     }
     return [...map.values()].map(x=>{
       const years=[...x.years].sort((a,b)=>a-b);
-      return {
-        team:x.team,
-        appearances:hakoneAllTimeAppearances[x.team]||years.length,
-        periodAppearances:years.length,
-        years,
-        first:years[0],
-        latest:years[years.length-1],
-        runs:x.runs,
-        athleteCount:x.athletes.size
-      };
+      return {team:x.team,appearances:hakoneAllTimeAppearances[x.team]||years.length,periodAppearances:years.length,years,first:years[0],latest:years[years.length-1],runs:x.runs,athleteCount:x.athletes.size};
     }).sort((a,b)=>{
       const ai=hakone2026Order.indexOf(a.team),bi=hakone2026Order.indexOf(b.team);
       if(ai>=0||bi>=0){
@@ -103,13 +99,13 @@
   }
   function pbRows(team){
     if(window.currentAthletePbResolver?.currentRows){
-      return window.currentAthletePbResolver.currentRows(team).map(r=>[
+      return sortCurrentRows(window.currentAthletePbResolver.currentRows(team).map(r=>[
         r.name,r.grade||'',r.pb5000||'—',r.pb10000||'—',r.half||'—'
-      ]);
+      ]));
     }
-    return typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
+    const legacy=typeof expandedTopAthletes2027!=='undefined' ? (expandedTopAthletes2027[team]||[]) : [];
+    return sortCurrentRows(legacy);
   }
-
   function averageRanks(stats){
     const ranks={};
     ['5000m','10000m','ハーフ'].forEach(metric=>{
@@ -127,19 +123,6 @@
   }
   function pbTableRows(rows){
     return rows.map(r=>'<tr><td data-label="選手"><strong>'+r[0]+'</strong></td><td data-label="学年">'+gradeLabel(r[1])+'</td><td data-label="5000m PB">'+r[2]+'</td><td data-label="10000m PB">'+r[3]+'</td><td data-label="ハーフ PB">'+r[4]+'</td></tr>').join('');
-  }
-  function splitFeaturedRows(team,rows){
-    const key=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'');
-    const selected=window.expandedTopAthletes2027?.[team]||[];
-    const rowMap=new Map(rows.map(r=>[key(r[0]),r]));
-    const top=[];
-    selected.forEach(r=>{
-      const hit=rowMap.get(key(r?.[0]));
-      if(hit&&!top.includes(hit)&&top.length<10) top.push(hit);
-    });
-    rows.forEach(r=>{if(top.length<10&&!top.includes(r)) top.push(r);});
-    const topSet=new Set(top);
-    return {top,rest:rows.filter(r=>!topSet.has(r))};
   }
   function historicalAthletes(team){
     const db=window.hakonePhase2StaticDB||{};
@@ -160,13 +143,11 @@
   }
   function athleteDataBlock(team){
     const rows=pbRows(team);
-    let pb='<div class="notice">2026年度の現役選手を、TOP10とその他の選手に分けて表示しています。</div>';
+    let pb='<div class="notice">2026年度の現役選手を、学年順・同学年内は五十音順で1つの一覧に表示しています。</div>';
     if(rows.length){
-      const split=splitFeaturedRows(team,rows);
       const tableHead='<table><thead><tr><th>選手</th><th>学年</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead>';
       pb='<h3>現行選手PB <span class="muted">（'+rows.length+'名）</span></h3>'+
-        '<div class="table-wrap compact university-pb-table">'+tableHead+'<tbody>'+pbTableRows(split.top)+'</tbody></table></div>'+
-        (split.rest.length?'<details class="university-other-athletes"><summary>その他の選手（'+split.rest.length+'名）</summary><div class="table-wrap compact university-pb-table">'+tableHead+'<tbody>'+pbTableRows(split.rest)+'</tbody></table></div></details>':'');
+        '<div class="table-wrap compact university-pb-table">'+tableHead+'<tbody>'+pbTableRows(rows)+'</tbody></table></div>';
     }
     const hist=historicalAthletes(team);
     const history='<details class="historical-athletes-details"><summary>箱根歴代出走選手（2007〜2026）</summary><div class="table-wrap compact"><table><thead><tr><th>選手</th><th>出走</th><th>年度</th><th>区間</th></tr></thead><tbody>'+hist.map(a=>'<tr><td><strong>'+a.name+'</strong></td><td>'+a.runs+'回</td><td>'+a.years.join('・')+'</td><td>'+a.sections.map(s=>s+'区').join('・')+'</td></tr>').join('')+'</tbody></table></div></details>';
