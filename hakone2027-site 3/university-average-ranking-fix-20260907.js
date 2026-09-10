@@ -19,6 +19,7 @@
     return `${m}:${(r/100).toFixed(2).padStart(5,'0')}`;
   };
   const metricDefs=[['5000m',2,false],['10000m',3,false],['ハーフ',4,true]];
+  const ja=new Intl.Collator('ja',{usage:'sort',sensitivity:'base',numeric:true});
   function rows(team){ return window.expandedTopAthletes2027?.[team]||[]; }
   function metric(team,idx,half){
     const vals=rows(team).map(r=>toSec(r[idx])).filter(Number.isFinite).sort((a,b)=>a-b).slice(0,10);
@@ -36,6 +37,27 @@
     return out;
   }
   function teamName(card){ return card.querySelector('.university-history-head h2')?.textContent?.trim()||''; }
+  function gradeNumber(row){
+    const text=row.children?.[1]?.textContent||'';
+    const m=text.match(/([1-5])/);
+    return m?Number(m[1]):0;
+  }
+  function athleteName(row){ return row.children?.[0]?.textContent?.trim()||''; }
+  function normalizeRoster(card){
+    const details=card.querySelector('.university-pb-details');
+    if(!details) return;
+    const tables=[...details.querySelectorAll('.university-pb-table table')];
+    if(!tables.length) return;
+    const main=tables[0],tbody=main.querySelector('tbody');
+    if(!tbody) return;
+    tables.slice(1).forEach(table=>table.querySelectorAll('tbody tr').forEach(tr=>tbody.appendChild(tr)));
+    const all=[...tbody.querySelectorAll('tr')];
+    all.sort((a,b)=>gradeNumber(b)-gradeNumber(a)||ja.compare(athleteName(a),athleteName(b)));
+    all.forEach(tr=>tbody.appendChild(tr));
+    details.querySelectorAll('.university-other-athletes').forEach(el=>el.remove());
+    const h3=details.querySelector('h3');
+    if(h3) h3.innerHTML=`現行選手PB <span class="muted">（${all.length}名）</span>`;
+  }
   function apply(){
     if(location.hash.replace('#','')!=='teams') return;
     const rank=ranked();
@@ -52,6 +74,7 @@
     }
 
     document.querySelectorAll('.university-history-card').forEach(card=>{
+      normalizeRoster(card);
       const team=teamName(card); if(!team)return;
       const cells=[...card.querySelectorAll('.top10-average-grid > div')];
       metricDefs.forEach(([label,idx,half],i)=>{
