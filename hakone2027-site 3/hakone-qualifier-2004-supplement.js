@@ -67,3 +67,6 @@
   existing.supplementalSources = Array.from(new Set([...(existing.supplementalSources||[]), ...record.supplementalSources]));
   existing.notes = existing.notes || record.notes;
 })();
+
+// Load the next historical supplement synchronously while index.html is still parsing.
+document.write('<script src="hakone-qualifier-2003-supplement.js"><\/script>');
