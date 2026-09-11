@@ -68,5 +68,5 @@
   existing.notes = existing.notes || record.notes;
 })();
 
-// Load the next historical supplement synchronously while index.html is still parsing.
-document.write('<script src="hakone-qualifier-2003-supplement.js"><\/script>');
+// Load the next historical supplements synchronously while index.html is still parsing.
+document.write('<script src="hakone-qualifier-2003-supplement.js"><\/script><script src="hakone-qualifier-2002-supplement.js"><\/script>');
