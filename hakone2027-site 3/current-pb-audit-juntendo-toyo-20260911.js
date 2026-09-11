@@ -1,6 +1,7 @@
-// Current-athlete PB audit: Juntendo / Toyo — 2026-09-11
-// Source: Kanto Student Athletics Federation official 2026 Kanto Inter-University results.
-// Only results explicitly marked PB by the official result system are applied. Missing values are never inferred.
+// Current-athlete PB audit: Juntendo / Toyo / Senshu — updated 2026-09-12
+// Sources: Kanto Student Athletics Federation official 2026 Kanto Inter-University results;
+// Senshu University Athletics Club official 2026 meet results.
+// Only results explicitly marked PB/self-best by the official result system are applied. Missing values are never inferred.
 (() => {
   const audits={
     '順天堂大学':{
@@ -8,11 +9,22 @@
     },
     '東洋大学':{
       '濱中 尊':['—','28:56.97','—']
+    },
+    '専修大学':{
+      '佐藤 瑞城':['—','30:23.18','—'],
+      '水津 智哉':['—','29:48.88','—'],
+      '小川 恵裕':['14:42.79','—','—'],
+      '下江 太翔':['14:44.03','—','—'],
+      '戸津 大輝':['14:25.80','—','—'],
+      '田口 萩太':['14:26.94','—','—']
     }
   };
   const grades={
     '順天堂大学':{'松尾 和真':'2'},
-    '東洋大学':{'濱中 尊':'4'}
+    '東洋大学':{'濱中 尊':'4'},
+    '専修大学':{
+      '佐藤 瑞城':'1','水津 智哉':'3','小川 恵裕':'1','下江 太翔':'1','戸津 大輝':'3','田口 萩太':'3'
+    }
   };
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
   Object.entries(audits).forEach(([team,pb])=>{
@@ -51,7 +63,7 @@
   }
 
   const resolver=window.currentAthletePbResolver;
-  if(!resolver?.currentRows || resolver.__juntendoToyoOfficialAudit20260911)return;
+  if(!resolver?.currentRows || resolver.__juntendoToyoSenshuOfficialAudit20260912)return;
   const base=resolver.currentRows.bind(resolver);
   const teamNorm=s=>String(s||'').normalize('NFKC').replace('國學院大学','國學院大學').trim();
   resolver.currentRows=function(currentTeam){
@@ -65,7 +77,8 @@
       const row=byName.get(key)||{name,grade:grades[team]?.[name]||'',pb5000:'—',pb10000:'—',half:'—',sources:[]};
       row.grade=grades[team]?.[name]||row.grade||'';
       row.pb5000=better(row.pb5000,v[0]); row.pb10000=better(row.pb10000,v[1]); row.half=better(row.half,v[2]);
-      if(!row.sources.includes('KGRR official 2026'))row.sources.push('KGRR official 2026');
+      const source=team==='専修大学'?'Senshu official 2026':'KGRR official 2026';
+      if(!row.sources.includes(source))row.sources.push(source);
       if(!byName.has(key)){rows.push(row);byName.set(key,row);}
     });
     return rows.sort((a,b)=>{
@@ -74,5 +87,5 @@
       return (a10??Infinity)-(b10??Infinity)||(a5??Infinity)-(b5??Infinity)||a.name.localeCompare(b.name,'ja');
     });
   };
-  resolver.__juntendoToyoOfficialAudit20260911=true;
+  resolver.__juntendoToyoSenshuOfficialAudit20260912=true;
 })();
