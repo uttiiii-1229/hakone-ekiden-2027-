@@ -51,12 +51,3 @@
     patchHomeRankingVisuals();
   }
 })();
-
-// Load the final race-team drilldown patch after all race page templates have been registered.
-(() => {
-  if(document.querySelector('script[data-live-team-drilldown-fix]')) return;
-  const script=document.createElement('script');
-  script.src='race-team-drilldown-live-fix.js?v=20260911-final1';
-  script.dataset.liveTeamDrilldownFix='';
-  document.body.appendChild(script);
-})();
