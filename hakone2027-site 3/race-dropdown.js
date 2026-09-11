@@ -1,3 +1,14 @@
+// Move 大会・記録会 from 大学データ to the bottom of 大会データ before dropdown handlers bind.
+(() => {
+  const universityMenu=document.querySelector('.university-dropdown-menu');
+  const raceMenu=document.querySelector('.race-dropdown-menu:not(.university-dropdown-menu):not(.topic-dropdown-menu)');
+  const meets=universityMenu?.querySelector('[data-route="meets"]');
+  if(meets&&raceMenu){
+    meets.classList.remove('university-dropdown-item');
+    raceMenu.appendChild(meets);
+  }
+})();
+
 (() => {
   const dropdown=document.querySelector('.race-dropdown');
   const toggle=document.querySelector('.race-dropdown-toggle');
@@ -30,13 +41,13 @@
   if(typeof originalRender==='function'){
     window.render=function(route='home'){
       originalRender(route);
-      const raceRoutes=['history','qualifier','izumo','zennihon'];
+      const raceRoutes=['history','qualifier','izumo','zennihon','meets'];
       dropdown.classList.toggle('active',raceRoutes.includes(route));
       dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon'].includes(route));
+    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon','meets'].includes(route));
     dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
@@ -89,13 +100,13 @@
   if(typeof previousRender==='function'){
     window.render=function(route='home'){
       previousRender(route);
-      const routes=['teams','meets','pbupdates','grade-rankings'];
+      const routes=['teams','pbupdates','grade-rankings'];
       dropdown.classList.toggle('active',routes.includes(route));
       dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['teams','meets','pbupdates','grade-rankings'].includes(route));
+    dropdown.classList.toggle('active',['teams','pbupdates','grade-rankings'].includes(route));
     dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
