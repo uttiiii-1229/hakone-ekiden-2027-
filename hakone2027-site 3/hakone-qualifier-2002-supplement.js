@@ -44,19 +44,24 @@
     notes: '2002年10月19日開催の第79回箱根駅伝予選会。日本テレビ公式の総合表に掲載された1〜32位を収録（公式本文は参加34校・396名と記載するが、残る2校は総合表に掲載されないため推測で追加しない）。7位以下は関東インカレポイント反映後の公式最終総合タイムを採用。個人成績は公式掲載の上位10名。学年は第79回本大会の公式選手一覧等で同一年度に確認できた選手のみ設定し、土井洋志は確認不足のため未設定。河野孝行は第78回本大会で2年と確認できるため、2002年10月時点は3年として収録。既存の確認済み値は空データで上書きしない。'
   };
   const existing = window.hakoneQualifierDB.years['2002'];
-  if (!existing) { window.hakoneQualifierDB.years['2002'] = record; return; }
-  if (!Array.isArray(existing.teams)) existing.teams = [];
-  const normTeam = s => String(s||'').normalize('NFKC').replace(/國學院大学/g,'國學院大學').replace(/[\s　]/g,'');
-  const teamByName = new Map(existing.teams.map(x => [normTeam(x.team), x]));
-  record.teams.forEach(x => { const k=normTeam(x.team), p=teamByName.get(k); if(!p){existing.teams.push(x);teamByName.set(k,x);return;} if((p.rank==null||p.rank==='')&&x.rank!=null)p.rank=x.rank; if(!p.time&&x.time)p.time=x.time; if(!p.status&&x.status)p.status=x.status; });
-  existing.teams.sort((a,b)=>(a.rank ?? 999)-(b.rank ?? 999));
-  if (!Array.isArray(existing.individuals)) existing.individuals = [];
-  const normName = s => String(s||'').normalize('NFKC').replace(/[\s　・.･]/g,'').toLowerCase();
-  const personKey = x => `${x.rank}|${normName(x.name)}|${normTeam(x.team)}`;
-  const people = new Map(existing.individuals.map(x => [personKey(x), x]));
-  record.individuals.forEach(x => { const k=personKey(x), p=people.get(k); if(!p){existing.individuals.push(x);people.set(k,x);return;} if(!p.time&&x.time)p.time=x.time; if(!p.grade&&x.grade)p.grade=x.grade; });
-  existing.individuals.sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
-  existing.source = existing.source || record.source;
-  existing.supplementalSources = Array.from(new Set([...(existing.supplementalSources||[]), ...record.supplementalSources]));
-  existing.notes = existing.notes || record.notes;
+  if (!existing) { window.hakoneQualifierDB.years['2002'] = record; }
+  else {
+    if (!Array.isArray(existing.teams)) existing.teams = [];
+    const normTeam = s => String(s||'').normalize('NFKC').replace(/國學院大学/g,'國學院大學').replace(/[\s　]/g,'');
+    const teamByName = new Map(existing.teams.map(x => [normTeam(x.team), x]));
+    record.teams.forEach(x => { const k=normTeam(x.team), p=teamByName.get(k); if(!p){existing.teams.push(x);teamByName.set(k,x);return;} if((p.rank==null||p.rank==='')&&x.rank!=null)p.rank=x.rank; if(!p.time&&x.time)p.time=x.time; if(!p.status&&x.status)p.status=x.status; });
+    existing.teams.sort((a,b)=>(a.rank ?? 999)-(b.rank ?? 999));
+    if (!Array.isArray(existing.individuals)) existing.individuals = [];
+    const normName = s => String(s||'').normalize('NFKC').replace(/[\s　・.･]/g,'').toLowerCase();
+    const personKey = x => `${x.rank}|${normName(x.name)}|${normTeam(x.team)}`;
+    const people = new Map(existing.individuals.map(x => [personKey(x), x]));
+    record.individuals.forEach(x => { const k=personKey(x), p=people.get(k); if(!p){existing.individuals.push(x);people.set(k,x);return;} if(!p.time&&x.time)p.time=x.time; if(!p.grade&&x.grade)p.grade=x.grade; });
+    existing.individuals.sort((a,b)=>(a.rank ?? 9999)-(b.rank ?? 9999));
+    existing.source = existing.source || record.source;
+    existing.supplementalSources = Array.from(new Set([...(existing.supplementalSources||[]), ...record.supplementalSources]));
+    existing.notes = existing.notes || record.notes;
+  }
 })();
+
+// Continue loading the oldest historical supplements while index.html is parsing.
+document.write('<script src="hakone-qualifier-2001-supplement.js"><\/script><script src="hakone-qualifier-2000-supplement.js"><\/script>');
