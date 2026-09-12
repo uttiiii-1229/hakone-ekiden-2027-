@@ -155,11 +155,22 @@
     script.async=false;
     document.body.appendChild(script);
   }
-  if(!document.querySelector('script[data-pb-improvement-ranking]')){
+  function loadImprovementRanking(){
+    if(document.querySelector('script[data-pb-improvement-ranking]'))return;
     const script=document.createElement('script');
-    script.src='pb-improvement-ranking.js?v=20260912-imp1';
+    script.src='pb-improvement-ranking.js?v=20260912-imp2';
     script.dataset.pbImprovementRanking='';
     script.async=false;
     document.body.appendChild(script);
+  }
+  if(window.pbImprovementVerified2026){
+    loadImprovementRanking();
+  }else if(!document.querySelector('script[data-pb-improvement-data]')){
+    const data=document.createElement('script');
+    data.src='pb-improvement-ranking-data-20260912.js?v=20260912-data1';
+    data.dataset.pbImprovementData='';
+    data.async=false;
+    data.onload=loadImprovementRanking;
+    document.body.appendChild(data);
   }
 })();
