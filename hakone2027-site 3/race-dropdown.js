@@ -7,8 +7,18 @@
     meets.classList.remove('university-dropdown-item');
     raceMenu.appendChild(meets);
   }
-  // PB更新ランキングは、更新幅データを実装するまでナビから外す。
-  document.querySelectorAll('[data-route="pbupdates"]').forEach(el=>el.remove());
+  // 大学データは「大学・選手データ → 学年別ランキング → PB更新幅ランキング」の順に統一。
+  const grade=universityMenu?.querySelector('[data-route="grade-rankings"]');
+  const pb=universityMenu?.querySelector('[data-route="pbupdates"]');
+  if(pb){pb.textContent='PB更新幅ランキング';pb.classList.add('university-dropdown-item');}
+  if(universityMenu&&grade)universityMenu.appendChild(grade);
+  if(universityMenu&&pb)universityMenu.appendChild(pb);
+  const footer=document.querySelector('.footer-links');
+  const footerGrade=footer?.querySelector('[data-route="grade-rankings"]');
+  const footerPb=footer?.querySelector('[data-route="pbupdates"]');
+  if(footerPb)footerPb.textContent='PB更新幅ランキング';
+  if(footer&&footerGrade)footer.appendChild(footerGrade);
+  if(footer&&footerPb)footer.appendChild(footerPb);
 })();
 
 (() => {
@@ -102,13 +112,13 @@
   if(typeof previousRender==='function'){
     window.render=function(route='home'){
       previousRender(route);
-      const routes=['teams','grade-rankings'];
+      const routes=['teams','grade-rankings','pbupdates'];
       dropdown.classList.toggle('active',routes.includes(route));
       dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['teams','grade-rankings'].includes(route));
+    dropdown.classList.toggle('active',['teams','grade-rankings','pbupdates'].includes(route));
     dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
@@ -136,11 +146,20 @@
   }
 })();
 
-// Load the consolidated all-years / grade PB ranking after university-data-pages.js has registered its base templates.
+// Load ranking extensions after university-data-pages.js has registered its base templates.
 (() => {
-  if(document.querySelector('script[data-grade-rankings-all-years]')) return;
-  const script=document.createElement('script');
-  script.src='grade-rankings-all-years.js?v=20260912-all1';
-  script.dataset.gradeRankingsAllYears='';
-  document.body.appendChild(script);
+  if(!document.querySelector('script[data-grade-rankings-all-years]')){
+    const script=document.createElement('script');
+    script.src='grade-rankings-all-years.js?v=20260912-all2';
+    script.dataset.gradeRankingsAllYears='';
+    script.async=false;
+    document.body.appendChild(script);
+  }
+  if(!document.querySelector('script[data-pb-improvement-ranking]')){
+    const script=document.createElement('script');
+    script.src='pb-improvement-ranking.js?v=20260912-imp1';
+    script.dataset.pbImprovementRanking='';
+    script.async=false;
+    document.body.appendChild(script);
+  }
 })();
