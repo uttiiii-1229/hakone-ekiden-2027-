@@ -1,0 +1,32 @@
+window.pbImprovementVerified2026=[
+  {team:'早稲田大学',name:'山口 竣平',metric:'pb5000',before:'13:32.53',after:'13:17.19',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'Ekiden-Metrics / ホクレンDC'},
+  {team:'早稲田大学',name:'吉倉 ナヤブ直希',metric:'pb5000',before:'14:16.01',after:'13:37.61',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'Ekiden-Metrics / ホクレンDC'},
+  {team:'創価大学',name:'村上 遵世',metric:'pb5000',before:'13:57.76',after:'13:39.46',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'LongJog Records / 4years.'},
+  {team:'青山学院大学',name:'平松 享祐',metric:'pb5000',before:'13:46.06',after:'13:34.05',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'サイト既存PB / 4years.'},
+  {team:'青山学院大学',name:'黒田 然',metric:'pb5000',before:'13:55.10',after:'13:42.18',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'JAAF 2025 / Ekiden-Metrics'},
+  {team:'青山学院大学',name:'佐藤 愛斗',metric:'pb5000',before:'13:44.48',after:'13:42.37',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'JAAF 2025 / 4years.'},
+  {team:'東京国際大学',name:'アモス ベット',metric:'pb5000',before:'13:16.85',after:'13:11.33',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'LongJog / 4years.'},
+  {team:'山梨学院大学',name:'ブライアン キピエゴ',metric:'pb5000',before:'13:22.58',after:'13:19.08',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'LongJog / 4years.'},
+  {team:'中央大学',name:'藤田 大智',metric:'pb5000',before:'13:28.93',after:'13:28.68',meet:'第110回日本陸上競技選手権大会',source:'中央大学公式 / LongJog'},
+
+  {team:'早稲田大学',name:'山口 竣平',metric:'pb10000',before:'29:11.26',after:'27:59.47',meet:'第95回日本学生陸上競技対校選手権大会',source:'Ekiden-Metrics / JAAF'},
+  {team:'早稲田大学',name:'吉倉 ナヤブ直希',metric:'pb10000',before:'28:46.86',after:'28:13.07',meet:'第95回日本学生陸上競技対校選手権大会',source:'Ekiden-Metrics / JAAF'},
+  {team:'筑波大学',name:'川﨑 颯',metric:'pb10000',before:'28:32.10',after:'28:15.69',meet:'第95回日本学生陸上競技対校選手権大会',source:'日本テレビ箱根駅伝 / 筑波大学公式'},
+  {team:'東海大学',name:'中野 純平',metric:'pb10000',before:'29:09.61',after:'28:19.39',meet:'第105回関東学生陸上競技対校選手権大会',source:'関東インカレ結果 / 東海大学記録'},
+  {team:'東海大学',name:'南坂 柚汰',metric:'pb10000',before:'28:42.31',after:'28:21.62',meet:'第105回関東学生陸上競技対校選手権大会',source:'関東インカレスタートリスト・結果'},
+  {team:'順天堂大学',name:'松尾 和真',metric:'pb10000',before:'28:30.99',after:'28:23.90',meet:'第105回関東学生陸上競技対校選手権大会',source:'関東インカレスタートリスト・結果'},
+  {team:'大東文化大学',name:'松浦 輝仁',metric:'pb10000',before:'28:51.98',after:'28:32.83',meet:'第105回関東学生陸上競技対校選手権大会',source:'関東インカレスタートリスト・結果'},
+  {team:'山梨学院大学',name:'占部 大和',metric:'pb10000',before:'28:56.53',after:'28:34.91',meet:'第105回関東学生陸上競技対校選手権大会',source:'関東インカレスタートリスト・結果'},
+
+  {team:'創価大学',name:'齊藤 大空',metric:'half',before:'1:03:19',after:'1:01:35',meet:'第29回日本学生ハーフマラソン選手権大会',source:'創価大学公式'},
+  {team:'創価大学',name:'榎木 凜太朗',metric:'half',before:'1:02:37',after:'1:01:43',meet:'第29回日本学生ハーフマラソン選手権大会',source:'創価大学公式'},
+  {team:'創価大学',name:'大倉 凰來',metric:'half',before:'1:04:49',after:'1:03:49',meet:'第29回日本学生ハーフマラソン選手権大会',source:'創価大学公式'},
+  {team:'國學院大學',name:'辻原 輝',metric:'half',before:'1:00:51',after:'1:00:33',meet:'ベルリンハーフマラソン2026',source:'月陸Online'},
+  {team:'國學院大學',name:'浅野 結太',metric:'half',before:'1:01:27',after:'1:01:12',meet:'ベルリンハーフマラソン2026',source:'月陸Online'},
+  {team:'青山学院大学',name:'小河原 陽琉',metric:'half',before:'1:02:14',after:'1:01:30',meet:'ベルリンハーフマラソン2026',source:'月陸Online'},
+  {team:'早稲田大学',name:'小平 敦之',metric:'half',before:'1:02:28',after:'1:01:54',meet:'第29回日本学生ハーフマラソン選手権大会',source:'日本テレビ箱根駅伝 / 早稲田大学'},
+  {team:'駒澤大学',name:'菅谷 希弥',metric:'half',before:'1:01:24',after:'1:01:12',meet:'第29回日本学生ハーフマラソン選手権大会',source:'日本テレビ箱根駅伝 / 駒澤大学'},
+  {team:'駒澤大学',name:'安原 海晴',metric:'half',before:'1:02:08',after:'1:01:45',meet:'第29回日本学生ハーフマラソン選手権大会',source:'駒澤大学 / 上尾ハーフ記録'},
+  {team:'専修大学',name:'ダンカン マイナ',metric:'half',before:'1:01:47',after:'1:01:46',meet:'第29回日本学生ハーフマラソン選手権大会',source:'専大スポーツ'},
+  {team:'専修大学',name:'丹 柊太郎',metric:'half',before:'1:03:35',after:'1:01:56',meet:'第29回日本学生ハーフマラソン選手権大会',source:'専大スポーツ'}
+];
