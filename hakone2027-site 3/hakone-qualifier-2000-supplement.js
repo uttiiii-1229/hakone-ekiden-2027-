@@ -14,18 +14,23 @@
     individuals: [
       {rank:1,time:'59:17',name:'J. カーニー',team:'平成国際大学'},
       {rank:2,time:'59:33',name:'F. ムヒア',team:'平成国際大学'},
-      {rank:3,time:'1:00:51',name:'土井 洋志',team:'法政大学'},
-      {rank:4,time:'1:01:03',name:'松浦 仁一',team:'大東文化大学'},
+      {rank:3,time:'1:00:51',name:'土井 洋志',team:'法政大学',grade:2},
+      {rank:4,time:'1:01:03',name:'松浦 仁一',team:'大東文化大学',grade:4},
       {rank:5,time:'1:01:13',name:'尾田 賢典',team:'関東学院大学'},
       {rank:6,time:'1:01:15',name:'石川 末廣',team:'東洋大学'},
       {rank:7,time:'1:01:19',name:'和田 昇',team:'東京農業大学'},
-      {rank:8,time:'1:01:25',name:'安部 晋太郎',team:'拓殖大学'},
+      {rank:8,time:'1:01:25',name:'安部 晋太郎',team:'拓殖大学',grade:3},
       {rank:9,time:'1:01:30',name:'寺尾 成人',team:'関東学院大学'},
       {rank:10,time:'1:01:30',name:'新妻 拓弥',team:'東京大学'}
     ],
     source: 'https://www.ntv.co.jp/hakone/backnumber/77/yosen_sougouresult/',
-    supplementalSources: ['https://www.ntv.co.jp/hakone/backnumber/77/yosen_kojinresult/'],
-    notes: '2000年開催の第77回箱根駅伝予選会。日本テレビ公式本文は30校334名出場とするが、総合表は1〜10位のみ掲載されているため確認できた10校のみ収録。個人成績は公式掲載の上位10名。公式ページの大学略称はDBの標準表記へ正規化。学年は確認できないため未設定。既存確認済み値を空データで上書きしない。'
+    supplementalSources: [
+      'https://www.ntv.co.jp/hakone/backnumber/77/yosen_kojinresult/',
+      'https://www.ntv.co.jp/hakone/backnumber/77/team/hosei.html',
+      'https://www.ntv.co.jp/hakone/backnumber/77/team/daito.html',
+      'https://www.ntv.co.jp/hakone/backnumber/77/team/takushoku.html'
+    ],
+    notes: '2000年開催の第77回箱根駅伝予選会。日本テレビ公式本文は30校334名出場とするが、総合表は1〜10位のみ掲載されているため確認できた10校のみ収録。個人成績は公式掲載の上位10名。公式ページの大学略称はDBの標準表記へ正規化。学年は第77回本戦の日本テレビ公式選手名簿で同一選手を確認できた土井洋志（2年）、松浦仁一（4年）、安部晋太郎（3年）のみ追加し、その他は推測せず未設定。既存確認済み値を空データで上書きしない。'
   };
   const existing = window.hakoneQualifierDB.years['2000'];
   if (!existing) { window.hakoneQualifierDB.years['2000'] = record; return; }
