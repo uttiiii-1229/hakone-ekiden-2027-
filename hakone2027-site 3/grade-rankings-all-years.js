@@ -82,16 +82,7 @@
     if(result) result.innerHTML=table();
   });
 
-  if(typeof templates!=='undefined'){
-    templates['grade-rankings']=template;
-    // Keep old bookmarked links useful without exposing the old placeholder PB update page.
-    templates.pbupdates=template;
-  }
+  if(typeof templates!=='undefined') templates['grade-rankings']=template;
   const route=location.hash.replace('#','');
-  if(route==='pbupdates'&&typeof render==='function'){
-    history.replaceState(null,'','#grade-rankings');
-    render('grade-rankings');
-  }else if(route==='grade-rankings'&&typeof render==='function'){
-    render('grade-rankings');
-  }
+  if(route==='grade-rankings'&&typeof render==='function') render('grade-rankings');
 })();
