@@ -1,5 +1,5 @@
 // Historical supplement: 2021 (第98回) 箱根駅伝予選会
-// Team standings: 41 teams. Individual results: verified top 10 with grades.
+// Team standings: 41 teams. Individual results: official KGRR results, ranks 1-42; grades retained only where previously verified.
 (() => {
   if (!window.hakoneQualifierDB) window.hakoneQualifierDB = { years: {} };
   if (!window.hakoneQualifierDB.years) window.hakoneQualifierDB.years = {};
@@ -61,19 +61,87 @@
       {rank:7,time:'1:02:15',name:'ポール オニエゴ',grade:'4',team:'山梨学院大学'},
       {rank:8,time:'1:02:46',name:'栗原 啓吾',grade:'4',team:'中央学院大学'},
       {rank:9,time:'1:02:47',name:'加藤 大誠',grade:'3',team:'明治大学'},
-      {rank:10,time:'1:02:49',name:'髙瀨 桂',grade:'3',team:'専修大学'}
+      {rank:10,time:'1:02:49',name:'髙瀨 桂',grade:'3',team:'専修大学'},
+      {rank:11,time:'1:02:50',name:'チャールズ ドゥング',team:'日本大学'},
+      {rank:12,time:'1:02:50',name:'鈴木 聖人',team:'明治大学'},
+      {rank:13,time:'1:02:51',name:'吉居 大和',team:'中央大学'},
+      {rank:14,time:'1:02:52',name:'高槻 芳照',team:'東京農業大学'},
+      {rank:15,time:'1:02:55',name:'藤本 珠輝',team:'日本体育大学'},
+      {rank:16,time:'1:02:58',name:'福谷 颯太',team:'筑波大学'},
+      {rank:17,time:'1:02:58',name:'児玉 真輝',team:'明治大学'},
+      {rank:18,time:'1:02:59',name:'櫛田 佳希',team:'明治大学'},
+      {rank:19,time:'1:03:00',name:'斎藤 俊輔',team:'立教大学'},
+      {rank:20,time:'1:03:01',name:'手嶋 杏丞',team:'明治大学'},
+      {rank:21,time:'1:03:01',name:'松倉 唯斗',team:'山梨学院大学'},
+      {rank:22,time:'1:03:02',name:'中山 雄太',team:'日本薬科大学'},
+      {rank:23,time:'1:03:04',name:'ダンカン キサイサ',team:'専修大学'},
+      {rank:24,time:'1:03:09',name:'村上 航大',team:'上武大学'},
+      {rank:25,time:'1:03:09',name:'橋本 大輝',team:'明治大学'},
+      {rank:26,time:'1:03:14',name:'小澤 大輝',team:'明治大学'},
+      {rank:27,time:'1:03:16',name:'木山 達哉',team:'山梨学院大学'},
+      {rank:28,time:'1:03:17',name:'並木 寧音',team:'東京農業大学'},
+      {rank:29,time:'1:03:23',name:'巻田 理空',team:'神奈川大学'},
+      {rank:30,time:'1:03:25',name:'荻原 陸斗',team:'国士舘大学'},
+      {rank:31,time:'1:03:27',name:'鎌田 航生',team:'法政大学'},
+      {rank:32,time:'1:03:28',name:'阿部 陽樹',team:'中央大学'},
+      {rank:33,time:'1:03:29',name:'砂岡 拓磨',team:'城西大学'},
+      {rank:34,time:'1:03:29',name:'中山 凜斗',team:'立教大学'},
+      {rank:35,time:'1:03:30',name:'竹井 祐貴',team:'亜細亜大学'},
+      {rank:36,time:'1:03:30',name:'手島 駿',team:'中央大学'},
+      {rank:37,time:'1:03:31',name:'合田 椋',team:'拓殖大学'},
+      {rank:38,time:'1:03:32',name:'小泉 樹',team:'法政大学'},
+      {rank:39,time:'1:03:34',name:'諸星 颯大',team:'育英大学'},
+      {rank:40,time:'1:03:34',name:'中澤 雄大',team:'中央大学'},
+      {rank:41,time:'1:03:35',name:'木榑 杏祐',team:'国士舘大学'},
+      {rank:42,time:'1:03:36',name:'盛本 聖也',team:'日本体育大学'}
     ],
-    source: 'https://hashirou.com/article/page/hakone-ekiden-preliminary-2021',
+    source: 'https://www.kgrr.org/competition/?id=57',
     supplementalSources: [
+      'https://www.kgrr.org/files/competition/57/40/kojin.pdf',
+      'https://hashirou.com/article/page/hakone-ekiden-preliminary-2021',
       'https://genkimanman.com/halfmarathon/hakoneyosen/hakoneyosen2021.html',
       'https://4years.asahi.com/article/14467832'
     ]
   };
+
+  const norm = (v) => String(v ?? '').replace(/\s+/g, '').replace(/[髙高]/g, '高');
+  const hasValue = (v) => v !== undefined && v !== null && String(v).trim() !== '';
+
   if (!existing) {
     window.hakoneQualifierDB.years['2021'] = record;
-  } else {
-    if (!Array.isArray(existing.teams) || existing.teams.length === 0) existing.teams = record.teams;
-    if (!Array.isArray(existing.individuals) || existing.individuals.length === 0) existing.individuals = record.individuals;
-    if (!existing.source) existing.source = record.source;
+    return;
   }
+
+  if (!Array.isArray(existing.teams)) existing.teams = [];
+  const teamKeys = new Set(existing.teams.map(x => `${Number(x.rank)||''}|${norm(x.team)}`));
+  for (const row of record.teams) {
+    const key = `${Number(row.rank)||''}|${norm(row.team)}`;
+    const found = existing.teams.find(x => `${Number(x.rank)||''}|${norm(x.team)}` === key);
+    if (!found) {
+      existing.teams.push(row);
+      teamKeys.add(key);
+    } else {
+      if (!hasValue(found.time) && hasValue(row.time)) found.time = row.time;
+      if (!hasValue(found.team) && hasValue(row.team)) found.team = row.team;
+    }
+  }
+
+  if (!Array.isArray(existing.individuals)) existing.individuals = [];
+  for (const row of record.individuals) {
+    const found = existing.individuals.find(x =>
+      Number(x.rank) === Number(row.rank) && norm(x.name) === norm(row.name) && norm(x.team) === norm(row.team)
+    );
+    if (!found) {
+      existing.individuals.push(row);
+    } else {
+      for (const field of ['time','name','team','grade']) {
+        if (!hasValue(found[field]) && hasValue(row[field])) found[field] = row[field];
+      }
+    }
+  }
+  existing.teams.sort((a,b) => (Number(a.rank)||9999) - (Number(b.rank)||9999));
+  existing.individuals.sort((a,b) => (Number(a.rank)||9999) - (Number(b.rank)||9999));
+  if (!existing.source) existing.source = record.source;
+  if (!Array.isArray(existing.supplementalSources)) existing.supplementalSources = [];
+  for (const src of record.supplementalSources) if (!existing.supplementalSources.includes(src)) existing.supplementalSources.push(src);
 })();
