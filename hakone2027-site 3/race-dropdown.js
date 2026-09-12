@@ -155,12 +155,21 @@
     script.async=false;
     document.body.appendChild(script);
   }
+  function loadGrowthMode(){
+    if(document.querySelector('script[data-pb-growth-mode]'))return;
+    const script=document.createElement('script');
+    script.src='pb-growth-mode.js?v=20260912-growth1';
+    script.dataset.pbGrowthMode='';
+    script.async=false;
+    document.body.appendChild(script);
+  }
   function loadImprovementRanking(){
     if(document.querySelector('script[data-pb-improvement-ranking]'))return;
     const script=document.createElement('script');
     script.src='pb-improvement-ranking.js?v=20260912-imp2';
     script.dataset.pbImprovementRanking='';
     script.async=false;
+    script.onload=loadGrowthMode;
     document.body.appendChild(script);
   }
   if(window.pbImprovementVerified2026){
