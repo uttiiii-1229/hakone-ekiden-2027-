@@ -144,3 +144,8 @@
   };
   resolver.__aoyamaOfficialAudit20260913=true;
 })();
+
+// Synchronously load the Kanagawa University official profile audit before ranking/page scripts run.
+if(typeof document!=='undefined' && document.readyState==='loading'){
+  document.write('<script src="current-pb-audit-kanagawa-20260913.js?v=20260913-audit1"><\/script>');
+}
