@@ -7,6 +7,8 @@
     meets.classList.remove('university-dropdown-item');
     raceMenu.appendChild(meets);
   }
+  // PB更新ランキングは、更新幅データを実装するまでナビから外す。
+  document.querySelectorAll('[data-route="pbupdates"]').forEach(el=>el.remove());
 })();
 
 (() => {
@@ -100,13 +102,13 @@
   if(typeof previousRender==='function'){
     window.render=function(route='home'){
       previousRender(route);
-      const routes=['teams','pbupdates','grade-rankings'];
+      const routes=['teams','grade-rankings'];
       dropdown.classList.toggle('active',routes.includes(route));
       dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['teams','pbupdates','grade-rankings'].includes(route));
+    dropdown.classList.toggle('active',['teams','grade-rankings'].includes(route));
     dropdown.querySelectorAll('.university-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
@@ -132,4 +134,13 @@
     dropdown.classList.toggle('active',routes.includes(route));
     dropdown.querySelectorAll('.prediction-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
+})();
+
+// Load the consolidated all-years / grade PB ranking after university-data-pages.js has registered its base templates.
+(() => {
+  if(document.querySelector('script[data-grade-rankings-all-years]')) return;
+  const script=document.createElement('script');
+  script.src='grade-rankings-all-years.js?v=20260912-all1';
+  script.dataset.gradeRankingsAllYears='';
+  document.body.appendChild(script);
 })();
