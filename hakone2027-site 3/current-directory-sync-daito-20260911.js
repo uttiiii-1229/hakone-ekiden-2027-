@@ -28,3 +28,8 @@
     athlete_count:roster.length
   });
 })();
+
+// Load the Soka University 2026 official PB audit before the all-athlete directory is built.
+if(typeof document!=='undefined' && document.readyState==='loading'){
+  document.write('<script src="current-pb-audit-soka-20260913.js?v=20260913-audit1"><\/script>');
+}
