@@ -1,5 +1,7 @@
 // 創価大学 2026年度 現役長距離選手・公式PB監査
 // Sources:
+// - 第105回関東学生陸上競技対校選手権大会 男子2部10000m (2026-05-21): 小池莉希 27:52.43 PB
+//   https://www.kgrr.org/event/event/2026/kan-currywithgyoza/rel086.html
 // - ホクレン・ディスタンスチャレンジ2026 千歳大会 男子5000mC (2026-07-04): 村上遵世 13:39.46
 //   Official event result was published via JAAF / Hokuren DC official account.
 // - 関東学生陸上競技連盟 関東学生網走夏季記録挑戦競技会 男子10000m (2026-07-12): 村上遵世 28:59.56
@@ -8,10 +10,11 @@
 (() => {
   const team='創価大学';
   const audits={
+    '小池 莉希':['—','27:52.43','—'],
     '村上 遵世':['13:39.46','28:59.56','—']
   };
-  const grades={'村上 遵世':'1'};
-  const source='Hokuren Distance Challenge Chitose / KGRR Abashiri official results (2026)';
+  const grades={'小池 莉希':'4','村上 遵世':'1'};
+  const source='KGRR Kanto Intercollegiate / Hokuren Distance Challenge Chitose / KGRR Abashiri official results (2026)';
   const norm=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
   const toSec=v=>{
     const p=String(v||'').trim().split(':').map(Number);
