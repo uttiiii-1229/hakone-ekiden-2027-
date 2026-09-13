@@ -29,7 +29,8 @@
   });
 })();
 
-// Load the Soka University 2026 official PB audit before the all-athlete directory is built.
+// Load official current-roster/PB audits before the athlete directories are built.
 if(typeof document!=='undefined' && document.readyState==='loading'){
   document.write('<script src="current-pb-audit-soka-20260913.js?v=20260913-audit1"><\/script>');
+  document.write('<script src="current-pb-audit-teikyo-20260914.js?v=20260914-audit1"><\/script>');
 }
