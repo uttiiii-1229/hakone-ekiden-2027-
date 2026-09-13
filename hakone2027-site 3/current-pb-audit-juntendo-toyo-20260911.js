@@ -1,4 +1,4 @@
-// Current-athlete PB audit: Juntendo / Toyo / Senshu / Chuo Gakuin — updated 2026-09-12
+// Current-athlete PB audit: Juntendo / Toyo / Senshu / Chuo Gakuin — updated 2026-09-13
 // Sources: Kanto Student Athletics Federation official 2026 results; university official 2026 rosters/results.
 // Only official PB/profile values are applied. Missing values are never inferred.
 (() => {
@@ -19,12 +19,20 @@
     },
     '中央学院大学':{
       '林 愛斗':['—','28:47.11','—'],
+      '日数谷 隼人':['13:52.54','—','—'],
       '米田 昂太':['14:14.09','—','—'],
+      '長友 英吾':['14:04.75','—','—'],
+      '山田 琉斗':['14:14.09','—','—'],
+      '一ノ瀬 慎太':['14:24.48','—','—'],
+      '柴木 叶仁':['14:30.35','—','—'],
+      '佐藤 大翔':['14:36.65','—','—'],
       '三代田 宏太朗':['—','29:14.26','—'],
       '小川 優晴':['—','29:16.78','—'],
+      '佐藤 悠斗':['—','30:11.62','—'],
       '湯澤 芳優':['14:29.17','29:56.93','1:09:37'],
       '近藤 健斗':['14:28.09','30:12.98','1:08:17'],
       '藤重 大輔':['14:44.05','30:19.18','1:09:12'],
+      '千代谷 来仁':['—','—','1:08:23'],
       '徳善 龍':['14:09.23','29:36.75','—'],
       '福山 裕咲':['14:37.95','—','—'],
       '松井 健人':['14:31.37','—','—'],
@@ -45,7 +53,8 @@
       '佐藤 瑞城':'1','水津 智哉':'3','小川 恵裕':'1','下江 太翔':'1','戸津 大輝':'3','田口 萩太':'3'
     },
     '中央学院大学':{
-      '林 愛斗':'4','米田 昂太':'3','三代田 宏太朗':'3','小川 優晴':'2','湯澤 芳優':'1','近藤 健斗':'1','藤重 大輔':'1',
+      '林 愛斗':'4','日数谷 隼人':'3','米田 昂太':'3','長友 英吾':'3','山田 琉斗':'4','一ノ瀬 慎太':'2','柴木 叶仁':'1','佐藤 大翔':'1',
+      '三代田 宏太朗':'3','小川 優晴':'2','佐藤 悠斗':'1','湯澤 芳優':'1','近藤 健斗':'1','藤重 大輔':'1','千代谷 来仁':'1',
       '徳善 龍':'3','福山 裕咲':'2','松井 健人':'1','吉田 翔真':'1','保坂 航平':'3','松本 夏祁':'3','神田 雅貴':'2',
       '森 亘生':'2','渡邉 大地':'1','藤本 晄太':'1','蓑毛 俊太':'1'
     }
@@ -103,7 +112,7 @@
   }
 
   const resolver=window.currentAthletePbResolver;
-  if(!resolver?.currentRows || resolver.__juntendoToyoSenshuChuoGakuinOfficialAudit20260912)return;
+  if(!resolver?.currentRows || resolver.__juntendoToyoSenshuChuoGakuinOfficialAudit20260913)return;
   const base=resolver.currentRows.bind(resolver);
   const teamNorm=s=>String(s||'').normalize('NFKC').replace('國學院大学','國學院大學').trim();
   resolver.currentRows=function(currentTeam){
@@ -127,5 +136,5 @@
       return bg-ag||a.name.localeCompare(b.name,'ja',{sensitivity:'base'});
     });
   };
-  resolver.__juntendoToyoSenshuChuoGakuinOfficialAudit20260912=true;
+  resolver.__juntendoToyoSenshuChuoGakuinOfficialAudit20260913=true;
 })();
