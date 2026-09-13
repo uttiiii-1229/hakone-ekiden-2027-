@@ -80,4 +80,12 @@
   if (!Array.isArray(existing.supplementalSources)) existing.supplementalSources = [];
   const src = 'https://www.kgrr.org/files/competition/57/40/kojin.pdf';
   if (!existing.supplementalSources.includes(src)) existing.supplementalSources.push(src);
+
+  // Continue loading the next verified block without requiring an index.html edit.
+  if (!document.querySelector('script[data-hakone-q-2021-s5]')) {
+    const s = document.createElement('script');
+    s.src = 'hakone-qualifier-2021-supplement-5.js';
+    s.dataset.hakoneQ2021S5 = '1';
+    document.head.appendChild(s);
+  }
 })();
