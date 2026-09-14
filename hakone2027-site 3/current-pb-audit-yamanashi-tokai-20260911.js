@@ -1,4 +1,4 @@
-// Current-athlete PB audit: Yamanashi Gakuin / Tokai — 2026-09-11
+// Current-athlete PB audit: Yamanashi Gakuin / Tokai / Tsukuba — updated 2026-09-15
 // Sources: Kanto Student Athletics Federation official 2026 results.
 // Only results explicitly marked PB by the official result system are applied. Missing values are never inferred.
 (() => {
@@ -11,11 +11,15 @@
       '南坂 柚汰':['—','28:21.62','—'],
       '平井 璃空':['—','28:57.47','—'],
       '松山 優太':['—','29:12.87','—']
+    },
+    '筑波大学':{
+      '小林 晴琉':['14:06.50','—','—']
     }
   };
   const grades={
     '山梨学院大学':{'占部 大和':'4'},
-    '東海大学':{'中野 純平':'3','南坂 柚汰':'4','平井 璃空':'3','松山 優太':'2'}
+    '東海大学':{'中野 純平':'3','南坂 柚汰':'4','平井 璃空':'3','松山 優太':'2'},
+    '筑波大学':{'小林 晴琉':'2'}
   };
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
   Object.entries(audits).forEach(([team,pb])=>{
@@ -54,7 +58,7 @@
   }
 
   const resolver=window.currentAthletePbResolver;
-  if(!resolver?.currentRows || resolver.__yamanashiTokaiOfficialAudit20260911)return;
+  if(!resolver?.currentRows || resolver.__kgrrOfficialAudit20260915)return;
   const base=resolver.currentRows.bind(resolver);
   const teamNorm=s=>String(s||'').normalize('NFKC').replace('國學院大学','國學院大學').trim();
   resolver.currentRows=function(currentTeam){
@@ -77,5 +81,5 @@
       return (a10??Infinity)-(b10??Infinity)||(a5??Infinity)-(b5??Infinity)||a.name.localeCompare(b.name,'ja');
     });
   };
-  resolver.__yamanashiTokaiOfficialAudit20260911=true;
+  resolver.__kgrrOfficialAudit20260915=true;
 })();
