@@ -4,6 +4,15 @@
   const seasonTemplate=templates.pbupdates;
   const state=window.pbGrowthModeState=window.pbGrowthModeState||{mode:'season',team:'all'};
 
+  if(!window.pbGrowth5000Verified2026&&!document.querySelector('script[data-pb-growth-5000-data]')){
+    const data=document.createElement('script');
+    data.src='pb-growth-5000-data-20260914.js?v=20260914-data1';
+    data.dataset.pbGrowth5000Data='';
+    data.async=false;
+    data.onload=()=>{if(location.hash.replace('#','')==='pbupdates'&&typeof render==='function')render('pbupdates');};
+    document.body.appendChild(data);
+  }
+
   function norm(v=''){
     return String(v).normalize('NFKC').replace(/[\s　]+/g,'').replace(/大學/g,'大学').trim();
   }
