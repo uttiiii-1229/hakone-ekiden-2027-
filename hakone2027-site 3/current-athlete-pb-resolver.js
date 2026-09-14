@@ -3,6 +3,21 @@
   const norm=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
   const teamNorm=s=>String(s||'').normalize('NFKC').replace('國學院大学','國學院大學').trim();
 
+  // 筑波大学 箱根駅伝プロジェクト公式「選手紹介」(2026-09-14再確認) の自己ベスト。
+  // JSON基準値より速い、または未登録だった値だけを監査値として上書きする。
+  const tsukubaVerified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  tsukubaVerified['筑波大学']=Object.assign(tsukubaVerified['筑波大学']||{}, {
+    '成石 昌平':['14:30.48','—','—'],
+    '小山 陽生':['14:28.06','—','—'],
+    '荻原 悠生':['14:27.63','—','—'],
+    '中村 優太':['14:11.13','—','—'],
+    '井上 月':['14:58.11','—','—'],
+    '小林 晴琉':['13:57.07','—','—'],
+    '崎山 健之介':['16:00.85','—','—'],
+    '三輪 駿介':['15:49.47','—','1:12:10'],
+    '山形 恵蔵':['—','—','1:13:57']
+  });
+
   function timeSeconds(v){
     const s=String(v||'').trim();
     if(!s||s==='—') return null;
