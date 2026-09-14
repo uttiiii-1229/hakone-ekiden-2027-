@@ -5,9 +5,11 @@ window.pbImprovementVerified2026=[
   {team:'青山学院大学',name:'平松 享祐',metric:'pb5000',before:'13:46.06',after:'13:34.05',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'サイト既存PB / 4years.'},
   {team:'青山学院大学',name:'黒田 然',metric:'pb5000',before:'13:55.10',after:'13:42.18',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'JAAF 2025 / Ekiden-Metrics'},
   {team:'青山学院大学',name:'佐藤 愛斗',metric:'pb5000',before:'13:44.48',after:'13:42.37',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'JAAF 2025 / 4years.'},
+  {team:'青山学院大学',name:'小河原 陽琉',metric:'pb5000',before:'13:41.76',after:'13:31.99',meet:'第105回関東学生陸上競技対校選手権大会',source:'Ekiden-Metrics / 関東インカレ'},
   {team:'東京国際大学',name:'アモス ベット',metric:'pb5000',before:'13:16.85',after:'13:11.33',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'LongJog / 4years.'},
   {team:'山梨学院大学',name:'ブライアン キピエゴ',metric:'pb5000',before:'13:22.58',after:'13:19.08',meet:'ホクレン・ディスタンスチャレンジ2026 千歳大会',source:'LongJog / 4years.'},
   {team:'中央大学',name:'藤田 大智',metric:'pb5000',before:'13:28.93',after:'13:28.68',meet:'第110回日本陸上競技選手権大会',source:'中央大学公式 / LongJog'},
+  {team:'中央大学',name:'七枝 直',metric:'pb5000',before:'13:49.99',after:'13:30.35',meet:'ゴールデンゲームズinのべおか2026',source:'Ekiden-Metrics / GGN'},
 
   {team:'早稲田大学',name:'山口 竣平',metric:'pb10000',before:'29:11.26',after:'27:59.47',meet:'第95回日本学生陸上競技対校選手権大会',source:'Ekiden-Metrics / JAAF'},
   {team:'早稲田大学',name:'吉倉 ナヤブ直希',metric:'pb10000',before:'28:46.86',after:'28:13.07',meet:'第95回日本学生陸上競技対校選手権大会',source:'Ekiden-Metrics / JAAF'},
