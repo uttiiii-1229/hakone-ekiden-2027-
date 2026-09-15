@@ -31,3 +31,22 @@
   add('近藤 純太','1:10:14');
   add('五十嵐 歩武','1:10:42');
 })();
+
+// 青山学院大学 2026年度 公式部員ページ再監査（2026-09-16）。
+// Source: https://aogaku-tf.com/member/member_1.php
+// Faster or previously missing PBs only. This block is kept in a script already loaded by index.html
+// so both university data and the all-athlete directory consume the same verifiedCurrentPb2026 values.
+(() => {
+  const team='青山学院大学';
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  verified[team]=Object.assign({},verified[team]||{}, {
+    '大藪 遙斗':['14:10.22','—','—'],
+    '寺内 頼':['—','30:32.63','—'],
+    '新見 春陽':['14:06.72','—','—'],
+    '古川 陽樹':['13:50.55','—','—'],
+    '前田 蒼空':['14:18.99','—','—'],
+    '横畑 僚大':['—','33:24.28','—']
+  });
+  const meta=window.currentAthletePbJsonMeta2026=window.currentAthletePbJsonMeta2026||{};
+  meta[team]=Object.assign({},meta[team]||{}, {season:2026,data_as_of:'2026-09-16',verification_status:'official_pb_reverified'});
+})();
