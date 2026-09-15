@@ -42,5 +42,6 @@
 {"id":"west-japan-ic-78-2025","year":2025,"name":"秩父宮賜杯第78回西日本学生陸上競技対校選手権大会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/icaak/record/2025/9_NISHINIHON_IC/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"west-japan-ic-76-2023","year":2023,"name":"秩父宮賜杯第76回西日本学生陸上競技対校選手権大会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/jaic/tgrr/kiroku/2023/nishiic/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"kansai-university-track-meet-1-2026","year":2026,"name":"2026 第1回関西大学記録会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/jaic/icaak/record/2026/26_KULONG/kyougi.html","includeGenders":["男子","女子"]},
-{"id":"kansai-long-distance-2-2025","year":2025,"name":"2025年度第2回長距離強化記録会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/jaic/icaak/record/2025/10_2ndLONG/kyougi.html","includeGenders":["男子","女子"]}
+{"id":"kansai-long-distance-2-2025","year":2025,"name":"2025年度第2回長距離強化記録会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/jaic/icaak/record/2025/10_2ndLONG/kyougi.html","includeGenders":["男子","女子"]},
+{"id":"kansai-ic-99-2022","year":2022,"name":"第99回関西学生陸上競技対校選手権大会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/icaak/record/2022/5_KSIC/kyougi.html","includeGenders":["男子","女子"]}
 ]
