@@ -1,11 +1,15 @@
-// Current-athlete PB audit: Juntendo / Toyo / Senshu / Chuo Gakuin — updated 2026-09-14
+// Current-athlete PB audit: Juntendo / Toyo / Senshu / Chuo Gakuin — updated 2026-09-16
 // Sources: Kanto Student Athletics Federation official 2026 results; university official 2026 rosters/results.
 // Toyo additions verified from Toyo University long-distance team's official 2026 results page.
+// Juntendo additions verified from Juntendo University long-distance block official 2026 results pages.
 // Only official PB/profile values are applied. Missing values are never inferred.
 (() => {
   const audits={
     '順天堂大学':{
-      '松尾 和真':['—','28:23.90','—']
+      '松尾 和真':['—','28:23.90','—'],
+      '浦野 恭成':['14:33.92','—','—'],
+      '内山 遥人':['14:42.49','—','—'],
+      '井上 朋哉':['13:38.67','—','—']
     },
     '東洋大学':{
       '濱中 尊':['14:08.72','28:56.97','—'],
@@ -49,7 +53,7 @@
     }
   };
   const grades={
-    '順天堂大学':{'松尾 和真':'2'},
+    '順天堂大学':{'松尾 和真':'2','浦野 恭成':'3','内山 遥人':'2','井上 朋哉':'2'},
     '東洋大学':{'濱中 尊':'4','宮崎 優':'3'},
     '専修大学':{
       '佐藤 瑞城':'1','水津 智哉':'3','小川 恵裕':'1','下江 太翔':'1','戸津 大輝':'3','田口 萩太':'3'
@@ -62,7 +66,6 @@
     }
   };
   const excluded={
-    // The 2026 official member page lists him as a manager, not a current long-distance athlete.
     '中央学院大学':new Set(['鯉沼大'])
   };
   const aliases={
@@ -129,7 +132,7 @@
       const row=byName.get(key)||{name,grade:grades[team]?.[name]||'',pb5000:'—',pb10000:'—',half:'—',sources:[]};
       row.grade=grades[team]?.[name]||row.grade||'';
       row.pb5000=better(row.pb5000,v[0]); row.pb10000=better(row.pb10000,v[1]); row.half=better(row.half,v[2]);
-      const source=team==='専修大学'?'Senshu official 2026':team==='中央学院大学'?'Chuo Gakuin official 2026':team==='東洋大学'?'Toyo official 2026':'KGRR official 2026';
+      const source=team==='専修大学'?'Senshu official 2026':team==='中央学院大学'?'Chuo Gakuin official 2026':team==='東洋大学'?'Toyo official 2026':'Juntendo official 2026';
       if(!row.sources.includes(source))row.sources.push(source);
       if(!byName.has(key)){rows.push(row);byName.set(key,row);}
     });
