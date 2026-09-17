@@ -30,5 +30,6 @@ window.pbImprovementVerified2026=[
   {team:'駒澤大学',name:'菅谷 希弥',metric:'half',before:'1:01:24',after:'1:01:12',meet:'第29回日本学生ハーフマラソン選手権大会',source:'日本テレビ箱根駅伝 / 駒澤大学'},
   {team:'駒澤大学',name:'安原 海晴',metric:'half',before:'1:02:08',after:'1:01:45',meet:'第29回日本学生ハーフマラソン選手権大会',source:'駒澤大学 / 上尾ハーフ記録'},
   {team:'専修大学',name:'ダンカン マイナ',metric:'half',before:'1:01:47',after:'1:01:46',meet:'第29回日本学生ハーフマラソン選手権大会',source:'専大スポーツ'},
-  {team:'専修大学',name:'丹 柊太郎',metric:'half',before:'1:03:35',after:'1:01:56',meet:'第29回日本学生ハーフマラソン選手権大会',source:'専大スポーツ'}
+  {team:'専修大学',name:'丹 柊太郎',metric:'half',before:'1:03:35',after:'1:01:56',meet:'第29回日本学生ハーフマラソン選手権大会',source:'専大スポーツ'},
+  {team:'東洋大学',name:'宮崎 優',metric:'half',before:'1:02:49',after:'1:02:22',meet:'第39回サフォークランド士別ハーフマラソン',source:'東洋大学公式 / 月陸Online'}
 ];
