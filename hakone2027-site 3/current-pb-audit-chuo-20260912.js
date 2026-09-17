@@ -44,6 +44,16 @@
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};verified[team]=Object.assign(verified[team]||{},audits);
 })();
 
+// Verified current PBs: Senshu University. Official team 2026 results; each value explicitly marked 自己新.
+(() => {
+  const team='専修大学';
+  const audits={
+    '佐藤 瑞城':['—','30:23.18','—'],'水津 智哉':['—','29:48.88','—'],'小川 恵裕':['14:42.79','—','—'],
+    '下江 太翔':['14:44.03','—','—'],'戸津 大輝':['14:25.80','—','—'],'田口 萩太':['14:26.94','—','—']
+  };
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};verified[team]=Object.assign(verified[team]||{},audits);
+})();
+
 // Synchronously load the Kanagawa University official profile audit before ranking/page scripts run.
 if(typeof document!=='undefined' && document.readyState==='loading'){
   document.write('<script src="current-pb-audit-kanagawa-20260913.js?v=20260913-audit1"><\/script>');
