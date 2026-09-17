@@ -34,6 +34,16 @@
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};verified[team]=Object.assign(verified[team]||{},audits);
 })();
 
+// Verified current PBs: Chuo Gakuin University. Official 2026 roster/profile pages and meet results.
+(() => {
+  const team='中央学院大学';
+  const audits={
+    '林 愛斗':['—','28:47.11','—'],'米田 昂太':['14:14.09','—','—'],'三代田 宏太朗':['—','29:14.26','—'],'小川 優晴':['—','29:16.78','—'],
+    '福山 裕咲':['14:37.95','—','—'],'松井 健人':['14:37.25','—','—'],'湯澤 芳優':['14:29.17','29:56.93','1:09:37'],'近藤 健斗':['14:28.09','30:12.98','1:08:17']
+  };
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};verified[team]=Object.assign(verified[team]||{},audits);
+})();
+
 // Synchronously load the Kanagawa University official profile audit before ranking/page scripts run.
 if(typeof document!=='undefined' && document.readyState==='loading'){
   document.write('<script src="current-pb-audit-kanagawa-20260913.js?v=20260913-audit1"><\/script>');
