@@ -13,3 +13,13 @@
   existing.individuals.sort((a,b)=>(a.rank||9999)-(b.rank||9999));
   existing.supplementalSources=Array.from(new Set([...(existing.supplementalSources||[]),'https://hakonesaijo.sakura.ne.jp/97yosenkai-kojin.htm']));
 })();
+
+// Continue with the next verified 2020 individual-result supplement.
+(() => {
+  if (document.querySelector('script[data-hq-2020-s10]')) return;
+  const s=document.createElement('script');
+  s.src='hakone-qualifier-2020-supplement-10.js';
+  s.defer=true;
+  s.dataset.hq2020S10='1';
+  document.head.appendChild(s);
+})();
