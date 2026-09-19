@@ -21,3 +21,18 @@
     verification_status:'official_pb_reverified'
   });
 })();
+
+// Waseda University 2026 official PB audit.
+// Source: Waseda University Track & Field official competition results; only PB / 自己新記録 entries.
+// This mirrors current-pb-audit-waseda-20260919.js so the verified values are loaded by the production bundle.
+(() => {
+  const team='早稲田大学';
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  verified[team]=Object.assign({},verified[team]||{}, {
+    '山口 竣平':['13:17.19','27:59.47','—'],
+    '吉倉 ナヤブ直希':['13:37.61','28:13.07','—'],
+    '本田 桜二郎':['13:32.61','—','—'],
+    '増子 陽季':['—','29:36.19','—'],
+    '辻 陽介':['—','31:25.69','—']
+  });
+})();
