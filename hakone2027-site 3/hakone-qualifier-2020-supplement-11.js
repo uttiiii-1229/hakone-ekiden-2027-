@@ -11,4 +11,5 @@
  rows.forEach(x=>{const key=`${x.rank}|${norm(x.name)}|${norm(x.team)}`;const old=byKey.get(key);if(!old){existing.individuals.push(x);byKey.set(key,x);return;}['time','grade'].forEach(k=>{if((old[k]===undefined||old[k]===null||old[k]==='')&&x[k])old[k]=x[k];});});
  existing.individuals.sort((a,b)=>(a.rank||9999)-(b.rank||9999));
  existing.supplementalSources=Array.from(new Set([...(existing.supplementalSources||[]),'https://hakonesaijo.sakura.ne.jp/97yosenkai-kojin.htm']));
+ if(!document.querySelector('script[data-hakone-qualifier-2020-supplement="12"]')){const s=document.createElement('script');s.src='hakone-qualifier-2020-supplement-12.js';s.dataset.hakoneQualifier2020Supplement='12';document.head.appendChild(s);}
 })();
