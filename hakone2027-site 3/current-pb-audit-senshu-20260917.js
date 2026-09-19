@@ -18,3 +18,20 @@
     verified[team][u.name]=[u.pb5000||prev[0],u.pb10000||prev[1],u.half||prev[2]];
   });
 })();
+
+// Official 2026 Josai University PB audit.
+// Source: 城西大学 TEAM JOSAI 男子駅伝部公式・歴代記録表 (2026-09-20確認).
+// These are current 2026 athletes and records explicitly listed by the university.
+(()=>{
+  const team='城西大学';
+  const updates=[
+    {name:'柴田 侑',pb5000:'13:22.46',pb10000:'28:05.07'},
+    {name:'中島 巨翔',half:'1:01:24'}
+  ];
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  verified[team]=verified[team]||{};
+  updates.forEach(u=>{
+    const prev=verified[team][u.name]||['—','—','—'];
+    verified[team][u.name]=[u.pb5000||prev[0],u.pb10000||prev[1],u.half||prev[2]];
+  });
+})();
