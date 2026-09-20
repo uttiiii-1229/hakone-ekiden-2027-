@@ -14,4 +14,5 @@
  rows.forEach(x=>{const key=`${x.rank}|${norm(x.name)}|${norm(x.team)}`;const old=byKey.get(key);if(!old){existing.individuals.push(x);byKey.set(key,x);return;}['time','grade'].forEach(k=>{if((old[k]===undefined||old[k]===null||old[k]==='')&&x[k])old[k]=x[k];});});
  existing.individuals.sort((a,b)=>(a.rank||9999)-(b.rank||9999));
  existing.supplementalSources=Array.from(new Set([...(existing.supplementalSources||[]),'https://www.kgrr.org/event/2020/kgrr/97yosen/kojin.pdf','https://kjyossy.net/hakone/97th/h97ysogo.html']));
+ const s=document.createElement('script');s.src='hakone-qualifier-2020-supplement-15.js';document.head.appendChild(s);
 })();
