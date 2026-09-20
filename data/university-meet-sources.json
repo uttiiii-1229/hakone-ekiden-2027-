@@ -52,5 +52,6 @@
 {"id":"kansai-long-distance-1-2025","year":2025,"name":"2025第1回長距離強化記録会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/jaic/icaak/record/2025/7_1stLONG/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"kansai-long-distance-1-2022","year":2022,"name":"2022年度 第1回長距離強化記録会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/jaic/icaak/record/2022/7_LONG/kyougi.html","includeGenders":["男子","女子"]},
 {"id":"kansai-gakuren-2-2024","year":2024,"name":"2024年度第2回学連競技会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/icaak/record/2024/20_GK2/kyougi.html","includeGenders":["男子","女子"]},
-{"id":"tokai-autumn-long-49-2022","year":2022,"name":"第49回東海学生陸上競技秋季選手権大会（長距離）","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/tgrr/kiroku/2022/autumn_long/","includeGenders":["男子","女子"]}
+{"id":"tokai-autumn-long-49-2022","year":2022,"name":"第49回東海学生陸上競技秋季選手権大会（長距離）","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/tgrr/kiroku/2022/autumn_long/","includeGenders":["男子","女子"]},
+{"id":"kyushu-student-championships-54-2026","year":2026,"name":"第54回九州学生陸上競技選手権大会","adapter":"kgrr-web-results","indexUrl":"https://gold.jaic.org/icalk/2026/54cs/kyougi.html","includeGenders":["男子","女子"]}
 ]
