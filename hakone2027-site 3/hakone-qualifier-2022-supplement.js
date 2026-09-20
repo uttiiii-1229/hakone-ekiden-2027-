@@ -37,4 +37,12 @@
   if (!Array.isArray(existing.supplementalSources)) existing.supplementalSources=[];
   const src='https://www.obirin.ac.jp/sports/ekiden/topics/y_2022/amhute000005qaie.html';
   if (!existing.supplementalSources.includes(src)) existing.supplementalSources.push(src);
+
+  // Continue with the next verified 2022 supplement without replacing confirmed values.
+  if (typeof document !== 'undefined' && !document.querySelector('script[data-hq-2022-s2]')) {
+    const s=document.createElement('script');
+    s.src='hakone-qualifier-2022-supplement-2.js';
+    s.dataset.hq2022S2='1';
+    document.head.appendChild(s);
+  }
 })();
