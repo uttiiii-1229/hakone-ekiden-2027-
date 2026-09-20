@@ -1,7 +1,7 @@
 // Teikyo University 2026 current-roster / PB audit.
 // Roster source: Teikyo University Ekiden Club official member pages, checked 2026-09-14.
 // Staff/manager-only entries are excluded from the long-distance athlete roster.
-// PB values below are only records explicitly marked PB by the official team results/news.
+// PB values below are records verified from official team results/news or official federation results.
 (() => {
   const team='帝京大学';
   const rosters=window.currentRosterOfficial2026=window.currentRosterOfficial2026||{};
@@ -24,14 +24,14 @@
     ['倉橋 征己','1'],['齋藤 星弥','1'],['佐々木 蓮斗','1'],['檀上 翔','1'],['中村 漣','1'],
     ['福島 命','1'],['松尾 航希','1'],['水谷 奏翔','1'],['三谷 大輝','1'],['安田 塙史','1'],['山本 隼士','1']
   ];
-  rosterMeta[team]={season:2026,asOf:'2026-09-14',source:'帝京大学駅伝競走部公式 部員紹介'};
+  rosterMeta[team]={season:2026,asOf:'2026-09-20',source:'帝京大学駅伝競走部公式 部員紹介'};
 
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
   verified[team]=Object.assign({},verified[team]||{}, {
-    // Official team result pages explicitly mark these records as PB.
     '浅川 侑大':['14:08.42','30:22.66','—'],
     '井上 寛大':['—','29:54.28','—'],
-    '楠岡 由浩':['13:50.12','27:52.09','—'],
+    // 2026-06-12 第110回日本選手権5000m予選2組1着。JAAF公式結果 13:26.92。
+    '楠岡 由浩':['13:26.92','27:52.09','—'],
     '高橋 賢太':['—','31:53.84','—'],
     '谷口 颯太':['13:52.08','—','—'],
     '西森 市直':['—','31:05.97','—'],
@@ -48,8 +48,6 @@
     '岩崎 輝翔':['14:36.89','—','—']
   });
 
-  // The JSON baseline predates some roster audits. Rebuild Teikyo's membership from
-  // the official 2026 roster while preserving any already-known PBs by athlete name.
   const db=window.currentAthletePbJson2026=window.currentAthletePbJson2026||{};
   const oldRows=Array.isArray(db[team])?db[team]:[];
   const norm=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
@@ -68,7 +66,7 @@
   const meta=window.currentAthletePbJsonMeta2026=window.currentAthletePbJsonMeta2026||{};
   meta[team]=Object.assign({},meta[team]||{}, {
     season:2026,
-    data_as_of:'2026-09-14',
+    data_as_of:'2026-09-20',
     verification_status:'official_roster_and_pb_reverified',
     athlete_count:rosters[team].length
   });
