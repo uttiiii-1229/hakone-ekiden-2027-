@@ -1,5 +1,5 @@
 // Official 2026 current-athlete PB audit additions.
-// Sources are official university competition results; only values explicitly marked PB/self-best are applied.
+// Sources are official university competition results / athlete profiles; only officially confirmed values are applied.
 (()=>{
   const datasets={
     '東京国際大学':[
@@ -10,7 +10,8 @@
       {name:'吉倉ナヤブ直希',grade:3,pb5000:'13:37.61',pb10000:'28:13.07',half:null,source:'早稲田大学競走部 公式競技結果（PB表記）',sourceDate:'2026-07-04'},
       {name:'本田桜二郎',grade:1,pb5000:'13:32.61',pb10000:null,half:null,source:'早稲田大学競走部 ホクレン千歳5000mB（PB表記）',sourceDate:'2026-07-04'},
       {name:'増子陽季',grade:4,pb5000:null,pb10000:'29:36.19',half:null,source:'早稲田大学競走部 第9回早稲田大学競技会（PB表記）',sourceDate:'2026-02-14'},
-      {name:'辻陽介',grade:3,pb5000:null,pb10000:'31:25.69',half:null,source:'早稲田大学競走部 第9回早稲田大学競技会（PB表記）',sourceDate:'2026-02-14'}
+      {name:'辻陽介',grade:3,pb5000:null,pb10000:'31:25.69',half:null,source:'早稲田大学競走部 第9回早稲田大学競技会（PB表記）',sourceDate:'2026-02-14'},
+      {name:'増子陽太',grade:1,pb5000:'13:20.35',pb10000:null,half:null,rosterConfirmed:true,source:'早稲田大学競走部 部員紹介／ゴールデンゲームズinのべおか（自己新記録）',sourceDate:'2026-05-04'}
     ]
   };
   const norm=s=>String(s||'').normalize('NFKC').replace(/[・･\s　]/g,'').trim();
@@ -20,11 +21,16 @@
     const sec=v=>{const p=String(v).split(':').map(Number);return p.length===3?p[0]*3600+p[1]*60+p[2]:p[0]*60+p[1];};
     return sec(b)<sec(a)?b:a;
   };
-  const apply=(rows,updates)=>{
+  const apply=(rows,updates,allowConfirmedCreate=false)=>{
     if(!Array.isArray(rows))return;
     updates.forEach(u=>{
-      const r=rows.find(x=>norm(x.name||x[0])===norm(u.name));
-      if(!r)return; // never create current membership from a PB result alone
+      let r=rows.find(x=>norm(x.name||x[0])===norm(u.name));
+      if(!r&&allowConfirmedCreate&&u.rosterConfirmed){
+        r={name:u.name,grade:u.grade,pb5000:u.pb5000||null,pb10000:u.pb10000||null,half:u.half||null};
+        rows.push(r);
+        return;
+      }
+      if(!r)return;
       if(Array.isArray(r)){
         if(u.pb5000)r[2]=faster(r[2],u.pb5000);
         if(u.pb10000)r[3]=faster(r[3],u.pb10000);
@@ -37,8 +43,8 @@
     });
   };
   Object.entries(datasets).forEach(([team,updates])=>{
-    if(window.currentAthletePbJson2026)apply(window.currentAthletePbJson2026[team],updates);
-    if(window.expandedTopAthletes2027)apply(window.expandedTopAthletes2027[team],updates);
+    if(window.currentAthletePbJson2026)apply(window.currentAthletePbJson2026[team],updates,true);
+    if(window.expandedTopAthletes2027)apply(window.expandedTopAthletes2027[team],updates,false);
     const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
     verified[team]=verified[team]||{};
     updates.forEach(u=>{
