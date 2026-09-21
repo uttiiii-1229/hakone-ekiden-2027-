@@ -1,6 +1,8 @@
 // Official 2026 Senshu University PB audit.
-// Source: 専修大学陸上競技部 2026年度大会結果 (絆記録挑戦会 / 関東学生網走夏季記録挑戦競技会).
-// Only official results explicitly marked 自己新 and improving the 2026 JSON baseline are listed.
+// Sources:
+// - 専修大学陸上競技部 2026年度大会結果 (絆記録挑戦会 / 関東学生網走夏季記録挑戦競技会).
+// - 関東学生陸上競技連盟 第58回全日本大学駅伝関東選考会公式結果 (2026-05-04).
+// Only official results explicitly marked 自己新/PB and improving or filling the 2026 baseline are listed.
 (()=>{
   const team='専修大学';
   const updates=[
@@ -9,7 +11,8 @@
     {name:'小川 恵裕',pb5000:'14:42.79'},
     {name:'下江 太翔',pb5000:'14:44.03'},
     {name:'戸津 大輝',pb5000:'14:25.80'},
-    {name:'田口 萩太',pb5000:'14:26.94'}
+    {name:'田口 萩太',pb5000:'14:26.94'},
+    {name:'サミュエル ガユ',pb10000:'28:27.88'}
   ];
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
   verified[team]=verified[team]||{};
