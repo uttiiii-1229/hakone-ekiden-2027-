@@ -21,4 +21,5 @@
   y.teams.sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999));
   if(!Array.isArray(y.supplementalSources))y.supplementalSources=[];
   ['https://4years.asahi.com/article/14743195','https://chuo-ldt.net/2022/10/15/99hakoneyosen/'].forEach(src=>{if(!y.supplementalSources.includes(src))y.supplementalSources.push(src);});
+  if(typeof document!=='undefined'&&!document.querySelector('script[data-hq-2022-s3]')){const s=document.createElement('script');s.src='hakone-qualifier-2022-supplement-3.js';s.dataset.hq2022S3='1';document.head.appendChild(s);}
 })();
