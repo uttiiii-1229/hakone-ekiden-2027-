@@ -8,5 +8,6 @@ window.pbGrowth5000Verified2026=[
   {team:'青山学院大学',name:'飯田 翔大',highSchoolPb:'13:34.20',source:'4years.（2024年度新入部員5000m PB）'},
   {team:'青山学院大学',name:'折田 壮太',highSchoolPb:'13:28.78',source:'4years.（2024年度新入部員5000m PB）'},
   {team:'青山学院大学',name:'福冨 翔',highSchoolPb:'14:09.05',currentPb:'13:55.95',source:'4years.（須磨学園時代14:09.05）/ 駅伝ナビ2026（現PB13:55.95）'},
-  {team:'帝京大学',name:'楠岡 由浩',highSchoolPb:'13:55.84',currentPb:'13:26.92',source:'慶誠高校陸上競技部（高校PB13:55.84）/ 日本選手権2026（現PB13:26.92）'}
+  {team:'帝京大学',name:'楠岡 由浩',highSchoolPb:'13:55.84',currentPb:'13:26.92',source:'慶誠高校陸上競技部（高校PB13:55.84）/ 日本選手権2026（現PB13:26.92）'},
+  {team:'國學院大學',name:'髙石 樹',highSchoolPb:'13:58.23',currentPb:'13:45.29',source:'國學院大學2025年度新入生発表・月陸Online（高校PB13:58.23）/ 2026日体大長距離競技会（現PB13:45.29）'}
 ];
