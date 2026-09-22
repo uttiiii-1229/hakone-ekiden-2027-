@@ -15,4 +15,5 @@
   y.individuals.sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999));
   if(!Array.isArray(y.supplementalSources))y.supplementalSources=[];
   for(const src of ['https://hakonankit-fd.com/article/post-19988.html','https://gakusei-ld-kansoku.blog.jp/archives/32342412.html'])if(!y.supplementalSources.includes(src))y.supplementalSources.push(src);
+  if(!document.querySelector('script[data-hakone-q-2022-s9]')){const s=document.createElement('script');s.src='hakone-qualifier-2022-supplement-9.js';s.dataset.hakoneQ2022S9='1';document.head.appendChild(s);}
 })();
