@@ -1,11 +1,12 @@
 // Aoyama Gakuin University 2026 current-athlete PB audit.
 // Primary source: Aoyama Gakuin University Track & Field Club official member page (checked 2026-09-16).
-// https://aogaku-tf.com/member/member_1.php
+// Additional official source: JAAF 110th Japan Championships 5000m entry/results documents (2026).
 // Only faster or previously-missing records are supplied here; resolver keeps the faster value.
 (() => {
   const team='青山学院大学';
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
   verified[team]=Object.assign({},verified[team]||{}, {
+    '小河原 陽琉':['13:31.99','—','—'],
     '大藪 遙斗':['14:10.22','—','—'],
     '寺内 頼':['—','30:32.63','—'],
     '新見 春陽':['14:06.72','—','—'],
@@ -17,7 +18,7 @@
   const meta=window.currentAthletePbJsonMeta2026=window.currentAthletePbJsonMeta2026||{};
   meta[team]=Object.assign({},meta[team]||{}, {
     season:2026,
-    data_as_of:'2026-09-16',
+    data_as_of:'2026-09-23',
     verification_status:'official_pb_reverified'
   });
 })();
