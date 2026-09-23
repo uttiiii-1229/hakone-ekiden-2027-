@@ -41,12 +41,31 @@
 })();
 
 // Official 2026 Josai University PB audit.
-// Source: 城西大学 TEAM JOSAI 男子駅伝部公式・歴代記録表 (2026-09-20確認).
+// Source: 城西大学 TEAM JOSAI 男子駅伝部「部長・監督・部員」公式ページ (2026-09-24確認).
+// Only faster/current official PBs are supplied; resolver preserves any faster verified value.
 (()=>{
   const team='城西大学';
   const updates=[
+    {name:'小田 伊織',pb5000:'14:08.27'},
+    {name:'河野 世寿',pb5000:'14:07.98'},
+    {name:'熊井 志岳',pb5000:'14:14.03',pb10000:'29:31.84'},
     {name:'柴田 侑',pb5000:'13:22.46',pb10000:'28:05.07'},
-    {name:'中島 巨翔',half:'1:01:24'}
+    {name:'中島 巨翔',half:'1:01:24'},
+    {name:'早川 晴仁',pb5000:'14:40.54'},
+    {name:'葛城 渚',pb10000:'30:52.48'},
+    {name:'橋本 健市',pb10000:'28:50.21'},
+    {name:'正岡 優翔',pb5000:'14:05.01'},
+    {name:'村木 風舞',pb5000:'14:07.54'},
+    {name:'秋山 流星',pb5000:'14:27.41'},
+    {name:'徳永 航大',pb5000:'14:11.68',pb10000:'29:53.72'},
+    {name:'村尾 恭輔',pb5000:'14:08.48'},
+    {name:'渡邉 勇利',pb5000:'14:20.18'},
+    {name:'江面 虎次郎',pb10000:'29:57.80'},
+    {name:'岸本 晟',pb10000:'29:49.18'},
+    {name:'月岡 義人',pb5000:'14:20.40',pb10000:'30:55.48'},
+    {name:'鶴留 唯月',pb10000:'30:07.80'},
+    {name:'御子神 廉',pb10000:'30:08.99'},
+    {name:'山口 翼',pb10000:'31:12.74'}
   ];
   const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
   verified[team]=verified[team]||{};
