@@ -37,4 +37,5 @@
   y.individuals.sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999));
   if(!Array.isArray(y.supplementalSources))y.supplementalSources=[];
   for(const src of ['https://www.hakone-ekiden.jp/_assets/2022/4db97c19ab23303c7b5bb45ce022f554e0052804.pdf','https://www.nichiyaku.ac.jp/trackclub/news/18592/'])if(!y.supplementalSources.includes(src))y.supplementalSources.push(src);
+  if(!document.querySelector('script[data-hakone-q-2022-s10]')){const s=document.createElement('script');s.src='hakone-qualifier-2022-supplement-10.js';s.dataset.hakoneQ2022S10='1';document.head.appendChild(s);}
 })();
