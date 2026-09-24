@@ -39,4 +39,5 @@
   y.individuals.sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999));
   if(!Array.isArray(y.supplementalSources))y.supplementalSources=[];
   const src='https://www.hakone-ekiden.jp/_assets/2022/4db97c19ab23303c7b5bb45ce022f554e0052804.pdf';if(!y.supplementalSources.includes(src))y.supplementalSources.push(src);
+  if(!document.querySelector('script[data-hakone-q-2022-s14]')){const s=document.createElement('script');s.src='hakone-qualifier-2022-supplement-14.js';s.dataset.hakoneQ2022S14='1';document.head.appendChild(s);}
 })();
