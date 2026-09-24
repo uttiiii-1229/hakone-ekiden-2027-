@@ -79,3 +79,22 @@
     ];
   }
 })();
+
+// Tsukuba University 2026 current-athlete PB supplement (checked 2026-09-24).
+// Primary source: Tsukuba University Hakone Ekiden Project official athlete profile.
+// https://tsukuba-hakone.win/member/
+// The profile lists Kobayashi Haru (2nd year): 5000m 13:57.07, 10000m 29:16.86, half 63:20.
+// Only the newly verified faster 5000m value is overridden here; other events are left to the existing dataset.
+(() => {
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  verified['筑波大学']=Object.assign({},verified['筑波大学']||{}, {
+    '小林 晴琉':['13:57.07','—','—'],
+    '小林晴琉':['13:57.07','—','—']
+  });
+  const meta=window.currentAthletePbJsonMeta2026=window.currentAthletePbJsonMeta2026||{};
+  meta['筑波大学']=Object.assign({},meta['筑波大学']||{}, {
+    season:2026,
+    data_as_of:'2026-09-24',
+    verification_status:'official_pb_reverified'
+  });
+})();
