@@ -37,3 +37,21 @@
     '辻 陽介':['—','31:25.69','—']
   });
 })();
+
+// University of Tsukuba 2026 current-athlete PB audit.
+// Primary source: University of Tsukuba Track & Field Club official result report,
+// 105th Kanto Intercollegiate Championships day 4 (2026-05-24), explicitly marked PB.
+(() => {
+  const team='筑波大学';
+  const verified=window.verifiedCurrentPb2026=window.verifiedCurrentPb2026||{};
+  verified[team]=Object.assign({},verified[team]||{}, {
+    '小林 晴琉':['14:06.50','—','—']
+  });
+
+  const meta=window.currentAthletePbJsonMeta2026=window.currentAthletePbJsonMeta2026||{};
+  meta[team]=Object.assign({},meta[team]||{}, {
+    season:2026,
+    data_as_of:'2026-09-24',
+    verification_status:'official_pb_reverified'
+  });
+})();
