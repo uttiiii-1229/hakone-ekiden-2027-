@@ -85,9 +85,35 @@ function athleteTable(name){const data=athleteData[name]||[]; if(!data.length)re
 function teamsTemplate(){return `<section class="container page"><div class="page-header"><h1>大学・選手データ</h1><p>2027年大会を見据え、2026年度在籍選手から5000m・10000m・ハーフの実績を総合して各校10名を抜粋しています。</p></div>${teams.slice(0,4).map(t=>`<article class="team-detail"><div class="team-detail-head"><div><h2>${t.name}</h2><p>${t.note}</p></div><div class="score-pill">戦力指数 ${t.score}</div></div>${athleteTable(t.name)}</article>`).join('')}<div class="notice">2026年度4年生は2027年1月2〜3日の第103回箱根駅伝に出場可能なため候補に含めています。PBは公開情報を再確認し、未確認値は無理に補完しません。</div></section>`}
 function historyTable(key,title){return `<article class="history-block"><h2>${title}</h2><div class="table-wrap"><table><thead><tr><th>年</th><th>大会</th><th>優勝</th><th>記録</th><th>総合上位3校</th><th>区間順位</th></tr></thead><tbody>${historyData[key].map(r=>`<tr><td>${r.year}</td><td>${r.edition}</td><td><strong>${r.winner}</strong></td><td>${r.time}</td><td>${r.top3}</td><td><a href="${r.official}" target="_blank" rel="noopener">公式区間記録で確認 ↗</a></td></tr>`).join('')}</tbody></table></div></article>`}
 function historyTemplate(){return `<section class="container page"><div class="page-header"><h1>過去10年・三大駅伝</h1><p>箱根駅伝は2017〜2026、出雲・全日本は2016〜2025を公式記録ベースで再照合。総合上位3校を掲載し、区間順位は各大会公式記録へ直結しています。</p></div>${historyTable('hakone','箱根駅伝')}${historyTable('izumo','出雲駅伝')}${historyTable('zennihon','全日本大学駅伝')}<div class="notice">区間順位は誤転記を避けるため、各年の公式記録を参照する方式に変更しました。2020年の出雲駅伝（第32回）は大会中止です。</div></section>`}
+
+const izumoPrediction2026 = {
+  updated:'2026-09-27',
+  ranking:['中央大学','早稲田大学','アイビーリーグ選抜','青山学院大学','國學院大學','創価大学','順天堂大学','駒澤大学','城西大学','帝京大学','日本大学','京都産業大学','関西大学','皇學館大學','広島経済大学','札幌学院大学','信州大学','金沢学院大学','第一工科大学','北海道大学','東北学連選抜'],
+  orders:{
+    '青山学院大学':['折田 壮太','小河原 陽琉','飯田 翔大','黒田 然','鳥井 健太','平松 享祐'],
+    '國學院大學':['五十嵐 新太','鼻野木 悠翔','野中 恒亨','飯國 新太','髙石 樹','辻原 輝'],
+    '順天堂大学':['井上 朋哉','池間 凜斗','吉岡 大翔','永原 颯磨','山本 悠','荒牧 琢登'],
+    '早稲田大学':['増子 陽太','本田 桜二郎','山口 竣平','新妻 遼己','鈴木 琉胤','吉倉 ナヤブ直希'],
+    '中央大学':['栗村 凌','濵口 大和','岡田 開成','三宅 悠斗','佐藤 大介','藤田 大智'],
+    '駒澤大学':['桑田 駿介','鈴木 大翔','谷中 晴','植阪 嶺児','小山 翔也','安原 海晴'],
+    '城西大学':['柴田 侑','山本 聖也','ルト アロン','小林 竜輝','橋本 健市','中島 巨翔'],
+    '創価大学':['村上 遵世','菅野 元太','S.ムチーニ','織橋 巧','山口 翔輝','小池 莉希'],
+    '帝京大学':['松尾 航希','松井 一','楠岡 由浩','小林 咲冴','原 悠太','廣田 陸'],
+    '日本大学':['首藤 海翔','山口 聡太','J.キプケメイ','石川 悠斗','長澤 辰朗','橋本 櫂知']
+  }
+};
+function izumoPredictionTemplate(){
+  const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names])=>`<tr><td><strong>${team}</strong></td>${names.map((n,i)=>`<td><small>${i+1}区</small><br><strong>${n}</strong></td>`).join('')}</tr>`).join('');
+  return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>9月27日時点。正式チームエントリー、2026年の5000m・10000m PB、直近の記録会、過去の駅伝実績を組み合わせた予想。区間予想は当日変更前の暫定版です。</p></div>
+  <div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>総合順位予想</h3></div><div class="panel-body"><div class="rank-list">${izumoPrediction2026.ranking.map((t,i)=>`<div class="rank-item"><div class="rank-number">${i+1}</div><div><div class="team-name">${t}</div></div></div>`).join('')}</div></div></article>
+  <article class="data-card"><h3>予想の評価軸</h3><div class="weight-list"><div><span>5000m上位6名・スピード</span><strong>35%</strong></div><div><span>10000m上位層</span><strong>20%</strong></div><div><span>2026トラック実績・直近状態</span><strong>20%</strong></div><div><span>過去の出雲・三大駅伝実績</span><strong>15%</strong></div><div><span>区間配置・アンカー力</span><strong>10%</strong></div></div><p>出雲は6区間45.1kmで、1区8.0km・2区5.8km・3区8.5km・4区6.2km・5区6.4km・6区10.2km。短距離区間が多いため5000mの比重を高めています。</p></article></div>
+  <article class="history-block"><h2>関東10大学 区間予想</h2><div class="table-wrap"><table><thead><tr><th>大学</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
+  <div class="notice"><strong>更新方針:</strong> 9月26日の第20回絆記録挑戦会までの完了結果を反映。9月27日の日体大記録会5000mなど、本日これから実施される競技は結果確定後にPB・予想へ反映します。</div></section>`;
+}
+
 function predictionTemplate(){return `<section class="container page"><div class="page-header"><h1>2027 箱根駅伝予想</h1><p>2026年8月時点の試算。今後の出雲・全日本・記録会で随時更新します。</p></div><div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>優勝確率 試算 v0.3</h3></div><div class="panel-body"><div class="rank-list">${rankList()}</div></div></article><article class="data-card"><h3>現在の評価軸</h3><div class="weight-list"><div><span>2026箱根実績</span><strong>30%</strong></div><div><span>直近の全日本・出雲</span><strong>25%</strong></div><div><span>5000m PB層</span><strong>10%</strong></div><div><span>10000m PB層</span><strong>15%</strong></div><div><span>ハーフPB層</span><strong>15%</strong></div><div><span>箱根適性・駅伝実績</span><strong>5%</strong></div></div></article></div><div class="notice"><strong>重要:</strong> 2026年度4年生は第103回箱根駅伝に出場可能なため戦力に含めています。2025年度4年生など、すでに卒業した選手は除外します。</div></section>`}
 function aboutTemplate(){return `<section class="container page"><div class="page-header"><h1>データと予想方法</h1><p>駅伝実績に加え、5000m・10000m・ハーフマラソンを分けて評価します。</p></div><div class="data-grid"><article class="data-card"><h3>三大駅伝</h3><p>箱根・出雲・全日本の過去10年を公式記録で照合し、特に直近大会を重く評価します。</p></article><article class="data-card"><h3>選手PB</h3><p>5000mのスピード、10000mの持続力、ハーフのロード適性を総合して各校10名を抜粋します。</p></article><article class="data-card"><h3>学年・出場資格</h3><p>第103回大会時点で出場可能な選手を対象にします。2026年度4年生は対象、すでに卒業した選手は除外します。</p></article></div></section>`}
-const templates={home:homeTemplate,teams:teamsTemplate,history:historyTemplate,prediction:predictionTemplate,about:aboutTemplate};
+const templates={home:homeTemplate,teams:teamsTemplate,history:historyTemplate,prediction:predictionTemplate,'izumo-prediction':izumoPredictionTemplate,about:aboutTemplate};
 function startCountdown(){clearInterval(countdownTimer);const el=document.querySelector('#countdown');if(!el)return;const target=new Date('2027-01-02T08:00:00+09:00');const render=()=>{const diff=Math.max(0,target-new Date());const days=Math.floor(diff/86400000),hours=Math.floor(diff/3600000)%24,mins=Math.floor(diff/60000)%60,secs=Math.floor(diff/1000)%60;el.innerHTML=[[days,'日'],[hours,'時間'],[mins,'分'],[secs,'秒']].map(([n,l])=>`<div class="time-box"><strong>${String(n).padStart(2,'0')}</strong><small>${l}</small></div>`).join('')};render();countdownTimer=setInterval(render,1000)}
 function render(route='home'){const tpl=templates[route]||homeTemplate;app.innerHTML=tpl();document.querySelectorAll('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.route===route));nav.classList.remove('open');menuButton.setAttribute('aria-expanded','false');resetPageTop();if(route==='home')startCountdown();else clearInterval(countdownTimer)}
 document.addEventListener('click',e=>{const target=e.target.closest('[data-route]');if(target)render(target.dataset.route)});menuButton.addEventListener('click',()=>{const open=nav.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open))});const initialRoute=location.hash.replace('#','')||'home';if(initialRoute!=='home')render(initialRoute);
