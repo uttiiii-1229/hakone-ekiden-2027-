@@ -1,6 +1,6 @@
 // Auto-generated historical Hakone qualifier database
 window.hakoneQualifierDB = {
-  "generatedAt": "2026-09-20T18:45:59.478Z",
+  "generatedAt": "2026-09-27T18:48:32.044Z",
   "years": {
     "2022": {
       "year": 2022,
