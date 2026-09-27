@@ -106,14 +106,39 @@ function izumoPredictionTemplate(){
   const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names])=>`<tr><td><strong>${team}</strong></td>${names.map((n,i)=>`<td><small>${i+1}区</small><br><strong>${n}</strong></td>`).join('')}</tr>`).join('');
   return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>9月27日時点。正式チームエントリー、2026年の5000m・10000m PB、直近の記録会、過去の駅伝実績を組み合わせた予想。区間予想は当日変更前の暫定版です。</p></div>
   <div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>総合順位予想</h3></div><div class="panel-body"><div class="rank-list">${izumoPrediction2026.ranking.map((t,i)=>`<div class="rank-item"><div class="rank-number">${i+1}</div><div><div class="team-name">${t}</div></div></div>`).join('')}</div></div></article>
-  <article class="data-card"><h3>予想の評価軸</h3><div class="weight-list"><div><span>5000m上位6名・スピード</span><strong>35%</strong></div><div><span>10000m上位層</span><strong>20%</strong></div><div><span>2026トラック実績・直近状態</span><strong>20%</strong></div><div><span>過去の出雲・三大駅伝実績</span><strong>15%</strong></div><div><span>区間配置・アンカー力</span><strong>10%</strong></div></div><p>出雲は6区間45.1kmで、1区8.0km・2区5.8km・3区8.5km・4区6.2km・5区6.4km・6区10.2km。短距離区間が多いため5000mの比重を高めています。</p></article></div>
+  <article class="data-card"><h3>予想の評価軸</h3><div class="weight-list"><div><span>5000m上位6名・スピード</span><strong>30%</strong></div><div><span>10000m上位層</span><strong>15%</strong></div><div><span>2026トラック実績・直近状態</span><strong>20%</strong></div><div><span>直近3〜5年の出雲実績・現役選手の出雲経験</span><strong>25%</strong></div><div><span>区間配置・アンカー力</span><strong>10%</strong></div></div><p>出雲は6区間45.1kmで、1区8.0km・2区5.8km・3区8.5km・4区6.2km・5区6.4km・6区10.2km。短距離区間が多いため5000mを重視しつつ、出雲特有の高速展開への対応力を評価するため、直近の出雲実績・現役選手の出雲経験を25%まで引き上げています。</p></article></div>
   <article class="history-block"><h2>関東10大学 区間予想</h2><div class="table-wrap"><table><thead><tr><th>大学</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
   <div class="notice"><strong>更新方針:</strong> 9月26日の第20回絆記録挑戦会までの完了結果を反映。9月27日の日体大記録会5000mなど、本日これから実施される競技は結果確定後にPB・予想へ反映します。</div></section>`;
 }
 
+
+const zennihonPrediction2026={
+ updated:'2026-09-27',
+ ranking:['駒澤大学','中央大学','青山学院大学','國學院大學','早稲田大学','創価大学','順天堂大学','帝京大学','日本大学','東洋大学','東海大学','大東文化大学','山梨学院大学','中央学院大学','神奈川大学'],
+ teams:['駒澤大学','中央大学','青山学院大学','國學院大學','早稲田大学','帝京大学','創価大学','順天堂大学','日本大学','東海大学','大東文化大学','神奈川大学','東洋大学','中央学院大学','山梨学院大学']
+};
+function zennihonPredictionTemplate(){
+ const resolver=window.currentAthletePbResolver;
+ const sec=v=>resolver?.timeSeconds?resolver.timeSeconds(v):null;
+ const score=r=>{const t10=sec(r.pb10000),h=sec(r.half),t5=sec(r.pb5000);return (t10??1900)*0.50+(h??4200)*0.35+(t5??900)*0.15;};
+ const forecast=zennihonPrediction2026.teams.map(team=>{
+   let rows=resolver?.currentRows?resolver.currentRows(team):[];
+   rows=rows.filter(r=>r&&r.name).sort((a,b)=>score(a)-score(b)).slice(0,8);
+   // 全日本は前半のスピード区間と7・8区の長距離を分離。上位2名を7・8区へ回す暫定配置。
+   const order=rows.length>=8?[rows[3],rows[5],rows[4],rows[6],rows[7],rows[2],rows[1],rows[0]]:rows;
+   return [team,order];
+ });
+ const orderRows=forecast.map(([team,rows])=>`<tr><td><strong>${team}</strong></td>${Array.from({length:8},(_,i)=>`<td><small>${i+1}区</small><br><strong>${rows[i]?.name||'未定'}</strong></td>`).join('')}</tr>`).join('');
+ return `<section class="container page"><div class="page-header"><h1>2026 全日本大学駅伝予想</h1><p>9月27日時点の暫定予想。関東の出場15大学を対象に、PB・2026年の状態・全日本実績・長距離区間への適性を評価しています。</p></div>
+ <div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>関東15大学 順位予想</h3></div><div class="panel-body"><div class="rank-list">${zennihonPrediction2026.ranking.map((t,i)=>`<div class="rank-item"><div class="rank-number">${i+1}</div><div><div class="team-name">${t}</div></div></div>`).join('')}</div></div></article>
+ <article class="data-card"><h3>予想の評価軸</h3><div class="weight-list"><div><span>10000m・ハーフの選手層</span><strong>30%</strong></div><div><span>2026年トラック・直近状態</span><strong>20%</strong></div><div><span>直近3〜5年の全日本実績</span><strong>25%</strong></div><div><span>5000mスピード</span><strong>10%</strong></div><div><span>7・8区の長距離対応と選手層</span><strong>15%</strong></div></div><p>全日本は8区間106.8km。出雲より距離が長いため、5000m単独の比重を下げ、10000m・ハーフと7〜8区を走り切れる層の厚さを重くしています。</p></article></div>
+ <article class="history-block"><h2>関東出場15大学 区間予想</h2><div class="table-wrap"><table><thead><tr><th>大学</th>${Array.from({length:8},(_,i)=>`<th>${i+1}区</th>`).join('')}</tr></thead><tbody>${orderRows}</tbody></table></div></article>
+ <div class="notice"><strong>暫定版:</strong> 本大会の正式エントリー・区間エントリー前のため、現在の2026年度在籍選手PBデータから8名を抽出して配置しています。出雲、10月の記録会、正式エントリー発表後に更新します。</div></section>`;
+}
+
 function predictionTemplate(){return `<section class="container page"><div class="page-header"><h1>2027 箱根駅伝予想</h1><p>2026年8月時点の試算。今後の出雲・全日本・記録会で随時更新します。</p></div><div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>優勝確率 試算 v0.3</h3></div><div class="panel-body"><div class="rank-list">${rankList()}</div></div></article><article class="data-card"><h3>現在の評価軸</h3><div class="weight-list"><div><span>2026箱根実績</span><strong>30%</strong></div><div><span>直近の全日本・出雲</span><strong>25%</strong></div><div><span>5000m PB層</span><strong>10%</strong></div><div><span>10000m PB層</span><strong>15%</strong></div><div><span>ハーフPB層</span><strong>15%</strong></div><div><span>箱根適性・駅伝実績</span><strong>5%</strong></div></div></article></div><div class="notice"><strong>重要:</strong> 2026年度4年生は第103回箱根駅伝に出場可能なため戦力に含めています。2025年度4年生など、すでに卒業した選手は除外します。</div></section>`}
 function aboutTemplate(){return `<section class="container page"><div class="page-header"><h1>データと予想方法</h1><p>駅伝実績に加え、5000m・10000m・ハーフマラソンを分けて評価します。</p></div><div class="data-grid"><article class="data-card"><h3>三大駅伝</h3><p>箱根・出雲・全日本の過去10年を公式記録で照合し、特に直近大会を重く評価します。</p></article><article class="data-card"><h3>選手PB</h3><p>5000mのスピード、10000mの持続力、ハーフのロード適性を総合して各校10名を抜粋します。</p></article><article class="data-card"><h3>学年・出場資格</h3><p>第103回大会時点で出場可能な選手を対象にします。2026年度4年生は対象、すでに卒業した選手は除外します。</p></article></div></section>`}
-const templates={home:homeTemplate,teams:teamsTemplate,history:historyTemplate,prediction:predictionTemplate,'izumo-prediction':izumoPredictionTemplate,about:aboutTemplate};
+const templates={home:homeTemplate,teams:teamsTemplate,history:historyTemplate,prediction:predictionTemplate,'izumo-prediction':izumoPredictionTemplate,'zennihon-prediction':zennihonPredictionTemplate,about:aboutTemplate};
 function startCountdown(){clearInterval(countdownTimer);const el=document.querySelector('#countdown');if(!el)return;const target=new Date('2027-01-02T08:00:00+09:00');const render=()=>{const diff=Math.max(0,target-new Date());const days=Math.floor(diff/86400000),hours=Math.floor(diff/3600000)%24,mins=Math.floor(diff/60000)%60,secs=Math.floor(diff/1000)%60;el.innerHTML=[[days,'日'],[hours,'時間'],[mins,'分'],[secs,'秒']].map(([n,l])=>`<div class="time-box"><strong>${String(n).padStart(2,'0')}</strong><small>${l}</small></div>`).join('')};render();countdownTimer=setInterval(render,1000)}
 function render(route='home'){const tpl=templates[route]||homeTemplate;app.innerHTML=tpl();document.querySelectorAll('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.route===route));nav.classList.remove('open');menuButton.setAttribute('aria-expanded','false');resetPageTop();if(route==='home')startCountdown();else clearInterval(countdownTimer)}
 document.addEventListener('click',e=>{const target=e.target.closest('[data-route]');if(target)render(target.dataset.route)});menuButton.addEventListener('click',()=>{const open=nav.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open))});const initialRoute=location.hash.replace('#','')||'home';if(initialRoute!=='home')render(initialRoute);
