@@ -670,5 +670,47 @@
     "includeGenders": [
       "男子"
     ]
+  },
+  {
+    "id": "kansai-ic-road-99-2022",
+    "year": 2022,
+    "name": "第99回関西学生陸上競技対校選手権大会（ロードの部）",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://gold.jaic.org/icaak/record/2022/4_KSICroad/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
+  },
+  {
+    "id": "kansai-ic-road-100-2023",
+    "year": 2023,
+    "name": "第100回関西学生陸上競技対校選手権大会（ロードの部）",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://gold.jaic.org/icaak/record/2023/4_KSICroad/kyougi.html",
+    "includeGenders": [
+      "男子"
+    ]
+  },
+  {
+    "id": "kansai-ic-road-102-2025",
+    "year": 2025,
+    "name": "第102回関西学生陸上競技対校選手権大会（ロードの部）",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://gold.jaic.org/jaic/icaak/record/2025/2_KSICRoad/kyougi.html",
+    "includeGenders": [
+      "男子"
+    ]
+  },
+  {
+    "id": "kansai-gakuren-2-2025",
+    "year": 2026,
+    "name": "2025年度第2回学連競技会",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://gold.jaic.org/jaic/icaak/record/2025/20_GK2/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
   }
 ]
