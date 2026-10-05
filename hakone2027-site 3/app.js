@@ -87,28 +87,459 @@ function historyTable(key,title){return `<article class="history-block"><h2>${ti
 function historyTemplate(){return `<section class="container page"><div class="page-header"><h1>過去10年・三大駅伝</h1><p>箱根駅伝は2017〜2026、出雲・全日本は2016〜2025を公式記録ベースで再照合。総合上位3校を掲載し、区間順位は各大会公式記録へ直結しています。</p></div>${historyTable('hakone','箱根駅伝')}${historyTable('izumo','出雲駅伝')}${historyTable('zennihon','全日本大学駅伝')}<div class="notice">区間順位は誤転記を避けるため、各年の公式記録を参照する方式に変更しました。2020年の出雲駅伝（第32回）は大会中止です。</div></section>`}
 
 const izumoPrediction2026 = {
-  updated:'2026-09-27',
-  ranking:['中央大学','早稲田大学','アイビーリーグ選抜','青山学院大学','國學院大學','創価大学','順天堂大学','駒澤大学','城西大学','帝京大学','日本大学','京都産業大学','関西大学','皇學館大學','広島経済大学','札幌学院大学','信州大学','金沢学院大学','第一工科大学','北海道大学','東北学連選抜'],
+  updated:'2026-10-05',
+  ranking:['中央大学','早稲田大学','國學院大學','創価大学','アイビーリーグ選抜','青山学院大学','順天堂大学','駒澤大学','城西大学','帝京大学','日本大学','京都産業大学','関西大学','皇學館大学','広島経済大学','札幌学院大学','信州大学','金沢学院大学','第一工科大学','北海道大学','東北学連選抜'],
   orders:{
     '青山学院大学':['折田 壮太','小河原 陽琉','飯田 翔大','黒田 然','鳥井 健太','平松 享祐'],
-    '國學院大學':['五十嵐 新太','鼻野木 悠翔','野中 恒亨','飯國 新太','髙石 樹','辻原 輝'],
-    '順天堂大学':['井上 朋哉','池間 凜斗','吉岡 大翔','永原 颯磨','山本 悠','荒牧 琢登'],
+    '國學院大學':['辻原 輝','鼻野木 悠翔','野中 恒亨','浅野 結太','飯國 新太','髙石 樹'],
+    '順天堂大学':['井上 朋哉','池間 凛斗','吉岡 大翔','永原 颯磨','山本 悠','荒牧 琢登'],
     '早稲田大学':['増子 陽太','本田 桜二郎','山口 竣平','新妻 遼己','鈴木 琉胤','吉倉 ナヤブ直希'],
     '中央大学':['栗村 凌','濵口 大和','岡田 開成','三宅 悠斗','佐藤 大介','藤田 大智'],
-    '駒澤大学':['桑田 駿介','鈴木 大翔','谷中 晴','植阪 嶺児','小山 翔也','安原 海晴'],
+    '駒澤大学':['桑田 駿介','池谷 陸斗','谷中 晴','植阪 嶺児','小山 翔也','安原 海晴'],
     '城西大学':['柴田 侑','山本 聖也','ルト アロン','小林 竜輝','橋本 健市','中島 巨翔'],
-    '創価大学':['村上 遵世','菅野 元太','S.ムチーニ','織橋 巧','山口 翔輝','小池 莉希'],
+    '創価大学':['村上 遵世','菅野 元太','スティーブン ムチーニ','織橋 巧','山口 翔輝','小池 莉希'],
     '帝京大学':['松尾 航希','松井 一','楠岡 由浩','小林 咲冴','原 悠太','廣田 陸'],
-    '日本大学':['首藤 海翔','山口 聡太','J.キプケメイ','石川 悠斗','長澤 辰朗','橋本 櫂知']
+    '日本大学':['首藤 海翔','山口 聡太','シャドラック キップケメイ','石川 悠斗','長澤 辰朗','橋本 櫂知']
   }
 };
+const izumoEntries2026 = {
+  "青山学院大学": [
+    {
+      "name": "平松 享祐",
+      "grade": 4
+    },
+    {
+      "name": "鳥井 健太",
+      "grade": 4
+    },
+    {
+      "name": "飯田 翔大",
+      "grade": 3
+    },
+    {
+      "name": "小河原 陽琉",
+      "grade": 3
+    },
+    {
+      "name": "折田 壮太",
+      "grade": 3
+    },
+    {
+      "name": "黒田 然",
+      "grade": 3
+    },
+    {
+      "name": "石川 浩輝",
+      "grade": 2
+    },
+    {
+      "name": "櫨元 優馬",
+      "grade": 2
+    },
+    {
+      "name": "前川 竜之将",
+      "grade": 2
+    },
+    {
+      "name": "古川 陽樹",
+      "grade": 1
+    }
+  ],
+  "國學院大學": [
+    {
+      "name": "野中 恒亨",
+      "grade": 4
+    },
+    {
+      "name": "田中 愛睦",
+      "grade": 4
+    },
+    {
+      "name": "辻原 輝",
+      "grade": 4
+    },
+    {
+      "name": "浅野 結太",
+      "grade": 3
+    },
+    {
+      "name": "飯國 新太",
+      "grade": 3
+    },
+    {
+      "name": "尾熊 迅斗",
+      "grade": 3
+    },
+    {
+      "name": "鼻野木 悠翔",
+      "grade": 3
+    },
+    {
+      "name": "髙石 樹",
+      "grade": 2
+    },
+    {
+      "name": "和久井 夏輝",
+      "grade": 2
+    },
+    {
+      "name": "五十嵐 新太",
+      "grade": 1
+    }
+  ],
+  "順天堂大学": [
+    {
+      "name": "荒牧 琢登",
+      "grade": 4
+    },
+    {
+      "name": "小林 侑世",
+      "grade": 4
+    },
+    {
+      "name": "古川 達也",
+      "grade": 4
+    },
+    {
+      "name": "吉岡 大翔",
+      "grade": 4
+    },
+    {
+      "name": "池間 凛斗",
+      "grade": 3
+    },
+    {
+      "name": "今井 悠貴",
+      "grade": 3
+    },
+    {
+      "name": "永原 颯磨",
+      "grade": 3
+    },
+    {
+      "name": "山本 悠",
+      "grade": 3
+    },
+    {
+      "name": "井上 朋哉",
+      "grade": 2
+    },
+    {
+      "name": "佐藤 賢仁",
+      "grade": 1
+    }
+  ],
+  "早稲田大学": [
+    {
+      "name": "工藤 慎作",
+      "grade": 4
+    },
+    {
+      "name": "山口 竣平",
+      "grade": 3
+    },
+    {
+      "name": "吉倉 ナヤブ直希",
+      "grade": 3
+    },
+    {
+      "name": "佐々木 哲",
+      "grade": 2
+    },
+    {
+      "name": "鈴木 琉胤",
+      "grade": 2
+    },
+    {
+      "name": "堀野 正太",
+      "grade": 2
+    },
+    {
+      "name": "上杉 敦史",
+      "grade": 1
+    },
+    {
+      "name": "新妻 遼己",
+      "grade": 1
+    },
+    {
+      "name": "本田 桜二郎",
+      "grade": 1
+    },
+    {
+      "name": "増子 陽太",
+      "grade": 1
+    }
+  ],
+  "中央大学": [
+    {
+      "name": "藤田 大智",
+      "grade": 4
+    },
+    {
+      "name": "佐藤 蓮",
+      "grade": 4
+    },
+    {
+      "name": "柴田 大地",
+      "grade": 4
+    },
+    {
+      "name": "岡田 開成",
+      "grade": 3
+    },
+    {
+      "name": "佐藤 大介",
+      "grade": 3
+    },
+    {
+      "name": "並川 颯太",
+      "grade": 3
+    },
+    {
+      "name": "濵口 大和",
+      "grade": 2
+    },
+    {
+      "name": "三宅 悠斗",
+      "grade": 2
+    },
+    {
+      "name": "簡 子傑",
+      "grade": 1
+    },
+    {
+      "name": "栗村 凌",
+      "grade": 1
+    }
+  ],
+  "駒澤大学": [
+    {
+      "name": "小山 翔也",
+      "grade": 4
+    },
+    {
+      "name": "植阪 嶺児",
+      "grade": 4
+    },
+    {
+      "name": "安原 海晴",
+      "grade": 4
+    },
+    {
+      "name": "桑田 駿介",
+      "grade": 3
+    },
+    {
+      "name": "谷中 晴",
+      "grade": 3
+    },
+    {
+      "name": "上岡 煌",
+      "grade": 2
+    },
+    {
+      "name": "池谷 陸斗",
+      "grade": 1
+    },
+    {
+      "name": "今村 仁",
+      "grade": 1
+    },
+    {
+      "name": "後藤 颯星",
+      "grade": 1
+    },
+    {
+      "name": "鈴木 大翔",
+      "grade": 1
+    }
+  ],
+  "城西大学": [
+    {
+      "name": "中島 巨翔",
+      "grade": 4
+    },
+    {
+      "name": "小田 伊織",
+      "grade": 4
+    },
+    {
+      "name": "柴田 侑",
+      "grade": 4
+    },
+    {
+      "name": "大場 崇義",
+      "grade": 3
+    },
+    {
+      "name": "小林 竜輝",
+      "grade": 3
+    },
+    {
+      "name": "橋本 健市",
+      "grade": 3
+    },
+    {
+      "name": "正岡 優翔",
+      "grade": 3
+    },
+    {
+      "name": "村尾 恭輔",
+      "grade": 2
+    },
+    {
+      "name": "山本 聖也",
+      "grade": 1
+    },
+    {
+      "name": "ルト アロン",
+      "grade": 1
+    }
+  ],
+  "創価大学": [
+    {
+      "name": "織橋 巧",
+      "grade": 4
+    },
+    {
+      "name": "小池 莉希",
+      "grade": 4
+    },
+    {
+      "name": "スティーブン ムチーニ",
+      "grade": 4
+    },
+    {
+      "name": "榎木 凜太朗",
+      "grade": 3
+    },
+    {
+      "name": "山口 翔輝",
+      "grade": 3
+    },
+    {
+      "name": "ソロモン ムトゥク",
+      "grade": 3
+    },
+    {
+      "name": "内田 涼太",
+      "grade": 1
+    },
+    {
+      "name": "菅野 元太",
+      "grade": 1
+    },
+    {
+      "name": "田村 幸太",
+      "grade": 1
+    },
+    {
+      "name": "村上 遵世",
+      "grade": 1
+    }
+  ],
+  "帝京大学": [
+    {
+      "name": "浅川 侑大",
+      "grade": 4
+    },
+    {
+      "name": "浅野 智仁",
+      "grade": 4
+    },
+    {
+      "name": "楠岡 由浩",
+      "grade": 4
+    },
+    {
+      "name": "原 悠太",
+      "grade": 4
+    },
+    {
+      "name": "廣田 陸",
+      "grade": 4
+    },
+    {
+      "name": "小林 咲冴",
+      "grade": 3
+    },
+    {
+      "name": "設楽 琉惺",
+      "grade": 3
+    },
+    {
+      "name": "松井 一",
+      "grade": 3
+    },
+    {
+      "name": "雪田 圭将",
+      "grade": 2
+    },
+    {
+      "name": "松尾 航希",
+      "grade": 1
+    }
+  ],
+  "日本大学": [
+    {
+      "name": "山口 聡太",
+      "grade": 4
+    },
+    {
+      "name": "天野 啓太",
+      "grade": 4
+    },
+    {
+      "name": "シャドラック キップケメイ",
+      "grade": 4
+    },
+    {
+      "name": "石川 悠斗",
+      "grade": 3
+    },
+    {
+      "name": "長澤 辰朗",
+      "grade": 3
+    },
+    {
+      "name": "橋本 櫂知",
+      "grade": 3
+    },
+    {
+      "name": "安濃 佑真",
+      "grade": 2
+    },
+    {
+      "name": "岸端 悠友",
+      "grade": 2
+    },
+    {
+      "name": "川野 陸翔",
+      "grade": 1
+    },
+    {
+      "name": "首藤 海翔",
+      "grade": 1
+    }
+  ]
+};
 function izumoPredictionTemplate(){
-  const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names])=>`<tr><td><strong>${team}</strong></td>${names.map((n,i)=>`<td><small>${i+1}区</small><br><strong>${n}</strong></td>`).join('')}</tr>`).join('');
-  return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>9月27日時点。正式チームエントリー、2026年の5000m・10000m PB、直近の記録会、過去の駅伝実績を組み合わせた予想。区間予想は当日変更前の暫定版です。</p></div>
+  const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names])=>`<tr><td><button type="button" class="entry-team-button" data-izumo-team="${team}" aria-expanded="false" aria-controls="izumo-entry-${Object.keys(izumoPrediction2026.orders).indexOf(team)}">${team}<small>エントリー10名</small></button></td>${names.map((n,i)=>`<td><small>${i+1}区</small><br><strong>${n}</strong></td>`).join('')}</tr><tr id="izumo-entry-${Object.keys(izumoPrediction2026.orders).indexOf(team)}" class="izumo-entry-row" hidden><td colspan="7"><div class="izumo-entry-panel"><h3>${team} 登録10名</h3><p>公式チームエントリー／2026年10月5日確認。区間は当サイトの予想です。</p><ol class="izumo-entry-list">${izumoEntries2026[team].map(p=>`<li><strong>${p.name}</strong><span>${p.grade}年</span><small>${names.includes(p.name)?`${names.indexOf(p.name)+1}区予想`:'区間未配置（予想）'}</small></li>`).join('')}</ol><a href="https://www.izumo-ekiden.jp/assets/pdf/orderlist-sokuhou.pdf" target="_blank" rel="noopener noreferrer">公式エントリー一覧（速報版）</a></div></td></tr>`).join('');
+  return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>10月5日更新。公式エントリーと選手紹介、9月27日のトラック・ロード結果を確認した暫定予想。出雲の経験を25%で評価し、登録10名から区間を予想しています。</p></div>
   <div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>総合順位予想</h3></div><div class="panel-body"><div class="rank-list">${izumoPrediction2026.ranking.map((t,i)=>`<div class="rank-item"><div class="rank-number">${i+1}</div><div><div class="team-name">${t}</div></div></div>`).join('')}</div></div></article>
   <article class="data-card"><h3>予想の評価軸</h3><div class="weight-list"><div><span>5000m上位6名・スピード</span><strong>30%</strong></div><div><span>10000m上位層</span><strong>15%</strong></div><div><span>2026トラック実績・直近状態</span><strong>20%</strong></div><div><span>直近3〜5年の出雲実績・現役選手の出雲経験</span><strong>25%</strong></div><div><span>区間配置・アンカー力</span><strong>10%</strong></div></div><p>出雲は6区間45.1kmで、1区8.0km・2区5.8km・3区8.5km・4区6.2km・5区6.4km・6区10.2km。短距離区間が多いため5000mを重視しつつ、出雲特有の高速展開への対応力を評価するため、直近の出雲実績・現役選手の出雲経験を25%まで引き上げています。</p></article></div>
-  <article class="history-block"><h2>関東10大学 区間予想</h2><div class="table-wrap"><table><thead><tr><th>大学</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
-  <div class="notice"><strong>更新方針:</strong> 9月26日の第20回絆記録挑戦会までの完了結果を反映。9月27日の日体大記録会5000mなど、本日これから実施される競技は結果確定後にPB・予想へ反映します。</div></section>`;
+  <article class="history-block"><h2>関東10大学 区間予想</h2><p>大学名をクリックすると、登録10名・学年・予想区間を表示します。</p><div class="table-wrap"><table><thead><tr><th>大学</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
+  <article class="data-card"><h2>今回の見直しと注目点</h2><ul>
+<li><strong>中央・早稲田を優勝候補に継続：</strong>中央は岡田・藤田・濵口・三宅に栗村を加えたスピードの厚さ、早稲田は山口・鈴木・増子の5000m13分20秒前後の層を評価。吉倉の9月27日ロード5km13分38秒も配置判断の材料にしています。</li>
+<li><strong>國學院を5位から3位へ：</strong>直近の出雲経験を再評価。昨年4区で区間新の辻原を1区に置き、野中を3区、髙石を6区に配置する案へ変更。新人を1区に置く前回案より、序盤の経験と終盤の持続力を重視しました。</li>
+<li><strong>創価を6位から4位へ：</strong>9月27日ロード5kmの小池13分26秒・ムチーニ13分25秒・織橋13分36秒を評価。小池を6区、ムチーニを3区に据える案を継続。一方、村上の同日トラック5000m13分54秒89も考慮し、序盤の確実性は課題としています。</li>
+<li><strong>駒澤の2区を池谷に変更：</strong>9月27日の5000m13分47秒09（PB）を評価。上岡も13分53秒20（PB）を記録しており、短い区間の代替候補。鈴木大翔との最終比較は当日の状態次第です。</li>
+<li><strong>日本・帝京の直近ロードも確認：</strong>キップケメイの5km13分15秒、帝京の松尾13分40秒・原13分53秒を参考に、現在の配置を継続。ロード5kmの記録をトラック5000mのPBとして扱うことはしません。</li>
+<li><strong>アイビーリーグ選抜は5位へ：</strong>ブランクスらのトラック能力は高く評価しつつ、6名の組合せ・出雲のロード適応に不確実性があるため幅を持って見ています。</li>
+</ul><p>上位6チームは区間配置と当日の状態で入れ替わると見ています。7位以下は今回確認した情報だけでは大きく動かす根拠が不足するため、前回の順序を維持。順位は評価軸に沿った編集上の予想で、確定順位や統計的な勝率ではありません。</p>
+<h3>確認した情報</h3><ul><li><a href="https://www.izumo-ekiden.jp/runner/index.html" target="_blank" rel="noopener noreferrer">出雲駅伝公式：エントリー・10月5日更新の選手紹介</a></li><li><a href="https://komazawa-ekiden.com/results/" target="_blank" rel="noopener noreferrer">駒澤大学公式：9月27日日体大競技会</a></li><li><a href="https://soka-ekiden.com/play/" target="_blank" rel="noopener noreferrer">創価大学公式：9月27日の日体大・ADIZERO 5K・The Road of WASEDA結果</a></li></ul></article>
+<div class="notice"><strong>確認範囲：</strong>2026年10月5日現在公開されている登録情報と、上記で確認できた直近結果を反映。健康状態や未公表の結果は推測していません。区間配置は公式区間エントリーとは別の予想です。登録10名のうち区間未配置の4名も、実際の補欠が確定したことを示すものではありません。</div></section>`;
 }
 
 
@@ -143,3 +574,14 @@ function startCountdown(){clearInterval(countdownTimer);const el=document.queryS
 function render(route='home'){const tpl=templates[route]||homeTemplate;app.innerHTML=tpl();document.querySelectorAll('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.route===route));nav.classList.remove('open');menuButton.setAttribute('aria-expanded','false');resetPageTop();if(route==='home')startCountdown();else clearInterval(countdownTimer)}
 document.addEventListener('click',e=>{const target=e.target.closest('[data-route]');if(target)render(target.dataset.route)});menuButton.addEventListener('click',()=>{const open=nav.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open))});const initialRoute=location.hash.replace('#','')||'home';if(initialRoute!=='home')render(initialRoute);
 window.addEventListener('pageshow',()=>resetPageTop());
+
+// Expand official entries in place without leaving the section prediction.
+document.addEventListener('click', e => {
+  const button = e.target.closest('[data-izumo-team]');
+  if (!button) return;
+  const row = document.getElementById(button.getAttribute('aria-controls'));
+  if (!row) return;
+  const expanded = button.getAttribute('aria-expanded') === 'true';
+  button.setAttribute('aria-expanded', String(!expanded));
+  row.hidden = expanded;
+});
