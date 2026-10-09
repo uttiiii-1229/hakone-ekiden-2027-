@@ -809,13 +809,170 @@ function athleteForm2026(name){
 }
 function formCoverage2026(){return `<article class="data-card"><h2>近況情報の確認範囲（10月5日）</h2><p>出走記録は、その日に走ったことの証拠です。ロード5kmとトラック5000mは別に扱い、長距離区間の適性や故障の有無まで断定しません。練習目的・調整段階が異なるレースのタイムを単純比較しません。</p><ul><li>青学：10月4日更新の取材記事で9月15〜23日の選抜合宿と主将の発言を確認。個人全員の好調さまでは確定しない。<a href="https://www.redbull.com/jp-ja/izumo-ekiden-aogaku-ekiden" target="_blank" rel="noopener noreferrer">取材記事</a></li><li>國學院：9月27日の公式結果・選手コメントは主に登録10名以外の選手。チーム全体の成果を登録選手の個人状態に置き換えない。<a href="https://www.kokugakuin.com/result/4229/" target="_blank" rel="noopener noreferrer">公式結果</a></li><li>中央：9月20日の学内記録会は天候不良による大会中止。個人の欠場・故障として扱わない。<a href="https://chuo-tf.com/official-record-meeting/" target="_blank" rel="noopener noreferrer">公式日程</a></li><li>大東文化：9月27日のロード結果は主力8名とは別の選手。主力の状態を推測しない。<a href="https://dbu-ekiden.com/news/2026/adizero-5k-tokyo-challenge-2026-results/" target="_blank" rel="noopener noreferrer">公式結果</a></li><li>X：中央の公式アカウントによる9月27日結果への検索掲載を確認したが、投稿本文・対象選手を直接照合できない情報は個人評価に採用しない。YouTube：予想動画を検索したが、映像・発言を直接確認できず、動画タイトルだけで故障や好不調を判断しない。</li></ul><p>順天堂・城西・帝京・日本の全員、全日本のみの大学の多くは秋の個人情報が限られます。「未確認」を表示し、欠場理由の未公表を不調と扱いません。正式発表で判断が変わる暫定案です。</p></article>`;}
 
+const izumoOfficialOrder2026 = {
+  "publishedAt": "2026-10-09 09:30",
+  "status": "暫定",
+  "source": "https://www.izumo-ekiden.jp/assets/pdf/orderlist_pre.pdf",
+  "teams": {
+    "青山学院大学": {
+      "runners": [
+        "石川 浩輝",
+        "鳥井 健太",
+        "飯田 翔大",
+        "小河原 陽琉",
+        "黒田 然",
+        "前川 竜之将"
+      ],
+      "reserves": [
+        "平松 享祐",
+        "古川 陽樹"
+      ]
+    },
+    "國學院大學": {
+      "runners": [
+        "浅野 結太",
+        "鼻野木 悠翔",
+        "辻原 輝",
+        "尾熊 迅斗",
+        "飯國 新太",
+        "髙石 樹"
+      ],
+      "reserves": [
+        "野中 恒亨",
+        "五十嵐 新太"
+      ]
+    },
+    "順天堂大学": {
+      "runners": [
+        "小林 侑世",
+        "吉岡 大翔",
+        "井上 朋哉",
+        "佐藤 賢仁",
+        "古川 達也",
+        "山本 悠"
+      ],
+      "reserves": [
+        "池間 凛斗",
+        "永原 颯磨"
+      ]
+    },
+    "早稲田大学": {
+      "runners": [
+        "吉倉 ナヤブ直希",
+        "本田 桜二郎",
+        "鈴木 琉胤",
+        "新妻 遼己",
+        "山口 竣平",
+        "工藤 慎作"
+      ],
+      "reserves": [
+        "上杉 敦史",
+        "増子 陽太"
+      ]
+    },
+    "中央大学": {
+      "runners": [
+        "藤田 大智",
+        "岡田 開成",
+        "三宅 悠斗",
+        "濵口 大和",
+        "柴田 大地",
+        "栗村 凌"
+      ],
+      "reserves": [
+        "佐藤 蓮",
+        "並川 颯太"
+      ]
+    },
+    "駒澤大学": {
+      "runners": [
+        "鈴木 大翔",
+        "上岡 煌",
+        "谷中 晴",
+        "小山 翔也",
+        "安原 海晴",
+        "桑田 駿介"
+      ],
+      "reserves": [
+        "植阪 嶺児",
+        "池谷 陸斗"
+      ]
+    },
+    "城西大学": {
+      "runners": [
+        "山本 聖也",
+        "柴田 侑",
+        "ルト アロン",
+        "橋本 健市",
+        "小林 竜輝",
+        "中島 巨翔"
+      ],
+      "reserves": [
+        "小田 伊織",
+        "大場 崇義"
+      ]
+    },
+    "創価大学": {
+      "runners": [
+        "菅野 元太",
+        "織橋 巧",
+        "スティーブン ムチーニ",
+        "村上 遵世",
+        "山口 翔輝",
+        "小池 莉希"
+      ],
+      "reserves": [
+        "榎木 凜太朗",
+        "田村 幸太"
+      ]
+    },
+    "帝京大学": {
+      "runners": [
+        "松尾 航希",
+        "小林 咲冴",
+        "楠岡 由浩",
+        "浅川 侑大",
+        "廣田 陸",
+        "原 悠太"
+      ],
+      "reserves": [
+        "浅野 智仁",
+        "設楽 琉惺"
+      ]
+    },
+    "日本大学": {
+      "runners": [
+        "天野 啓太",
+        "山口 聡太",
+        "シャドラック キップケメイ",
+        "首藤 海翔",
+        "長澤 辰朗",
+        "橋本 櫂知"
+      ],
+      "reserves": [
+        "石川 悠斗",
+        "岸端 悠友"
+      ]
+    }
+  }
+};
+function izumoOfficialRole2026(team,name){
+ const order=izumoOfficialOrder2026.teams[team];
+ const section=order.runners.indexOf(name);
+ return section>=0?`${section+1}区`:order.reserves.includes(name)?'補員':'区間エントリー外';
+}
 function izumoPredictionTemplate(){
-  const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names])=>`<tr><td><button type="button" class="entry-team-button" data-izumo-team="${team}" aria-expanded="false" aria-controls="izumo-entry-${Object.keys(izumoPrediction2026.orders).indexOf(team)}">${team}<small>エントリー10名</small></button></td>${names.map((n,i)=>`<td><small>${i+1}区</small><br><strong>${n}</strong></td>`).join('')}</tr><tr id="izumo-entry-${Object.keys(izumoPrediction2026.orders).indexOf(team)}" class="izumo-entry-row" hidden><td colspan="7"><div class="izumo-entry-panel"><h3>${team} 登録10名</h3><p>公式チームエントリー／2026年10月5日確認。区間は当サイトの予想です。</p><ol class="izumo-entry-list">${izumoEntries2026[team].map(p=>`<li><strong>${p.name}</strong><span>${p.grade}年</span><small>${names.includes(p.name)?`${names.indexOf(p.name)+1}区予想`:'区間未配置（予想）'}</small><p>${names.includes(p.name)?izumoSelectionAudit2026[team].selected[names.indexOf(p.name)]:izumoSelectionAudit2026[team].excluded[p.name]}</p>${names.includes(p.name)?`<p>区間適性の見立て：${ekidenCourse2026.izumo[names.indexOf(p.name)][2]}</p>`:''}<p>${athleteForm2026(p.name)}</p></li>`).join('')}</ol><a href="https://www.izumo-ekiden.jp/assets/pdf/orderlist-sokuhou.pdf" target="_blank" rel="noopener noreferrer">公式エントリー一覧（速報版）</a></div></td></tr>`).join('');
-  return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>10月5日更新。各区間の特徴、選手の実績と近況を踏まえた区間・順位予想です。</p></div>
+  const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names],index)=>{
+    const official=izumoOfficialOrder2026.teams[team];
+    return `<tr class="izumo-comparison-prediction"><th rowspan="2" scope="rowgroup"><button type="button" class="entry-team-button" data-izumo-team="${team}" aria-expanded="false" aria-controls="izumo-entry-${index}">${team}<small>登録10名・補員を見る ▾</small></button></th><th scope="row"><span class="izumo-row-label">予想</span><small>10/5時点</small></th>${names.map(n=>`<td><strong>${n}</strong></td>`).join('')}</tr>
+    <tr class="izumo-comparison-official"><th scope="row"><span class="izumo-row-label">公式エントリー</span><small>10/9発表・暫定</small></th>${official.runners.map((n,i)=>`<td class="${n!==names[i]?'izumo-order-different':''}"><strong>${n}</strong>${n!==names[i]?'<small class="izumo-order-diff-label">予想と異なる</small>':''}</td>`).join('')}</tr>
+    <tr id="izumo-entry-${index}" class="izumo-entry-row" hidden><td colspan="8"><div class="izumo-entry-panel"><h3>${team} 登録10名</h3><p><strong>公式補員：</strong>${official.reserves.join('・')}</p><ol class="izumo-entry-list">${izumoEntries2026[team].map(p=>`<li><strong>${p.name}</strong><span>${p.grade}年</span><small>予想：${names.includes(p.name)?`${names.indexOf(p.name)+1}区`:'区間未配置'} ／ 公式：${izumoOfficialRole2026(team,p.name)}</small><p>${names.includes(p.name)?izumoSelectionAudit2026[team].selected[names.indexOf(p.name)]:izumoSelectionAudit2026[team].excluded[p.name]}</p>${names.includes(p.name)?`<p>予想区間の適性：${ekidenCourse2026.izumo[names.indexOf(p.name)][2]}</p>`:''}<p>${athleteForm2026(p.name)}</p></li>`).join('')}</ol><a href="${izumoOfficialOrder2026.source}" target="_blank" rel="noopener noreferrer">公式区間エントリー（暫定）</a> ／ <a href="https://www.izumo-ekiden.jp/assets/pdf/orderlist-sokuhou.pdf" target="_blank" rel="noopener noreferrer">公式チーム登録一覧</a></div></td></tr>`;
+  }).join('');
+  return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>10月9日更新。発表前の区間予想と、公式区間エントリーを2行で比較できます。</p></div>
   <div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>総合順位予想</h3></div><div class="panel-body"><div class="rank-list">${izumoPrediction2026.ranking.map((t,i)=>`<div class="rank-item"><div class="rank-number">${i+1}</div><div><div class="team-name">${t}</div></div></div>`).join('')}</div></div></article>
-  <article class="data-card"><h3>予想のポイント</h3><p>過去の出雲実績、ロード・トラックの記録、直近の走りを各区間の距離や起伏と合わせて考えています。</p><p>大学名をクリックすると登録10名、予想区間、配置理由と近況をご覧いただけます。</p></article></div>
-  ${courseGuide2026('izumo')}<article class="history-block"><h2>関東10大学 区間予想</h2><p>大学名をクリックすると、登録10名・学年・予想区間を表示します。</p><div class="table-wrap"><table><thead><tr><th>大学</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
-<div class="notice"><strong>情報と予想の区別：</strong>掲載実績はリンク先の確認できた事実、区間の採用理由・代替案・順位は当サイトの推定です。公式区間エントリーや当日の出走を確定するものではありません。ロード5kmはトラック5000m PBと分けています。</div></section>`;
+  <article class="data-card"><h3>予想のポイント</h3><p>過去の出雲実績、ロード・トラックの記録、直近の走りを各区間の距離や起伏と合わせて考えています。</p><p>上段は10月5日時点の予想、下段は10月9日発表の公式区間エントリーです。大学名をタップすると登録10名・補員・配置理由が開きます。</p></article></div>
+  ${courseGuide2026('izumo')}<article class="history-block"><h2>関東10大学 区間予想と公式エントリー</h2><p>色の付いた区間は予想と異なる配置です。公式オーダーは10月9日9:30発行の暫定版。レース結果は10月12日の開催後に確定します。</p><div class="table-wrap izumo-comparison-wrap"><table class="izumo-comparison-table"><thead><tr><th>大学</th><th>表示</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
+<p class="izumo-order-note">公式区間エントリーは当日のメンバー変更前の配置です。予想は発表前の内容を残しています。<a href="${izumoOfficialOrder2026.source}" target="_blank" rel="noopener noreferrer">公式オーダー表（暫定）</a></p></section>`;
 }
 
 
