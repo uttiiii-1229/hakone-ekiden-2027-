@@ -956,6 +956,47 @@ const izumoOfficialOrder2026 = {
     }
   }
 };
+const izumoRankingAfterEntry2026 = {
+  "updated": "2026-10-09",
+  "ranking": [
+    "早稲田大学",
+    "中央大学",
+    "國學院大學",
+    "創価大学",
+    "アイビーリーグ選抜",
+    "青山学院大学",
+    "駒澤大学",
+    "順天堂大学",
+    "城西大学",
+    "帝京大学",
+    "日本大学",
+    "京都産業大学",
+    "関西大学",
+    "皇學館大学",
+    "広島経済大学",
+    "札幌学院大学",
+    "信州大学",
+    "金沢学院大学",
+    "第一工科大学",
+    "北海道大学",
+    "東北学連選抜",
+    "中国四国学連選抜"
+  ],
+  "notes": {
+    "早稲田大学": "2位→1位。鈴木琉胤が3区、山口竣平が5区となり、工藤慎作の6区につながる後半の構成を高く評価。吉倉の1区経験、本田・新妻の短区間での速度も生かせる。1年生2人の初出雲での対応が鍵。",
+    "中央大学": "1位→2位。藤田大智・岡田開成の1〜2区で先行し、三宅悠斗・濵口大和へつなぐ攻撃的な配置。最長6区は栗村凌の初出雲となるため、終盤の経験を備える早稲田を僅かに上に置く。序盤で十分な差を作れば優勝候補。",
+    "國學院大學": "3位を維持。辻原輝の3区と髙石樹の6区に、浅野・鼻野木・尾熊・飯國を配した厚い構成。ただし野中恒亨は補員で、主力全員が走る前提にはしない。野中への当日変更があれば、優勝争いでの評価を再び引き上げる余地がある。",
+    "創価大学": "4位を維持。菅野元太が1区、織橋巧が2区へ入れ替わり、3区ムチーニ、6区小池莉希は予想通り。9月のロード実績を持つ主力が重要区間に入り、上位3校を追う。菅野が1区の集団を離れずにつなげるかが鍵。",
+    "アイビーリーグ選抜": "5位を維持。Bendtsen・Shorten・Hackettを前半、Iversonを最長6区に配置。補員のBlanksを出走前提にはせず、発表された6人で評価。速い巡航と出雲の位置取り・中継への対応次第では上位争いに加わる。",
+    "青山学院大学": "6位を維持。鳥井健太の2区、飯田翔大の3区に小河原陽琉の4区が続く。1区石川浩輝、6区前川竜之将の配置を踏まえ、箱根の総合力をそのまま出雲の優勝評価にはしない。補員平松享祐への変更と序盤の展開で上位浮上を狙う。",
+    "駒澤大学": "8位→7位。3区谷中晴、6区桑田駿介で長い区間を担い、小山翔也・安原海晴を4〜5区へ置く構成を評価。鈴木大翔・上岡煌の1〜2区で主力へつなげれば浮上できる。池谷陸斗と植阪嶺児は補員として扱う。",
+    "順天堂大学": "7位→8位。吉岡大翔を2区、井上朋哉を3区、山本悠を6区に配置。池間凛斗・永原颯磨は補員となり、予想で置いた主力全員を出走前提にはできない。小林侑世の1区と佐藤賢仁の4区で差を抑えられれば駒澤との順位は逆転しうる。",
+    "城西大学": "9位を維持。山本聖也の1区とルト・アロンの3区を軸に、6区は中島巨翔。柴田侑を2区、小林竜輝を5区へ配し、予想より前後の役割が明確になった。3区で作る貯金を4〜6区まで守れるかを重視。",
+    "帝京大学": "10位を維持。松尾航希の1区から小林咲冴、3区楠岡由浩へつなぐ配置。浅川侑大・廣田陸・原悠太が後半を担い、長めの区間に上級生を置く。松尾が集団を保って楠岡へ渡せれば城西に迫る。",
+    "日本大学": "11位を維持。天野啓太・山口聡太が前半を運び、3区キップケメイで押し上げる構成。4区首藤海翔、5区長澤辰朗、6区橋本櫂知でその貯金を残せるかが焦点。留学生1人の力だけで総合順位を上げない。",
+    "中国四国学連選抜": "今回順位予想に追加。木戸颯から角南祐行までの公式6人を反映。地域選抜チームの予想は、大学単独チームとは別の不確実性がある。"
+  }
+};
 function izumoOfficialRole2026(team,name){
  const order=izumoOfficialOrder2026.teams[team];
  const section=order.runners.indexOf(name);
@@ -969,8 +1010,8 @@ function izumoPredictionTemplate(){
     <tr id="izumo-entry-${index}" class="izumo-entry-row" hidden><td colspan="8"><div class="izumo-entry-panel"><h3>${team} 登録10名</h3><p><strong>公式補員：</strong>${official.reserves.join('・')}</p><ol class="izumo-entry-list">${izumoEntries2026[team].map(p=>`<li><strong>${p.name}</strong><span>${p.grade}年</span><small>予想：${names.includes(p.name)?`${names.indexOf(p.name)+1}区`:'区間未配置'} ／ 公式：${izumoOfficialRole2026(team,p.name)}</small><p>${names.includes(p.name)?izumoSelectionAudit2026[team].selected[names.indexOf(p.name)]:izumoSelectionAudit2026[team].excluded[p.name]}</p>${names.includes(p.name)?`<p>予想区間の適性：${ekidenCourse2026.izumo[names.indexOf(p.name)][2]}</p>`:''}<p>${athleteForm2026(p.name)}</p></li>`).join('')}</ol><a href="${izumoOfficialOrder2026.source}" target="_blank" rel="noopener noreferrer">公式区間エントリー（暫定）</a> ／ <a href="https://www.izumo-ekiden.jp/assets/pdf/orderlist-sokuhou.pdf" target="_blank" rel="noopener noreferrer">公式チーム登録一覧</a></div></td></tr>`;
   }).join('');
   return `<section class="container page"><div class="page-header"><h1>2026 出雲駅伝予想</h1><p>10月9日更新。発表前の区間予想と、公式区間エントリーを2行で比較できます。</p></div>
-  <div class="prediction-layout"><article class="panel"><div class="panel-title dark"><h3>総合順位予想</h3></div><div class="panel-body"><div class="rank-list">${izumoPrediction2026.ranking.map((t,i)=>`<div class="rank-item"><div class="rank-number">${i+1}</div><div><div class="team-name">${t}</div></div></div>`).join('')}</div></div></article>
-  <article class="data-card"><h3>予想のポイント</h3><p>過去の出雲実績、ロード・トラックの記録、直近の走りを各区間の距離や起伏と合わせて考えています。</p><p>上段は10月5日時点の予想、下段は10月9日発表の公式区間エントリーです。大学名をタップすると登録10名・補員・配置理由が開きます。</p></article></div>
+  <article class="data-card"><h3>区間エントリー発表後の順位予想</h3><p>10月9日発表の暫定オーダーで走る6人を基準に更新。発表前の順位も残し、配置による評価の変化を比較できます。</p><p>補員からの当日変更はまだ確定していないため、主力が必ず交代で入るとは想定していません。</p></article>
+  <article class="panel"><div class="panel-title dark"><h3>総合順位予想 · 10月9日更新</h3></div><div class="panel-body"><div class="table-wrap"><table><thead><tr><th>更新後</th><th>大学・チーム</th><th>発表前</th><th>配置を踏まえた見立て</th></tr></thead><tbody>${izumoRankingAfterEntry2026.ranking.map((t,i)=>{const before=izumoPrediction2026.ranking.indexOf(t)+1;return `<tr><td><strong>${i+1}位</strong></td><th scope="row">${t}</th><td>${before?before+'位':'—'}</td><td style="white-space:normal;min-width:230px">${izumoRankingAfterEntry2026.notes[t]||'区間発表後も発表前の順位評価を維持。'}</td></tr>`;}).join('')}</tbody></table></div></div></article>
   ${courseGuide2026('izumo')}<article class="history-block"><h2>関東10大学 区間予想と公式エントリー</h2><p>色の付いた区間は予想と異なる配置です。公式オーダーは10月9日9:30発行の暫定版。レース結果は10月12日の開催後に確定します。</p><div class="table-wrap izumo-comparison-wrap"><table class="izumo-comparison-table"><thead><tr><th>大学</th><th>表示</th><th>1区 8.0km</th><th>2区 5.8km</th><th>3区 8.5km</th><th>4区 6.2km</th><th>5区 6.4km</th><th>6区 10.2km</th></tr></thead><tbody>${orderRows}</tbody></table></div></article>
 <p class="izumo-order-note">公式区間エントリーは当日のメンバー変更前の配置です。予想は発表前の内容を残しています。<a href="${izumoOfficialOrder2026.source}" target="_blank" rel="noopener noreferrer">公式オーダー表（暫定）</a></p></section>`;
 }
