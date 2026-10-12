@@ -1,7 +1,7 @@
 // 過去大会を箱根専用にし、出雲・全日本を独立ページへ分離
 (() => {
   const hakoneOverallState={year:2026};
-  const raceState={izumo:{year:2025},zennihon:{year:2025}};
+  const raceState={izumo:{year:2026},zennihon:{year:2025}};
   const sectionCounts={hakone:10,izumo:6,zennihon:8};
   const raceMeta={izumo:{title:'出雲駅伝',subtitle:'出雲全日本大学選抜駅伝競走',icon:'⚡'},zennihon:{title:'全日本大学駅伝',subtitle:'秩父宮賜杯 全日本大学駅伝対校選手権大会',icon:'🏃'}};
 
@@ -16,7 +16,7 @@
   function cleanAthlete(name=''){const s=String(name).trim();return s.replace(/\s*\([1-5]\)\s*.*$/,'').trim()||s;}
   function rankLabel(v){return (v===null||v===undefined||v==='')?'—':v;}
   function hakoneOverallYears(){return Array.from({length:27},(_,i)=>2026-i);}
-  function years(){return Array.from({length:19},(_,i)=>2025-i);}
+  function years(race){const last=race==='izumo'?2026:2025;return Array.from({length:last-2007+1},(_,i)=>last-i);}
   function edition(race,year){return race==='izumo'?year-1988:year-1968;}
   function hakoneOfficial(year){return window.hakoneOfficialOverallDB?.[year]||null;}
   function getData(race,year){return window.threeEkidenStandingsDB?.[race]?.[year]||null;}
@@ -67,7 +67,20 @@
   };
   templates.history=historyTemplate;
 
+
+  function provisionalIzumoResult(year){
+    const d=window.threeEkidenSectionsDB?.izumo?.[year];
+    if(!d?.provisional)return '';
+    const sections=d.sections||{},keys=Object.keys(sections).sort((a,b)=>a-b);
+    const teams=[...new Set(keys.flatMap(k=>sections[k].map(r=>r.team)))];
+    const cards=teams.map(team=>`<details class="izumo-live-team"><summary>${esc(team)} <small>区間成績を見る</small></summary><div class="izumo-live-sections">${Array.from({length:6},(_,i)=>{const r=(sections[i+1]||[]).find(r=>r.team===team);return `<div><strong>${i+1}区</strong> ${r?`${esc(r.athlete)}<br><span>区間順位 ${esc(rankLabel(r.rank))} ／ ${esc(r.time)}${r.record?'（区間新・速報）':''}</span>`:'未掲載・確認待ち'}</div>`;}).join('')}</div></details>`).join('');
+    const winners=keys.map(k=>{const r=sections[k].find(r=>r.rank===1);return r?`<li>${k}区：${esc(r.athlete)}（${esc(r.team)}） ${esc(r.time)}</li>`:'';}).join('');
+    const ranks=keys.map(k=>`<details class="izumo-live-team"><summary>${k}区の全選手順位</summary><div class="izumo-live-ranks">${sections[k].map(r=>`<div><strong>${esc(rankLabel(r.rank))}</strong><span>${esc(r.team)}<br>${esc(r.athlete)}</span><strong>${esc(r.time)}${r.record?' ※':''}</strong></div>`).join('')}</div></details>`).join('');
+    return `<div class="notice"><strong>2026年 第38回・速報（公式照合前）</strong><p>${esc(d.updated?.replace('T',' ').replace('+09:00',' JST')||'')}更新。1〜5区の区間順位・区間タイムを掲載。6区・総合順位・総合タイムは確認後に追記します。区間順位は通過順位とは異なります。</p><a href="${esc(d.source)}" target="_blank" rel="noopener">日刊スポーツ・区間成績速報</a> ／ <a href="https://www.rikujyokyogi.co.jp/archives/219067" target="_blank" rel="noopener">月陸Online・区間賞</a><p>公式結果公開後に走者・順位・記録を照合し、公式確定値へ更新します。中国四国学連選抜はオープン参加（OPN）。</p></div><h2>区間賞（速報）</h2><ul>${winners}</ul><h2>大学・チーム別 区間成績</h2><p>チーム名をタップして各区間を確認できます。</p>${cards}<h2>各区間の全選手順位（速報）</h2><p>※は速報での区間新記録表記です。</p>${ranks}`;
+  }
+
   function raceResult(race,year){
+    if(race==='izumo'&&year===2026){const live=provisionalIzumoResult(year);if(live)return live;}
     const d=getData(race,year),m=raceMeta[race],ed=edition(race,year);
     if(!d)return `<div class="notice">${year}年のデータは登録されていません。</div>`;
     if(d.status!=='開催')return `<div class="notice"><strong>${m.title} 第${ed}回（${year}年）:</strong> ${d.status}</div>`;
@@ -76,7 +89,7 @@
     return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。</div>`;
   }
   function racePage(race){
-    const st=raceState[race],m=raceMeta[race],ys=years();
+    const st=raceState[race],m=raceMeta[race],ys=years(race);
     return `<section class="container page race-page" id="race-page-${race}"><div class="page-header"><h1>${m.icon} ${m.title}</h1><p>${m.subtitle}の過去大会結果を独立して掲載。年度ごとの全出場チーム総合成績を確認できます。</p></div><div class="year-select-control"><label for="${race}YearSelect">年度</label><select class="year-select" id="${race}YearSelect" data-race-year-select data-race-page="${race}"><option value="" disabled>年を選択</option>${ys.map(y=>`<option value="${y}" ${y===st.year?'selected':''}>${y}年</option>`).join('')}</select></div><div id="race-result-${race}">${raceResult(race,st.year)}</div></section>`;
   }
   templates.izumo=()=>racePage('izumo');
@@ -109,7 +122,7 @@
 
   if(!document.getElementById('raceTeamDetailStyle')){
     const s=document.createElement('style');s.id='raceTeamDetailStyle';
-    s.textContent='.race-team-detail-button{border:0;background:transparent;padding:2px 0;color:#174f7d;font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.race-team-detail-button[aria-expanded="true"]{color:#0b376d}.race-team-detail-row>td{padding:0!important;background:#f7fafc}.race-team-detail{padding:14px 16px}.race-team-detail-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}.race-team-detail-head span{font-size:.72rem;color:#718190}.race-team-detail-table{min-width:520px}@media(max-width:760px){.race-team-detail{padding:10px 8px}.race-team-detail-table{min-width:500px}.race-team-detail-button{text-align:left}}';
+    s.textContent='.izumo-live-team{margin:10px 0;border:1px solid #dce5ed;border-radius:10px;overflow:hidden}.izumo-live-team summary{padding:14px;min-height:44px;cursor:pointer;font-weight:700}.izumo-live-team summary small{font-weight:400;color:#607588}.izumo-live-sections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.izumo-live-sections>div{padding:12px;background:#f3f7fa;border-radius:8px;overflow-wrap:anywhere}.izumo-live-sections span{color:#43586b}.izumo-live-ranks>div{display:grid;grid-template-columns:32px minmax(0,1fr) 72px;gap:8px;padding:10px 14px;border-top:1px solid #e5ecf2;overflow-wrap:anywhere}@media(max-width:680px){.izumo-live-sections{grid-template-columns:1fr}.izumo-live-ranks>div{padding:10px}}.race-team-detail-button{border:0;background:transparent;padding:2px 0;color:#174f7d;font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.race-team-detail-button[aria-expanded="true"]{color:#0b376d}.race-team-detail-row>td{padding:0!important;background:#f7fafc}.race-team-detail{padding:14px 16px}.race-team-detail-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}.race-team-detail-head span{font-size:.72rem;color:#718190}.race-team-detail-table{min-width:520px}@media(max-width:760px){.race-team-detail{padding:10px 8px}.race-team-detail-table{min-width:500px}.race-team-detail-button{text-align:left}}';
     document.head.appendChild(s);
   }
 
