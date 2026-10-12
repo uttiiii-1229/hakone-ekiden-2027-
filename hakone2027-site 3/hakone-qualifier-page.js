@@ -143,7 +143,7 @@
   }
   function predictionPage(){
     const others=entries2026.filter(x=>!predicted.some(p=>p.team===x.team));
-    return `<section class="container page qualifier-prediction-page"><div class="page-header"><div class="eyebrow">PREDICTION / HAKONE QUALIFIER 2027</div><h1>2027 箱根駅伝予選会予想</h1><p>2026年10月17日開催・第103回箱根駅伝予選会。正式登録メンバーを踏まえた順位予想です。</p></div>
+    return `<section class="container page qualifier-prediction-page"><div class="page-header"><div class="eyebrow">PREDICTION / HAKONE QUALIFIER 2027</div><h1>2027 箱根予選会予想</h1><p>2026年10月17日開催・第103回箱根駅伝予選会。正式登録メンバーを踏まえた順位予想です。</p></div>
       <div class="notice"><strong>2026年10月6日更新</strong> · 45校・692名の公式エントリーを反映。大学名を押すと登録選手の一覧が開きます。</div>
       <div class="race-page-summary"><div class="race-summary-card"><small>開催日</small><strong>10月17日（土）</strong></div><div class="race-summary-card"><small>距離</small><strong>21.0975km</strong></div><div class="race-summary-card"><small>登録／出走</small><strong>最大16名／12名</strong></div><div class="race-summary-card"><small>本戦出場権</small><strong>上位10校</strong></div></div>
       <div class="notice"><strong>通過予想10校:</strong> ${predicted.filter(x=>x.rank<=10).map(x=>x.team).join('・')}</div>
