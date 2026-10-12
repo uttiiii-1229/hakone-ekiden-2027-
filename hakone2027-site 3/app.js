@@ -1049,12 +1049,12 @@ function izumoPredictionReview2026(){
   const splits=[1,2,3,4,5,6].map(n=>izumoReviewResults2026.sections[n].find(x=>x.team===r.team));
   const matched=stats.perTeam[r.team];
   const note=izumoReviewNotes2026[r.team]||('1区終了時は通過'+splits[0].passingRank+'位、5区終了時は'+splits[4].passingRank+'位、最終'+r.rank+'位。各区間の成績から見ると、地域別の実績だけで置いた事前順位では6人のロード力と終盤の変動を十分に捉えられなかった。');
-  return `<article class="forecast-rank-card izumo-review-team" style="--forecast-team-color:${color};--forecast-team-ink:${ink}">
-  <div class="forecast-team-identity"><span class="forecast-team-icon" aria-hidden="true">${icon}</span><h3>${r.team}</h3></div>
+  return `<details class="forecast-rank-card izumo-review-team" style="--forecast-team-color:${color};--forecast-team-ink:${ink}">
+  <summary class="izumo-review-team-summary"><div class="forecast-team-identity"><span class="forecast-team-icon" aria-hidden="true">${icon}</span><h3>${r.team}</h3></div>
   <div class="izumo-review-line is-official"><span>公式結果</span><strong>${r.rank==='OPN'?'OPN':r.rank+'位'}</strong><span>${r.time}</span></div>
   <div class="izumo-review-line"><span>事前予想</span><strong>${r.rank==='OPN'?'掲載順22番目':index+1+'位'}</strong><span class="izumo-review-score">${score}点</span></div>
   <p class="izumo-review-delta">${label}${matched?' · 配置 '+matched.hits+'/6 · 選出 '+matched.people+'/6':''}</p>
-  <details><summary>予想の振り返り</summary><p>${note}</p><p class="izumo-review-split-summary">${splits.map((s,i)=>i+1+'区：区間'+s.rank+'位（'+s.time+'）').join(' ／ ')}</p></details></article>`;
+  <small class="izumo-review-expand-label">全6区・予想比較・振り返りを見る ▾</small></summary>${izumoReviewTeamSections2026(r.team)}<details><summary>予想の振り返り</summary><p>${note}</p></details></details>`;
  });
  return `<section class="izumo-review"><h2>予想と確定結果の比較</h2><p>総合順位は10月9日の最終保存版、区間配置は10月5日の保存版と比較。大会後に予想・評価点を変更せず、公式結果を上段に表示しています。</p>
  <div class="izumo-review-metrics">${metrics.map(([label,value,detail])=>`<article><span>${label}</span><strong>${value}</strong><small>${detail}</small></article>`).join('')}</div>
@@ -1065,21 +1065,33 @@ function izumoPredictionReview2026(){
  <li><strong>当日変更を一つの順位に固定していた。</strong>國學院の野中、アイビーのBlanksの出走など、補員からの変更で戦力が変わった。変更あり・なしの順位幅を示す。</li>
  <li><strong>関東以外・選抜の評価が粗かった。</strong>東北学連選抜は21位予想に対して14位。地域や過去の総合順位に頼らず、今回の6人を個別に比較する。</li>
  </ul><p>以上は公式成績からの当サイトの分析です。結果の差だけで故障・体調や監督の意図を断定しません。</p></article>
- <div class="forecast-rank-grid">${cards.slice(0,11).join('')}</div>
+ <p class="izumo-order-note">大学名をタップすると、総合順位の比較に続けて全6区の走者・区間順位・タイム・通過順位、区間予想、振り返りを確認できます。</p><div class="forecast-rank-grid">${cards.slice(0,11).join('')}</div>
  <details class="izumo-other-rankings"><summary>12位以降・OPNの比較を見る</summary><div class="forecast-rank-grid">${cards.slice(11).join('')}</div></details>
- <p class="izumo-order-note">2026年10月12日更新 · <a href="https://www.izumo-ekiden.jp/assets/pdf/record2026.pdf" target="_blank" rel="noopener noreferrer">公式総合・全区間成績</a> · <a href="#izumo">大会結果を見る</a></p></section>`;
+ ${izumoReviewSectionRankings2026()}<p class="izumo-order-note">2026年10月12日更新 · <a href="https://www.izumo-ekiden.jp/assets/pdf/record2026.pdf" target="_blank" rel="noopener noreferrer">公式総合・全区間成績</a> · <a href="#izumo">大会結果を見る</a></p></section>`;
+}
+
+
+function izumoReviewTeamSections2026(team){
+ const names=izumoPrediction2026.orders[team],official=izumoOfficialOrder2026.teams[team];
+ const actual=[1,2,3,4,5,6].map(n=>izumoReviewResults2026.sections[n].find(r=>r.team===team));
+ const sections=actual.map((r,i)=>{
+  const predicted=names?names[i]:null,match=predicted&&izumoReviewName2026(predicted)===izumoReviewName2026(r.athlete);
+  return `<article class="izumo-section-card ${predicted&&!match?'is-different':''}"><h3>${i+1}区 <span>${ekidenCourse2026.izumo[i][0].toFixed(1)}km</span></h3>
+  <div class="izumo-runner-line is-official"><span>公式結果</span><strong>${r.athlete}<small class="izumo-result-detail">区間${r.rank}位 · ${r.time} · ${r.passingRank==='OPN'?'通過 OPN':'通過'+r.passingRank+'位'}</small></strong></div>
+  ${predicted?`<div class="izumo-runner-line"><span>予想</span><strong>${predicted}</strong></div><small class="${match?'izumo-order-match-label':'izumo-order-diff-label'}">${match?'予想と一致':'予想と異なる配置'}</small>`:'<small class="izumo-order-note">区間配置の事前予想なし</small>'}</article>`;
+ }).join('');
+ return `<h4>全6区の結果${names?'と区間予想':''}</h4><div class="izumo-section-grid">${sections}</div>${official?`<p class="izumo-reserves"><strong>公式補員</strong> ${official.reserves.join('・')}</p><details class="izumo-roster-detail"><summary>登録10名・学年・選考理由を見る</summary><ol class="izumo-entry-list">${izumoEntries2026[team].map(p=>`<li><strong>${p.name}</strong><span>${p.grade}年</span><small>公式：${izumoOfficialRole2026(team,p.name)} ／ 予想：${names.includes(p.name)?`${names.indexOf(p.name)+1}区`:'区間未配置'}</small><p>${names.includes(p.name)?izumoSelectionAudit2026[team].selected[names.indexOf(p.name)]:izumoSelectionAudit2026[team].excluded[p.name]}</p><p>${athleteForm2026(p.name)}</p></li>`).join('')}</ol></details>`:''}`;
+}
+function izumoReviewSectionRankings2026(){
+ return `<details class="izumo-all-section-ranks"><summary>区間別の全順位を見る（1〜6区）</summary><p class="izumo-order-note">区間順位と通過順位は公式値です。中国四国学連選抜の通過順位はOPNとして表示します。</p>
+ ${[1,2,3,4,5,6].map(n=>`<details><summary>${n}区 · ${ekidenCourse2026.izumo[n-1][0].toFixed(1)}km</summary><div class="table-wrap"><table class="izumo-review-rank-table"><thead><tr><th>区間順位</th><th>大学・チーム／選手</th><th>タイム</th><th>通過順位</th></tr></thead><tbody>${izumoReviewResults2026.sections[n].map(r=>`<tr><td>${r.rank}</td><td><strong>${r.team}</strong><small>${r.athlete}</small></td><td>${r.time}</td><td>${r.passingRank}</td></tr>`).join('')}</tbody></table></div></details>`).join('')}</details>`;
 }
 
 function izumoPredictionTemplate(){
-  const orderRows=Object.entries(izumoPrediction2026.orders).map(([team,names],index)=>{
-    const official=izumoOfficialOrder2026.teams[team];
-    const actual=[1,2,3,4,5,6].map(n=>izumoReviewResults2026.sections[n].find(r=>r.team===team));
-    return `<details class="izumo-team-card"><summary><span>${team}</span><small>6区間の比較・登録10名</small></summary><div class="izumo-section-grid">${names.map((n,i)=>`<article class="izumo-section-card ${izumoReviewName2026(n)!==izumoReviewName2026(actual[i].athlete)?'is-different':''}"><h3>${i+1}区 <span>${ekidenCourse2026.izumo[i][0].toFixed(1)}km</span></h3><div class="izumo-runner-line is-official"><span>公式結果</span><strong>${actual[i].athlete}<small class="izumo-result-detail">区間${actual[i].rank}位 · ${actual[i].time} · 通過${actual[i].passingRank}位</small></strong></div><div class="izumo-runner-line"><span>予想</span><strong>${n}</strong></div>${izumoReviewName2026(n)!==izumoReviewName2026(actual[i].athlete)?'<small class="izumo-order-diff-label">予想と異なる配置</small>':'<small class="izumo-order-match-label">予想と一致</small>'}</article>`).join('')}</div><p class="izumo-reserves"><strong>公式補員</strong> ${official.reserves.join('・')}</p><details class="izumo-roster-detail"><summary>登録10名・学年・選考理由を見る</summary><ol class="izumo-entry-list">${izumoEntries2026[team].map(p=>`<li><strong>${p.name}</strong><span>${p.grade}年</span><small>公式：${izumoOfficialRole2026(team,p.name)} ／ 予想：${names.includes(p.name)?`${names.indexOf(p.name)+1}区`:'区間未配置'}</small><p>${names.includes(p.name)?izumoSelectionAudit2026[team].selected[names.indexOf(p.name)]:izumoSelectionAudit2026[team].excluded[p.name]}</p><p>${athleteForm2026(p.name)}</p></li>`).join('')}</ol></details></details>`;
-  }).join('');
   return `<section class="container page izumo-prediction-page"><div class="page-header"><div class="eyebrow">IZUMO EKIDEN 2026</div><h1>2026 出雲駅伝予想</h1><p>10月12日更新 · 事前予想と確定結果・的中率・振り返り</p></div>
   <article class="izumo-scoring-guide"><details><summary>100点評価の見方</summary><p>点数は当サイトの相対評価です。勝率や公式の成績を表すものではありません。差が小さいチームは展開や当日変更で逆転しうると見ています。</p><ul>${izumoScoreCriteria2026.map(c=>`<li><strong>${c[0]} ${c[1]}点</strong><span>${c[2]}</span></li>`).join('')}</ul></details></article>
   ${izumoPredictionReview2026()}<details class="izumo-prediction-archive"><summary>大会前の順位予想・評価点・根拠を見る</summary><h2>総合順位予想と評価点（大会前の保存版）</h2><div class="izumo-ranking-cards">${izumoRankingAfterEntry2026.ranking.slice(0,11).map((t,i)=>izumoRankCard2026(t,i)).join('')}</div><details class="izumo-other-rankings"><summary>12〜22位の順位・評価点を見る</summary><div class="izumo-ranking-cards">${izumoRankingAfterEntry2026.ranking.slice(11).map((t,i)=>izumoRankCard2026(t,i+11)).join('')}</div></details>
-  </details><h2 class="izumo-comparison-heading">公式結果と区間予想</h2><p>大学名をタップすると、各区間を「上：公式結果／下：予想」の2行で比較できます。色付きの区間は予想と異なる配置です。</p><p class="izumo-order-note">区間予想は10月5日時点、公式は10月12日の確定結果です。順位予想・評価点は大会前の内容を保存しています。</p><div class="izumo-team-cards">${orderRows}</div>
+  </details>
   ${izumoMobileCourses2026()}
   <p class="izumo-order-note">國學院4区の野中恒亨、駒澤3区の植阪嶺児・5区の池谷陸斗など、当日変更後の走者・補員を反映しました。<a href="${izumoOfficialOrder2026.source}" target="_blank" rel="noopener noreferrer">公式オーダー表（最終確定）</a></p></section>`;
 }
