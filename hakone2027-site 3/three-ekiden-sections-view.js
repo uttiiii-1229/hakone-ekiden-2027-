@@ -96,11 +96,24 @@
     return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.athlete}</td><td>${r.time}${r.record?' ※':''}</td></tr>`).join('')}</tbody></table></div>`;
   }
 
+
+  function esc(value=''){return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function awardsHtml(race,year){
+    const data=window.threeEkidenSectionsDB?.[race]?.[year];
+    if(!data||data.status!=='開催')return '';
+    const cards=Array.from({length:sectionCount[race]},(_,i)=>{
+      const section=i+1, winners=sectionRows(race,year,section).filter(r=>String(r.rank).trim()==='1');
+      const distance=recordFor(race,year,section)?.distance||(race==='izumo'&&year===2026?['8.0km','5.8km','8.5km','6.2km','6.4km','10.2km'][i]:'');
+      return `<article class="section-award-card"><h3>${section}区 <small>${esc(distance)}</small></h3>${winners.length?winners.map(r=>{const raw=String(r.athlete||''),grade=raw.match(/\(([1-5])\)/);const name=raw.replace(/\s*\([1-5]\)\s*.*$/,'').trim();return `<div class="section-award-winner"><strong>${esc(name)}${grade?` <small>${grade[1]}年</small>`:''}</strong><span>${esc(normalizeTeam(r.team))}</span><b>${esc(r.time)}${r.record?' ※':''}</b></div>`;}).join(''):'<p class="muted">区間賞データは確認中です。</p>'}</article>`;
+    }).join('');
+    return `<section class="section-awards" data-section-awards="${race}" aria-label="${labels[race]} ${year}年の区間賞"><h2>区間賞一覧</h2><p>${year}年・全${sectionCount[race]}区間。${data.provisional?'速報・公式照合前。':''}同着1位は全員掲載します。</p><div class="section-award-grid">${cards}</div></section>`;
+  }
+
   function block(race,page){
     const year=currentYear(page); if(!year)return '';
     const count=sectionCount[race];
     const sec=Math.min(currentSection[race],count);
-    return `<section class="three-ekiden-sections" data-three-sections="${race}" data-three-sections-year="${year}" style="margin-top:28px"><div class="page-header"><h2>各区間順位</h2><p>${year}年大会の区間別成績。区間タブで切り替えられます。</p></div><div class="tabs section-tabs">${Array.from({length:count},(_,i)=>`<button class="tab ${i+1===sec?'active':''}" data-three-section-race="${race}" data-three-section="${i+1}">${i+1}区</button>`).join('')}</div><div class="three-section-result">${renderTable(race,year,sec)}</div></section>`;
+    return `<section class="three-ekiden-sections" data-three-sections="${race}" data-three-sections-year="${year}" style="margin-top:28px">${awardsHtml(race,year)}<div class="page-header"><h2>各区間順位</h2><p>${year}年大会の区間別成績。区間タブで切り替えられます。</p></div><div class="tabs section-tabs">${Array.from({length:count},(_,i)=>`<button class="tab ${i+1===sec?'active':''}" data-three-section-race="${race}" data-three-section="${i+1}">${i+1}区</button>`).join('')}</div><div class="three-section-result">${renderTable(race,year,sec)}</div></section>`;
   }
 
   function ensure(race){
@@ -133,6 +146,11 @@
   });
 
   document.addEventListener('change',e=>{if(e.target.closest('[data-race-year-select]'))setTimeout(ensureAll,0);});
+  if(!document.getElementById('sectionAwardStyles')){
+    const style=document.createElement('style');style.id='sectionAwardStyles';
+    style.textContent='.section-awards{margin:0 0 28px}.section-award-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.section-award-card{border:1px solid #dce5ed;border-radius:10px;padding:14px;background:#fff;min-width:0}.section-award-card h3{margin:0 0 12px;color:#174f7d}.section-award-card small{font-weight:400;color:#65798b;font-size:.8em}.section-award-winner{display:grid;gap:5px;overflow-wrap:anywhere}.section-award-winner+div{margin-top:12px;padding-top:12px;border-top:1px solid #e3eaf0}.section-award-winner span{font-size:.9rem;color:#526879}.section-award-winner b{font-size:1.1rem;font-variant-numeric:tabular-nums}@media(max-width:680px){.section-award-grid{grid-template-columns:1fr}.section-award-card{padding:12px}}';
+    document.head.appendChild(style);
+  }
   const app=document.querySelector('#app');
   if(app)new MutationObserver(ensureAll).observe(app,{childList:true,subtree:true});
   ensureAll();
