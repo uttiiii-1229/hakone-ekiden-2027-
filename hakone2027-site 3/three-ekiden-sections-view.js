@@ -87,13 +87,54 @@
     return `<div class="notice section-record-note" style="margin:12px 0 14px"><strong>区間記録：</strong> <strong>${r.time}</strong>　${holders}<br><span class="muted">対象：${r.course}・${r.distance}。コース変更前の年度は、その当時のコース区間記録を表示しています。</span></div>`;
   }
 
+
+  function teamKey(name=''){return normalizeTeam(name).normalize('NFKC').replace(/[\s　]+/g,'').replace(/大學/g,'大学').replace(/大学$/,'').replace(/大$/,'');}
+  function stageSeconds(time=''){
+    const match=String(time).trim().match(/^(\d+):([0-5]\d)(?::([0-5]\d))?(?:\s|$)/);
+    if(!match)return null;
+    return match[3]===undefined?Number(match[1])*60+Number(match[2]):Number(match[1])*3600+Number(match[2])*60+Number(match[3]);
+  }
+  function passingRanks(race,year,section){
+    const rows=sectionRows(race,year,section),out=new Map();
+    const numeric=r=>/^\d+$/.test(String(r.rank).trim());
+    const entrants=sectionRows(race,year,1).filter(numeric);
+    const totals=[];
+    let incomplete=false;
+    for(const first of entrants){
+      const key=teamKey(first.team);let total=0,valid=true;
+      for(let k=1;k<=section;k++){
+        const hit=sectionRows(race,year,k).find(r=>teamKey(r.team)===key);
+        if(!hit||!numeric(hit)){valid=false;break;}
+        const seconds=stageSeconds(hit.time);
+        if(seconds===null){valid=false;incomplete=true;break;}
+        total+=seconds;
+      }
+      if(valid)totals.push({key,total});
+    }
+    // A current competitor absent from an earlier split makes the ranking incomplete.
+    if(rows.some(r=>numeric(r)&&!totals.some(t=>t.key===teamKey(r.team))))incomplete=true;
+    if(!incomplete){
+      totals.sort((a,b)=>a.total-b.total);
+      let previous=null,rank=0;
+      totals.forEach((t,i)=>{if(t.total!==previous)rank=i+1;out.set(t.key,rank);previous=t.total;});
+    }
+    for(const row of rows){
+      const key=teamKey(row.team);
+      if(row.rank==='OPN'||row.rank==='参考')out.set(key,row.rank);
+      else if(row.passingRank!==undefined&&row.passingRank!==null)out.set(key,row.passingRank);
+      else if(section===1&&numeric(row))out.set(key,row.rank);
+    }
+    return out;
+  }
+
   function renderTable(race,year,section){
     const yearData=window.threeEkidenSectionsDB?.[race]?.[year];
     if(!yearData)return `<div class="notice">${year}年の区間順位データを読み込めませんでした。</div>`;
     if(yearData.status!=='開催')return `<div class="notice">${year}年は${yearData.status}です。</div>`;
     const rows=sectionRows(race,year,section);
+    const passing=passingRanks(race,year,section);
     if(!rows.length)return `<div class="notice">${year}年 ${section}区の区間順位データは現在確認中です。</div>`;
-    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.athlete}</td><td>${r.time}${r.record?' ※':''}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${esc(passing.get(teamKey(r.team))??'—')}</td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.athlete}</td><td>${r.time}${r.record?' ※':''}</td></tr>`).join('')}</tbody></table></div><div class="notice"><strong>通過順位：</strong>1区から当該区間までの累計タイムによる順位です（公式通過順位の登録がある場合は公式値を優先）。繰り上げスタート後の実際の通過順とは異なります。累計同タイムは同順位、記録欠損は「—」、OPN・参考は順位対象外です。</div>`;
   }
 
 
