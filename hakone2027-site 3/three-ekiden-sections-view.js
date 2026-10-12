@@ -96,7 +96,7 @@
   }
   function passingRanks(race,year,section){
     const rows=sectionRows(race,year,section),out=new Map();
-    const numeric=r=>/^\d+$/.test(String(r.rank).trim());
+    const numeric=r=>!r.openParticipation&&/^\d+$/.test(String(r.rank).trim());
     const entrants=sectionRows(race,year,1).filter(numeric);
     const totals=[];
     let incomplete=false;
@@ -134,7 +134,7 @@
     const rows=sectionRows(race,year,section);
     const passing=passingRanks(race,year,section);
     if(!rows.length)return `<div class="notice">${year}年 ${section}区の区間順位データは現在確認中です。</div>`;
-    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${esc(passing.get(teamKey(r.team))??'—')}</td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.athlete}</td><td>${r.time}${r.record?' ※':''}</td></tr>`).join('')}</tbody></table></div><div class="notice"><strong>通過順位：</strong>1区から当該区間までの累計タイムによる順位です（公式通過順位の登録がある場合は公式値を優先）。繰り上げスタート後の実際の通過順とは異なります。累計同タイムは同順位、記録欠損は「—」、OPN・参考は順位対象外です。</div>`;
+    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.openParticipation||r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${esc(passing.get(teamKey(r.team))??'—')}</td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${esc(r.athlete)}${r.grade?` <small>${esc(r.grade)}年</small>`:''}</td><td>${r.time}${r.record?' ※':r.recordTie?'（区間タイ）':''}</td></tr>`).join('')}</tbody></table></div><div class="notice"><strong>通過順位：</strong>1区から当該区間までの累計タイムによる順位です（公式通過順位の登録がある場合は公式値を優先）。繰り上げスタート後の実際の通過順とは異なります。累計同タイムは同順位、記録欠損は「—」、OPN・参考は通過順位の対象外です。※は区間新記録です。</div>`;
   }
 
 
@@ -143,9 +143,9 @@
     const data=window.threeEkidenSectionsDB?.[race]?.[year];
     if(!data||data.status!=='開催')return '';
     const cards=Array.from({length:sectionCount[race]},(_,i)=>{
-      const section=i+1, winners=sectionRows(race,year,section).filter(r=>String(r.rank).trim()==='1');
+      const section=i+1, winners=sectionRows(race,year,section).filter(r=>!r.openParticipation&&String(r.rank).trim()==='1');
       const distance=recordFor(race,year,section)?.distance||(race==='izumo'&&year===2026?['8.0km','5.8km','8.5km','6.2km','6.4km','10.2km'][i]:'');
-      return `<article class="section-award-card"><h3>${section}区 <small>${esc(distance)}</small></h3>${winners.length?winners.map(r=>{const raw=String(r.athlete||''),grade=raw.match(/\(([1-5])\)/);const name=raw.replace(/\s*\([1-5]\)\s*.*$/,'').trim();return `<div class="section-award-winner"><strong>${esc(name)}${grade?` <small>${grade[1]}年</small>`:''}</strong><span>${esc(normalizeTeam(r.team))}</span><b>${esc(r.time)}${r.record?' ※':''}</b></div>`;}).join(''):'<p class="muted">区間賞データは確認中です。</p>'}</article>`;
+      return `<article class="section-award-card"><h3>${section}区 <small>${esc(distance)}</small></h3>${winners.length?winners.map(r=>{const raw=String(r.athlete||''),grade=r.grade?[null,r.grade]:raw.match(/\(([1-5])\)/);const name=raw.replace(/\s*\([1-5]\)\s*.*$/,'').trim();return `<div class="section-award-winner"><strong>${esc(name)}${grade?` <small>${grade[1]}年</small>`:''}</strong><span>${esc(normalizeTeam(r.team))}</span><b>${esc(r.time)}${r.record?' ※':''}</b></div>`;}).join(''):'<p class="muted">区間賞データは確認中です。</p>'}</article>`;
     }).join('');
     return `<section class="section-awards" data-section-awards="${race}" aria-label="${labels[race]} ${year}年の区間賞"><h2>区間賞一覧</h2><p>${year}年・全${sectionCount[race]}区間。${data.provisional?'速報・公式照合前。':''}同着1位は全員掲載します。</p><div class="section-award-grid">${cards}</div></section>`;
   }
