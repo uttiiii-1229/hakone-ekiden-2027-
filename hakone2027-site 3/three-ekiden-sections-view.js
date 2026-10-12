@@ -15,22 +15,22 @@
   // All-Japan: 1-7 changed from the 50th race (2018); 8 has stayed 19.7 km since the 24th.
   const courseRecords={
     izumo:{
-      1:[{start:2007,end:2025,distance:'8.0km',course:'2001年以降コース',time:'22:30',holders:[{athlete:'キラグ・ジュグナ',team:'第一工業大学',year:2009,edition:21}]}],
-      2:[{start:2007,end:2025,distance:'5.8km',course:'2001年以降コース',time:'15:27',holders:[{athlete:'佐藤 圭汰',team:'駒澤大学',year:2022,edition:34}]}],
+      1:[{start:2007,end:2026,distance:'8.0km',course:'2001年以降コース',time:'22:30',holders:[{athlete:'キラグ・ジュグナ',team:'第一工業大学',year:2009,edition:21}]}],
+      2:[{start:2007,end:2026,distance:'5.8km',course:'2001年以降コース',time:'15:27',holders:[{athlete:'佐藤 圭汰',team:'駒澤大学',year:2022,edition:34}]}],
       3:[
         {start:2007,end:2008,distance:'8.5km',course:'2001〜2008年コース',time:'24:24',holders:[{athlete:'伊達 秀晃',team:'東海大学',year:2006,edition:18}]},
         {start:2009,end:2013,distance:'7.9km',course:'2009〜2013年コース',time:'22:36',holders:[{athlete:'村山 謙太',team:'駒澤大学',year:2013,edition:25}]},
-        {start:2015,end:2025,distance:'8.5km',course:'2015年以降コース',time:'23:36',holders:[{athlete:'フィリップ・ムルワ',team:'創価大学',year:2022,edition:34}]}
+        {start:2015,end:2026,distance:'8.5km',course:'2015年以降コース',time:'22:56',holders:[{athlete:'シャドラック キップケメイ',team:'日本大学',year:2026,edition:38}]}
       ],
       4:[
         {start:2007,end:2008,distance:'6.5km',course:'2001〜2008年コース',time:'18:04',holders:[{athlete:'伊達 秀晃',team:'東海大学',year:2007,edition:19}]},
-        {start:2009,end:2025,distance:'6.2km',course:'2009年以降コース',time:'17:20',holders:[{athlete:'辻原 輝',team:'國學院大學',year:2025,edition:37}]}
+        {start:2009,end:2026,distance:'6.2km',course:'2009年以降コース',time:'17:10',holders:[{athlete:'新妻 遼己',team:'早稲田大学',year:2026,edition:38}]}
       ],
       5:[
         {start:2007,end:2008,distance:'5.0km',course:'2001〜2008年コース',time:'14:26',holders:[{athlete:'小出 徹',team:'東海大学',year:2003,edition:15}]},
-        {start:2009,end:2025,distance:'6.4km',course:'2009年以降コース',time:'17:43',holders:[{athlete:'安藤 悠哉',team:'青山学院大学',year:2016,edition:28}]}
+        {start:2009,end:2026,distance:'6.4km',course:'2009年以降コース',time:'17:35',holders:[{athlete:'山口 竣平',team:'早稲田大学',year:2026,edition:38}]}
       ],
-      6:[{start:2007,end:2025,distance:'10.2km',course:'2001年以降コース',time:'28:17',holders:[{athlete:'ギタウ・ダニエル',team:'日本大学',year:2009,edition:21}]}]
+      6:[{start:2007,end:2026,distance:'10.2km',course:'2001年以降コース',time:'28:17',holders:[{athlete:'ギタウ・ダニエル',team:'日本大学',year:2009,edition:21}]}]
     },
     zennihon:{
       1:[
@@ -84,7 +84,7 @@
     const r=recordFor(race,year,section);
     if(!r)return '';
     const holders=(r.holders||[]).map(h=>`${h.athlete}（${normalizeTeam(h.team)}・${h.year}年 第${h.edition}回）`).join(' ／ ');
-    return `<div class="notice section-record-note" style="margin:12px 0 14px"><strong>区間記録：</strong> <strong>${r.time}</strong>　${holders}<br><span class="muted">対象：${r.course}・${r.distance}。コース変更前の年度は、その当時のコース区間記録を表示しています。</span></div>`;
+    return `<div class="notice section-record-note" style="margin:12px 0 14px"><strong>区間記録${race==='izumo'?'（2026年まで）':''}：</strong> <strong>${r.time}</strong>　${holders}<br><span class="muted">対象：${r.course}・${r.distance}。コース変更前の年度は、その当時のコース区間記録を表示しています。</span>${race==='izumo'?'<br><a href="https://www.izumo-ekiden.jp/record/index.html" target="_blank" rel="noopener noreferrer">公式区間記録・大会結果</a>':''}</div>`;
   }
 
 
