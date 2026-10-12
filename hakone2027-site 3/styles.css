@@ -291,3 +291,25 @@ body { padding-top: calc(82px + env(safe-area-inset-top, 0px)); }
 
 /* Updated prediction pages: scores first, then collapsible section and roster cards. */
 .forecast-rank-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0 28px}.forecast-rank-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0}.forecast-rank-head{display:flex;align-items:center;gap:12px}.forecast-rank-head h3{flex:1;font-size:1.05rem;margin:0;overflow-wrap:anywhere}.forecast-place{font-size:1.8rem;font-weight:800;color:var(--navy)}.forecast-place small{font-size:.65rem}.forecast-points{font-size:1.7rem;color:var(--navy);white-space:nowrap}.forecast-points small{display:block;font-size:.65rem;text-align:right;color:var(--muted)}.forecast-rank-card p{font-size:.9rem;line-height:1.7}.forecast-rank-card summary,.forecast-score-guide summary,.forecast-course-guide summary{cursor:pointer;min-height:44px;padding:10px 0;font-weight:700}.forecast-score-guide{padding:12px 18px;border:1px solid var(--line);border-radius:12px;background:#fff}.forecast-breakdown{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.forecast-breakdown>div{display:grid;gap:5px;font-size:.8rem}.forecast-breakdown progress{width:100%;height:8px;accent-color:var(--blue)}.forecast-orders-heading{margin-top:30px}.forecast-team-card{background:#fff;border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}.forecast-team-card>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px;min-height:52px;cursor:pointer;color:var(--navy)}.forecast-team-card>summary span{font-size:.8rem;color:var(--muted)}.forecast-team-note,.forecast-roster-heading{margin:16px 18px}.forecast-section-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:0 18px}.forecast-section-card{border:1px solid var(--line);padding:12px;border-radius:10px;background:#f6f9fc;overflow-wrap:anywhere;min-width:0}.forecast-section-card h3{margin:0 0 8px;font-size:1rem}.forecast-section-card h3 small{font-size:.75rem;color:var(--muted)}.forecast-section-card p{font-size:.85rem;line-height:1.6}.forecast-roster{list-style:none;margin:0;padding:0 18px 18px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.forecast-roster li{display:grid;gap:5px;padding:10px;border:1px solid var(--line);border-radius:8px;min-width:0;overflow-wrap:anywhere}.forecast-roster span,.forecast-roster small{font-size:.8rem;color:var(--muted)}.forecast-team-card>p:last-child{margin:12px 18px}.forecast-course-guide{margin:24px 0}.forecast-sources{font-size:.85rem;line-height:1.8}@media(max-width:900px){.forecast-section-grid,.forecast-roster{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){.forecast-rank-grid{grid-template-columns:1fr}.forecast-section-grid{grid-template-columns:1fr}.forecast-roster{grid-template-columns:repeat(2,minmax(0,1fr))}.forecast-rank-card{padding:14px}.forecast-team-card>summary{padding:14px;flex-wrap:wrap}.forecast-breakdown{gap:8px}}
+
+/* University identities and color-coded forecast scores. */
+.forecast-rank-card{border-top:4px solid var(--forecast-team-color)}
+.forecast-rank-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px}
+.forecast-team-identity{display:flex;align-items:center;gap:10px;min-width:0}
+.forecast-team-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 40px;height:40px;border-radius:50%;background:var(--forecast-team-color);color:var(--forecast-team-ink);font-weight:800;font-size:16px}
+.forecast-team-identity h3{line-height:1.4}
+.forecast-points{background:var(--forecast-team-color);color:var(--forecast-team-ink);border-radius:10px;padding:8px 10px;line-height:1}
+.forecast-points small{color:inherit;margin-top:5px}
+.forecast-total-gauge{display:block;width:100%;height:9px;margin-top:16px}
+.forecast-rank-card progress{appearance:none;-webkit-appearance:none;border:0;overflow:hidden;border-radius:999px;background:#edf0f5;accent-color:var(--forecast-team-color)}
+.forecast-rank-card progress::-webkit-progress-bar{background:#edf0f5;border-radius:999px}
+.forecast-rank-card progress::-webkit-progress-value{background:var(--forecast-team-color);border-radius:999px}
+.forecast-rank-card progress::-moz-progress-bar{background:var(--forecast-team-color);border-radius:999px}
+@media(max-width:680px){
+ .forecast-rank-head{gap:8px}
+ .forecast-team-identity{gap:8px}
+ .forecast-team-icon{flex-basis:34px;height:34px;font-size:14px}
+ .forecast-team-identity h3{font-size:.95rem}
+ .forecast-place{font-size:1.5rem}
+ .forecast-points{font-size:1.5rem;padding:8px}
+}
