@@ -66,6 +66,8 @@
   };
 
   function currentYear(page){
+    const selected=page.querySelector('[data-race-year-select]');
+    if(selected)return Number(selected.value);
     const active=page.querySelector('[data-race-year].active');
     return Number(active?.dataset.raceYear||0);
   }
@@ -91,7 +93,7 @@
     if(yearData.status!=='開催')return `<div class="notice">${year}年は${yearData.status}です。</div>`;
     const rows=sectionRows(race,year,section);
     if(!rows.length)return `<div class="notice">${year}年 ${section}区の区間順位データは現在確認中です。</div>`;
-    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.athlete}</td><td>${r.time}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${r.athlete}</td><td>${r.time}${r.record?' ※':''}</td></tr>`).join('')}</tbody></table></div>`;
   }
 
   function block(race,page){
@@ -130,6 +132,7 @@
     if(e.target.closest('[data-race-year],[data-race-decade]')) setTimeout(ensureAll,0);
   });
 
+  document.addEventListener('change',e=>{if(e.target.closest('[data-race-year-select]'))setTimeout(ensureAll,0);});
   const app=document.querySelector('#app');
   if(app)new MutationObserver(ensureAll).observe(app,{childList:true,subtree:true});
   ensureAll();
