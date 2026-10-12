@@ -117,7 +117,7 @@
         <section class="home-news-card">
           <div class="section-heading compact"><div><span>▣</span><h2>最新アップデート</h2></div></div>
           <div class="home-news-list">
-            <div><time>2026.08.28</time><span>NEW</span><strong>優勝予想表示を総合戦力点へ修正</strong></div>
+            <div><time>2026.10.12</time><span>NEW</span><strong>出雲結果を反映して箱根・全日本予想を更新</strong></div>
             <div><time>2026.08.27</time><span>NEW</span><strong>ホームデザインを刷新</strong></div>
             <div><time>2026.08.27</time><span>NEW</span><strong>予想モデルをv0.9へ更新</strong></div>
             <div><time>2026.08</time><span>DATA</span><strong>現役選手PBデータを更新</strong></div>
