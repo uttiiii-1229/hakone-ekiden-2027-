@@ -331,3 +331,23 @@ body { padding-top: calc(82px + env(safe-area-inset-top, 0px)); }
 .izumo-result-detail{display:block;margin-top:6px;font-size:.75rem;font-weight:400;line-height:1.6}
 .izumo-prediction-archive>summary{cursor:pointer;min-height:44px;padding:14px 0;font-weight:700}
 @media(max-width:680px){.izumo-review-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.izumo-review-metrics article{padding:12px}.izumo-review-metrics strong{font-size:1.5rem}.izumo-review-line{grid-template-columns:70px minmax(0,1fr) auto;gap:6px}}
+
+/* One university disclosure contains rankings, splits and review. */
+.izumo-review-team>summary{display:block;list-style:none;padding:0;cursor:pointer}
+.izumo-review-team>summary::-webkit-details-marker{display:none}
+.izumo-review-team>summary:focus-visible{outline:3px solid var(--forecast-team-color);outline-offset:6px;border-radius:6px}
+.izumo-review-expand-label{display:block;font-size:.8rem;color:var(--muted);padding-bottom:6px}
+.izumo-review-team[open]>.izumo-review-team-summary{margin-bottom:16px;border-bottom:1px solid var(--line)}
+.izumo-review-team .izumo-section-grid{grid-template-columns:1fr;gap:10px}
+.izumo-review-team .izumo-runner-line{grid-template-columns:72px minmax(0,1fr)}
+.izumo-review-team .izumo-runner-line strong{overflow-wrap:anywhere}
+.izumo-review .forecast-rank-grid{align-items:start}
+.izumo-all-section-ranks{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:20px 0}
+.izumo-all-section-ranks summary{cursor:pointer;min-height:44px;padding:12px 0;font-weight:700}
+.izumo-review-rank-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.izumo-review-rank-table th,.izumo-review-rank-table td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.izumo-review-rank-table th{background:#f3f6fa}
+.izumo-review-rank-table td:first-child,.izumo-review-rank-table td:nth-child(3),.izumo-review-rank-table td:last-child{white-space:nowrap}
+.izumo-review-rank-table td small{display:block;color:var(--muted);margin-top:4px}
+.izumo-all-section-ranks .table-wrap{overflow-x:auto}
+@media(max-width:680px){.izumo-review-rank-table{font-size:.75rem}.izumo-review-rank-table th,.izumo-review-rank-table td{padding:9px 5px}.izumo-all-section-ranks{padding:10px}.izumo-review-team .izumo-runner-line{grid-template-columns:64px minmax(0,1fr)}}
