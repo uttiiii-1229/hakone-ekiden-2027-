@@ -68,25 +68,14 @@
   templates.history=historyTemplate;
 
 
-  function provisionalIzumoResult(year){
-    const d=window.threeEkidenSectionsDB?.izumo?.[year];
-    if(!d?.provisional)return '';
-    const sections=d.sections||{},keys=Object.keys(sections).sort((a,b)=>a-b);
-    const teams=[...new Set(keys.flatMap(k=>sections[k].map(r=>r.team)))];
-    const cards=teams.map(team=>`<details class="izumo-live-team"><summary>${esc(team)} <small>区間成績を見る</small></summary><div class="izumo-live-sections">${Array.from({length:6},(_,i)=>{const r=(sections[i+1]||[]).find(r=>r.team===team);return `<div><strong>${i+1}区</strong> ${r?`${esc(r.athlete)}<br><span>区間順位 ${esc(rankLabel(r.rank))} ／ ${esc(r.time)}${r.record?'（区間新・速報）':''}</span>`:'未掲載・確認待ち'}</div>`;}).join('')}</div></details>`).join('');
-    const winners=keys.map(k=>{const r=sections[k].find(r=>r.rank===1);return r?`<li>${k}区：${esc(r.athlete)}（${esc(r.team)}） ${esc(r.time)}</li>`:'';}).join('');
-    const ranks=keys.map(k=>`<details class="izumo-live-team"><summary>${k}区の全選手順位</summary><div class="izumo-live-ranks">${sections[k].map(r=>`<div><strong>${esc(rankLabel(r.rank))}</strong><span>${esc(r.team)}<br>${esc(r.athlete)}</span><strong>${esc(r.time)}${r.record?' ※':''}</strong></div>`).join('')}</div></details>`).join('');
-    return `<div class="notice"><strong>2026年 第38回・速報（公式照合前）</strong><p>${esc(d.updated?.replace('T',' ').replace('+09:00',' JST')||'')}更新。1〜5区の区間順位・区間タイムを掲載。6区・総合順位・総合タイムは確認後に追記します。区間順位は通過順位とは異なります。</p><a href="${esc(d.source)}" target="_blank" rel="noopener">日刊スポーツ・区間成績速報</a> ／ <a href="https://www.rikujyokyogi.co.jp/archives/219067" target="_blank" rel="noopener">月陸Online・区間賞</a><p>公式結果公開後に走者・順位・記録を照合し、公式確定値へ更新します。中国四国学連選抜はオープン参加（OPN）。</p></div><h2>区間賞（速報）</h2><ul>${winners}</ul><h2>大学・チーム別 区間成績</h2><p>チーム名をタップして各区間を確認できます。</p>${cards}<h2>各区間の全選手順位（速報）</h2><p>※は速報での区間新記録表記です。</p>${ranks}`;
-  }
-
   function raceResult(race,year){
-    if(race==='izumo'&&year===2026){const live=provisionalIzumoResult(year);if(live)return live;}
     const d=getData(race,year),m=raceMeta[race],ed=edition(race,year);
     if(!d)return `<div class="notice">${year}年のデータは登録されていません。</div>`;
     if(d.status!=='開催')return `<div class="notice"><strong>${m.title} 第${ed}回（${year}年）:</strong> ${d.status}</div>`;
     const rs=d.results||[];
+    const resultNote=race==='izumo'&&year===2026?`<div class="notice"><strong>${d.provisional?'速報（公式照合前）':'公式確定'}</strong><p>${esc(d.updated||'')} 更新。全22チーム・全6区を掲載。${d.provisional?'公式結果公開後に走者・順位・タイムを突合し、相違があれば修正します。':''} 中国四国学連選抜はオープン参加（OPN）。</p><a href="${esc(d.source)}" target="_blank" rel="noopener">総合成績の出典</a> ／ <a href="${esc(window.threeEkidenSectionsDB?.izumo?.[year]?.source||'https://www.izumo-ekiden.jp/record/index.html')}" target="_blank" rel="noopener">区間成績の出典</a></div><article class="data-card"><h2>大会の振り返り</h2><p>早稲田大学が2:05:56で優勝。2区・4区・5区・6区の4区間で区間賞を獲得し、國學院大學、アイビーリーグ選抜が続きました。</p><h3>区間賞${d.provisional?'（速報）':''}</h3><ul>${Object.entries(window.threeEkidenSectionsDB?.izumo?.[year]?.sections||{}).map(([k,rows])=>{const r=rows.find(r=>r.rank===1);return r?`<li>${k}区：${esc(r.athlete)}（${esc(r.team)}） ${esc(r.time)}</li>`:'';}).join('')}</ul></article>`:'';
     const rows=rs.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${teamButton(race,year,r.team)}</td><td>${r.time}</td></tr>${detailRow(race,year,r.team,3)}`).join('');
-    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。</div>`;
+    return `${resultNote}<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。</div>`;
   }
   function racePage(race){
     const st=raceState[race],m=raceMeta[race],ys=years(race);
