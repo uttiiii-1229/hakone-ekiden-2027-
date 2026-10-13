@@ -7,6 +7,8 @@
     meets.classList.remove('university-dropdown-item');
     raceMenu.appendChild(meets);
   }
+  const highschool=raceMenu?.querySelector('[data-route="highschool"]');
+  if(raceMenu&&highschool)raceMenu.appendChild(highschool);
   // 大学データは「大学・選手データ → 学年別ランキング → PB更新幅ランキング」の順に統一。
   const grade=universityMenu?.querySelector('[data-route="grade-rankings"]');
   const pb=universityMenu?.querySelector('[data-route="pbupdates"]');
@@ -53,13 +55,13 @@
   if(typeof originalRender==='function'){
     window.render=function(route='home'){
       originalRender(route);
-      const raceRoutes=['history','qualifier','izumo','zennihon','meets'];
+      const raceRoutes=['history','qualifier','izumo','zennihon','meets','highschool'];
       dropdown.classList.toggle('active',raceRoutes.includes(route));
       dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon','meets'].includes(route));
+    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon','meets','highschool'].includes(route));
     dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();
