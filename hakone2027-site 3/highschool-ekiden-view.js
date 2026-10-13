@@ -15,7 +15,7 @@
   }
   function splitDetail(team){
     const data=race(),rows=Array.from({length:config[state.gender].count},(_,i)=>({section:i+1,row:data.sections[i+1]?.find(r=>r.team===team)}));
-    return `<div class="hs-team-splits">${rows.map(({section,row:r})=>`<article><h3>${section}区 <small>${distance(section)}</small></h3>${r?`<strong>${escape(r.athlete)}</strong><div><span>区間 ${escape(r.rank)}${typeof r.rank==='number'?'位':''}</span><b>${escape(r.time)}</b></div><small>通過 ${escape(r.passingRank)}${typeof r.passingRank==='number'?'位':''}${r.disqualified?' · チーム失格':''}</small>`:'<p>出走成績なし</p>'}</article>`).join('')}</div>`;
+    return `<div class="hs-team-splits">${rows.map(({section,row:r})=>`<article><h3>${section}区 <small>${distance(section)}</small></h3>${r?`<div class="hs-athlete-time"><strong>${escape(r.athlete)}</strong><b aria-label="区間タイム">${escape(r.time)}</b></div><div><span>区間 ${escape(r.rank)}${typeof r.rank==='number'?'位':''}</span></div><small>通過 ${escape(r.passingRank)}${typeof r.passingRank==='number'?'位':''}${r.disqualified?' · チーム失格':''}</small>`:'<p>出走成績なし</p>'}</article>`).join('')}</div>`;
   }
   function overall(){
     const data=race();
