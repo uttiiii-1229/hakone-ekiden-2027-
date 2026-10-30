@@ -1,0 +1,8 @@
+.zen-entry-comparison .zen-member-line{display:grid;grid-template-columns:5em minmax(0,1fr);gap:.35rem .6rem;padding:.7rem 0;align-items:start}
+.zen-entry-comparison .zen-member-line strong{overflow-wrap:anywhere;line-height:1.6}
+.zen-entry-comparison .zen-member-line>small{grid-column:2;color:#53647a}
+.zen-entry-comparison .zen-member-label{font-size:.78rem;font-weight:700;background:#e8edf4;color:#243b56;padding:.2rem .35rem;border-radius:.3rem;text-align:center}
+.zen-entry-comparison .zen-predicted-line{border-top:1px solid #dbe3ed}
+.zen-entry-comparison .zen-predicted-line .zen-member-label{background:#e8f4ed;color:#195735}
+.zen-entry-comparison .is-change .zen-member-label{background:#fff0d2;color:#784600}
+@media(max-width:600px){.zen-entry-comparison .zen-member-line{grid-template-columns:4.6em minmax(0,1fr)}.zen-entry-comparison strong{font-size:1rem}}
