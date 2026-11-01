@@ -1,8 +1,9 @@
 // University Data subpages: in-site meet DB, PB updates, grade rankings
 (() => {
+  const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function gradeLabel(v){
     const g=String(v??'').normalize('NFKC').trim().replace(/年生?$/,'');
-    return /^[1-4]$/.test(g)?g+'年':'—';
+    return /^[1-6]$/.test(g)?g+'年':/^[MD]\d$/.test(g)?g+'年':'—';
   }
   function sec(v){
     const s=String(v||'').trim();
@@ -154,11 +155,20 @@
   };
 
   const autoDB=window.universityMeetResultsAutoDB?.meets||{};
+  // Every collected meet must be reachable from the year selector, not only the hand-written catalog.
+  const catalogIds=new Set(meetCatalog.map(m=>m.autoId||m.id));
+  Object.entries(autoDB).forEach(([id,meet])=>{
+    if(catalogIds.has(id)||!Object.values(meet.events||{}).some(e=>(e.rows||e).length))return;
+    meetCatalog.push({id,autoId:id,year:Number(meet.year),name:meet.name,
+      type:/対校選手権|インカレ/.test(meet.name)?'インカレ':'記録会・競技会',
+      period:meet.period||`${meet.year}年`,venue:meet.venue||'大会公式結果参照',status:'公式結果収録済み'});
+    catalogIds.add(id);
+  });
   meetCatalog.forEach(meta=>{
     const autoId=meta.autoId;
     if(!autoId||!autoDB[autoId]) return;
     const meet=autoDB[autoId];
-    if(!meetResults[meta.id]) meetResults[meta.id]={source:'公式WEBリザルト自動取得',events:{}};
+    if(!meetResults[meta.id]) meetResults[meta.id]={source:meet.source||'大会主催者公式リザルト',events:{}};
     Object.entries(meet?.events||{}).forEach(([eventName,event])=>{
       const rows=Array.isArray(event)?event:event?.rows;
       if(Array.isArray(rows)&&rows.length) meetResults[meta.id].events[eventName]=rows;
@@ -173,7 +183,7 @@
     const d=meetResults[meetId];
     const rows=d?.events?.[event]||[];
     if(!rows.length) return '<div class="notice">この大会・種目は結果確認中です。確認できた公式記録から順次追加します。</div>';
-    return `<div class="table-wrap meet-result-table"><table><thead><tr><th>順位</th><th>選手</th><th>大学</th><th>学年</th><th>記録</th><th>備考</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r[0]}</strong></td><td><strong>${r[1]}</strong></td><td>${r[2]}</td><td>${gradeLabel(r[3])}</td><td>${r[4]}</td><td>${r[5]||''}</td></tr>`).join('')}</tbody></table></div>`;
+    return `<div class="table-wrap meet-result-table"><table><thead><tr><th>順位</th><th>選手</th><th>所属</th><th>学年</th><th>記録</th><th>備考</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${escapeHtml(r[0])}</strong></td><td><strong>${escapeHtml(r[1])}</strong></td><td>${escapeHtml(r[2])}</td><td>${gradeLabel(r[3])}</td><td>${escapeHtml(r[4])}</td><td>${escapeHtml(r[5]||'')}</td></tr>`).join('')}</tbody></table></div>`;
   }
 
   function meetResultPanel(meetId){
@@ -184,9 +194,13 @@
     }
     const events=Object.keys(d.events);
     if(!events.includes(activeMeetEvent)) activeMeetEvent=events[0];
+    const official=autoDB[meet.autoId||meet.id];
+    const sourceUrl=official?.events?.[activeMeetEvent]?.url;
+    const sourceLink=sourceUrl&&/^https:\/\//.test(sourceUrl)?` · <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">公式結果</a>`:'';
+    const note=official?.note?`<p class="notice">${escapeHtml(official.note)}${official.noteUrl?` <a href="${escapeHtml(official.noteUrl)}" target="_blank" rel="noopener noreferrer">主催者発表</a>`:''}</p>`:'';
     return `<article class="data-card meet-db-panel">
       <div class="meet-card-top"><span class="topic-badge">${meet.type}</span><span class="muted">${meet.period}</span></div>
-      <h2>${meet.name}</h2><p class="muted">${meet.venue} / ${d.source}</p>
+      <h2>${meet.name}</h2><p class="muted">${escapeHtml(meet.venue)} / ${escapeHtml(d.source)}${sourceLink}</p>${note}
       <div class="tabs meet-event-tabs">${events.map(ev=>`<button class="tab ${ev===activeMeetEvent?'active':''}" data-meet-event="${ev}">${ev.replace('男子','')}</button>`).join('')}</div>
       <div id="meetEventResult">${meetResultTable(meetId,activeMeetEvent)}</div>
     </article>`;
@@ -242,7 +256,7 @@
     const meetBtn=e.target.closest('[data-meet-id]');
     if(meetBtn){activeMeet=meetBtn.dataset.meetId;const d=meetResults[activeMeet];if(d)activeMeetEvent=Object.keys(d.events)[0];const host=document.querySelector('#meetDatabaseResult');if(host)host.innerHTML=meetResultPanel(activeMeet);document.querySelectorAll('[data-meet-id]').forEach(b=>b.classList.toggle('active',b===meetBtn));return;}
     const eventBtn=e.target.closest('[data-meet-event]');
-    if(eventBtn){activeMeetEvent=eventBtn.dataset.meetEvent;eventBtn.closest('.meet-db-panel').querySelectorAll('[data-meet-event]').forEach(b=>b.classList.toggle('active',b===eventBtn));const host=document.querySelector('#meetEventResult');if(host)host.innerHTML=meetResultTable(activeMeet,activeMeetEvent);return;}
+    if(eventBtn){activeMeetEvent=eventBtn.dataset.meetEvent;eventBtn.closest('.meet-db-panel').querySelectorAll('[data-meet-event]').forEach(b=>b.classList.toggle('active',b===eventBtn));const host=document.querySelector('#meetDatabaseResult');if(host)host.innerHTML=meetResultPanel(activeMeet);return;}
     const gradeBtn=e.target.closest('[data-grade-select]');
     if(gradeBtn){
       gradeRankingState.grade=Number(gradeBtn.dataset.gradeSelect)||1;

@@ -712,5 +712,27 @@
       "男子",
       "女子"
     ]
+  },
+  {
+    "id": "tokai-long-251-2026",
+    "year": 2026,
+    "name": "第251回 東海大学長距離競技会",
+    "period": "2026/10/4",
+    "venue": "秦野市カルチャーパーク陸上競技場",
+    "sourceUrl": "https://www.go-tokai-ekiden.com/competition/competition_2026/2026/251.html",
+    "sourceSha256": "cf6bc909ea2855ef7b3f5cdbc6a742fa64bc355483370bbe13a76e352c3b47ef",
+    "adapter": "official-pdf",
+    "resultUrl": "https://www.go-tokai-ekiden.com/file/251result.pdf"
+  },
+  {
+    "id": "tokai-long-241-2025",
+    "year": 2025,
+    "name": "第241回 東海大学長距離競技会",
+    "period": "2025/10/26",
+    "venue": "秦野市カルチャーパーク陸上競技場",
+    "sourceUrl": "https://www.go-tokai-ekiden.com/competition/competition_2025/241.html",
+    "sourceSha256": "fc1c62ae342cfc468472d0a5b430299040638f459e6f9be9a6538bbb6d12600a",
+    "adapter": "official-pdf",
+    "resultUrl": "https://www.go-tokai-ekiden.com/file/result.pdf"
   }
 ]

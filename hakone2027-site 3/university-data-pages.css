@@ -14,3 +14,11 @@
 .grade-selector-button.active{background:#0b376d;color:#fff;border-color:#0b376d}
 .grade-selector-button:focus-visible{outline:3px solid rgba(23,105,209,.25);outline-offset:2px}
 @media(max-width:600px){.grade-selector{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.grade-selector-button{padding:11px 8px}}
+
+/* Keep the growing meet catalog usable without pushing results far below it. */
+.meet-db-list{max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior-y:contain;padding:2px;scrollbar-gutter:stable}
+@media(max-width:900px){.meet-db-list{max-height:320px;position:static}}
+
+
+.meet-db-layout>*{min-width:0}
+.meet-result-table{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
