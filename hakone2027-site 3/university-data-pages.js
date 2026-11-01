@@ -180,7 +180,7 @@
   });
 
   let activeMeetYear=2026;
-  let activeMeet='waseda-5-2026';
+  let activeMeet='';
   let activeMeetEvent='男子10000m';
 
   function meetResultTable(meetId,event){
@@ -200,7 +200,8 @@
     if(!events.includes(activeMeetEvent)) activeMeetEvent=events[0];
     const official=autoDB[meet.autoId||meet.id];
     const sourceUrl=official?.events?.[activeMeetEvent]?.url;
-    const sourceLink=sourceUrl&&/^https:\/\//.test(sourceUrl)?` · <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">公式結果</a>`:'';
+    const sourceItems=official?.events?.[activeMeetEvent]?.sourceUrls||(sourceUrl?[{label:'公式結果',url:sourceUrl}]:[]);
+    const sourceLink=sourceItems.filter(s=>/^https:\/\//.test(s.url)).map(s=>` · <a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.label)}</a>`).join('');
     const scope=official?.scope?`<p class="muted">収録範囲：${escapeHtml(official.scope)}</p>`:'';
     const note=official?.note?`<p class="notice">${escapeHtml(official.note)}${official.noteUrl?` <a href="${escapeHtml(official.noteUrl)}" target="_blank" rel="noopener noreferrer">主催者発表</a>`:''}</p>`:'';
     return `<article class="data-card meet-db-panel">
@@ -211,16 +212,30 @@
     </article>`;
   }
 
+  function meetSortDate(meet){
+    const period=String(meet.period||'').normalize('NFKC');
+    const full=period.match(/(\d{4})[\/年.-](\d{1,2})[\/月.-](\d{1,2})/);
+    if(full)return Number(full[1])*10000+Number(full[2])*100+Number(full[3]);
+    const month=period.match(/(\d{4})年(\d{1,2})月/);
+    return month?Number(month[1])*10000+Number(month[2])*100:null;
+  }
+  function compareMeetDates(a,b){
+    const ad=meetSortDate(a),bd=meetSortDate(b);
+    if(ad===null&&bd!==null)return 1;
+    if(bd===null&&ad!==null)return -1;
+    return (bd??0)-(ad??0)||a.name.localeCompare(b.name,'ja');
+  }
+
   function meetsTemplate(){
     const years=[2026,2025,2024,2023,2022];
-    const list=meetCatalog.filter(m=>m.year===activeMeetYear);
+    const list=meetCatalog.filter(m=>m.year===activeMeetYear).sort(compareMeetDates);
     if(!list.some(m=>m.id===activeMeet)) activeMeet=list[0]?.id||'';
     return `<section class="container page university-subpage">
       <div class="page-header"><div class="eyebrow">UNIVERSITY DATA / MEETS</div><h1>大会・記録会データベース</h1><p>2022〜2026の5年分を対象に、大学長距離の3000mより長いランニング種目をサイト内で確認できます。</p></div>
       <div class="university-note"><strong>収録ルール:</strong> 5000m・10000m・ロード5km以上・ハーフ等を対象とし、3000m、3000mSC、競歩は除外します。公式結果が残っている大会から順次バックフィルします。</div>
       <div class="year-select-control"><label for="meetYearSelect">年度</label><select id="meetYearSelect" class="year-select" data-meet-year>${years.map(y=>`<option value="${y}" ${y===activeMeetYear?'selected':''}>${y}年</option>`).join('')}</select></div>
-      <div class="meet-db-layout">
-        <aside class="meet-db-list">${list.map(m=>`<button class="meet-db-button ${m.id===activeMeet?'active':''}" data-meet-id="${m.id}"><strong>${m.name}</strong><span>${m.period} ・ ${m.status}</span></button>`).join('')}</aside>
+      <p class="muted">開催日の新しい順（複数日開催は初日を基準）。日付未確認の大会は末尾に表示します。</p>\n      <div class="meet-db-layout">
+        <aside class="meet-db-list" aria-label="開催日の新しい順">${list.map(m=>`<button class="meet-db-button ${m.id===activeMeet?'active':''}" data-meet-id="${m.id}"><strong>${m.name}</strong><span>${m.period} ・ ${m.status}</span></button>`).join('')}</aside>
         <div id="meetDatabaseResult">${activeMeet?meetResultPanel(activeMeet):'<div class="notice">大会データを確認中です。</div>'}</div>
       </div>
     </section>`;
