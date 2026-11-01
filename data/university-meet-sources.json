@@ -734,5 +734,16 @@
     "sourceSha256": "fc1c62ae342cfc468472d0a5b430299040638f459e6f9be9a6538bbb6d12600a",
     "adapter": "official-pdf",
     "resultUrl": "https://www.go-tokai-ekiden.com/file/result.pdf"
+  },
+  {
+    "id": "kansai-distance-challenge-2-2026",
+    "year": 2026,
+    "name": "2026年度第2回関西ディスタンスチャレンジ",
+    "adapter": "kgrr-web-results",
+    "indexUrl": "https://gold.jaic.org/jaic/icaak/record/2026/12_2ndDC/kyougi.html",
+    "includeGenders": [
+      "男子",
+      "女子"
+    ]
   }
 ]
