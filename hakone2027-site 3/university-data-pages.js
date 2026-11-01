@@ -165,9 +165,13 @@
     catalogIds.add(id);
   });
   meetCatalog.forEach(meta=>{
-    const autoId=meta.autoId;
+    const autoId=meta.autoId||(autoDB[meta.id]?meta.id:null);
     if(!autoId||!autoDB[autoId]) return;
     const meet=autoDB[autoId];
+    if(meet.replaceManual)meetResults[meta.id]={source:meet.source||'大会主催者公式リザルト',events:{}};
+    if(meet.period)meta.period=meet.period;
+    if(meet.venue)meta.venue=meet.venue;
+    if(meet.replaceManual)meta.status='公式結果・全組収録済み';
     if(!meetResults[meta.id]) meetResults[meta.id]={source:meet.source||'大会主催者公式リザルト',events:{}};
     Object.entries(meet?.events||{}).forEach(([eventName,event])=>{
       const rows=Array.isArray(event)?event:event?.rows;
@@ -176,7 +180,7 @@
   });
 
   let activeMeetYear=2026;
-  let activeMeet='student-individual-2026';
+  let activeMeet='waseda-5-2026';
   let activeMeetEvent='男子10000m';
 
   function meetResultTable(meetId,event){
@@ -197,10 +201,11 @@
     const official=autoDB[meet.autoId||meet.id];
     const sourceUrl=official?.events?.[activeMeetEvent]?.url;
     const sourceLink=sourceUrl&&/^https:\/\//.test(sourceUrl)?` · <a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer">公式結果</a>`:'';
+    const scope=official?.scope?`<p class="muted">収録範囲：${escapeHtml(official.scope)}</p>`:'';
     const note=official?.note?`<p class="notice">${escapeHtml(official.note)}${official.noteUrl?` <a href="${escapeHtml(official.noteUrl)}" target="_blank" rel="noopener noreferrer">主催者発表</a>`:''}</p>`:'';
     return `<article class="data-card meet-db-panel">
       <div class="meet-card-top"><span class="topic-badge">${meet.type}</span><span class="muted">${meet.period}</span></div>
-      <h2>${meet.name}</h2><p class="muted">${escapeHtml(meet.venue)} / ${escapeHtml(d.source)}${sourceLink}</p>${note}
+      <h2>${meet.name}</h2><p class="muted">${escapeHtml(meet.venue)} / ${escapeHtml(d.source)}${sourceLink}</p>${scope}${note}
       <div class="tabs meet-event-tabs">${events.map(ev=>`<button class="tab ${ev===activeMeetEvent?'active':''}" data-meet-event="${ev}">${ev.replace('男子','')}</button>`).join('')}</div>
       <div id="meetEventResult">${meetResultTable(meetId,activeMeetEvent)}</div>
     </article>`;

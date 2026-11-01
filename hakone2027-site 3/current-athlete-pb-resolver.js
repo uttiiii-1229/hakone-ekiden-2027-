@@ -51,6 +51,28 @@
     return /^[1-5]$/.test(s)?s:'';
   }
 
+  // Official result imports may improve a PB even when the organizer omits a PB badge.
+  // Match current roster members only; road results and disqualifications never become track PBs.
+  function mergeOfficialMeetPbs(rows,team){
+    const key=s=>norm(s).replace(/髙/g,'高').replace(/﨑/g,'崎');
+    const byName=new Map(rows.map(r=>[key(r.name),r]));
+    Object.values(window.universityMeetResultsAutoDB?.meets||{}).forEach(meet=>{
+      if(Number(meet.year)!==2026)return;
+      Object.entries(meet.events||{}).forEach(([eventName,event])=>{
+        if(!event.officialResult||event.pbEligible!==true||/女子|ロード|非公認|参考/.test(eventName))return;
+        const metric=eventMetric(eventName);if(!metric)return;
+        (event.rows||[]).forEach(row=>{
+          if(teamNorm(row[2])!==team||/DNS|DNF|DQ|失格|非公認|参考|途中棄権/i.test(String(row[5]||'')))return;
+          const target=byName.get(key(row[1])),value=recordCandidate(row[4]);
+          if(!target||!value)return;
+          const next=better(target[metric],value);
+          if(next!==target[metric]){target[metric]=next;target.sources.push('公式結果: '+meet.name+' '+meet.period);}
+        });
+      });
+    });
+    return rows;
+  }
+
   function currentRows(team){
     team=teamNorm(team);
 
@@ -79,7 +101,7 @@
       // Group by academic year while preserving the supplied order inside each
       // year. The source JSON is ordered in Japanese syllabary order within a grade.
       // JavaScript's stable sort keeps that within-grade order unchanged.
-      return rows.sort((a,b)=>(Number(b.grade)||0)-(Number(a.grade)||0));
+      return mergeOfficialMeetPbs(rows,team).sort((a,b)=>(Number(b.grade)||0)-(Number(a.grade)||0));
     }
 
     const map=new Map();
@@ -178,7 +200,7 @@
     });
 
     const arr=[...map.values()].map(r=>({...r,grade:normalizeGrade(r.grade),sources:[...r.sources]}));
-    return arr.sort((a,b)=>{
+    return mergeOfficialMeetPbs(arr,team).sort((a,b)=>{
       const ag=Number(a.grade)||0,bg=Number(b.grade)||0;
       return bg-ag||a.name.localeCompare(b.name,'ja',{sensitivity:'base'});
     });
