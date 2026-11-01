@@ -35,33 +35,33 @@
     zennihon:{
       1:[
         {start:2007,end:2017,distance:'14.6km',course:'第49回までの旧コース',time:'41:56',holders:[{athlete:'永田 宏一郎',team:'鹿屋体育大学',year:2000,edition:32},{athlete:'ギタウ・ダニエル',team:'日本大学',year:2007,edition:39}]},
-        {start:2018,end:2025,distance:'9.5km',course:'第50回以降の現行コース',time:'26:58',holders:[{athlete:'ピーター・ワンジル',team:'大東文化大学',year:2022,edition:54}]}
+        {start:2018,end:2026,distance:'9.5km',course:'第50回以降の現行コース',time:'26:58',holders:[{athlete:'ピーター・ワンジル',team:'大東文化大学',year:2022,edition:54}]}
       ],
       2:[
         {start:2007,end:2017,distance:'13.2km',course:'第49回までの旧コース',time:'37:16',holders:[{athlete:'エノック・オムワンバ',team:'山梨学院大学',year:2012,edition:44}]},
-        {start:2018,end:2025,distance:'11.1km',course:'第50回以降の現行コース',time:'31:01',holders:[{athlete:'佐藤 圭汰',team:'駒澤大学',year:2023,edition:55},{athlete:'楠岡 由浩',team:'帝京大学',year:2025,edition:57}]}
+        {start:2018,end:2026,distance:'11.1km',course:'第50回以降の現行コース',time:'30:51',holders:[{athlete:'増子 陽太',team:'早稲田大学',year:2026,edition:58},{athlete:'楠岡 由浩',team:'帝京大学',year:2026,edition:58}]}
       ],
       3:[
         {start:2007,end:2017,distance:'9.5km',course:'第49回までの旧コース',time:'26:55',holders:[{athlete:'油布 郁人',team:'駒澤大学',year:2012,edition:44}]},
-        {start:2018,end:2025,distance:'11.9km',course:'第50回以降の現行コース',time:'32:46',holders:[{athlete:'イェゴン・ヴィンセント',team:'東京国際大学',year:2021,edition:53}]}
+        {start:2018,end:2026,distance:'11.9km',course:'第50回以降の現行コース',time:'32:45',holders:[{athlete:'新妻 遼己',team:'早稲田大学',year:2026,edition:58}]}
       ],
       4:[
         {start:2007,end:2017,distance:'14.0km',course:'第49回までの旧コース',time:'39:24',holders:[{athlete:'村山 謙太',team:'駒澤大学',year:2013,edition:45}]},
-        {start:2018,end:2025,distance:'11.8km',course:'第50回以降の現行コース',time:'33:03',holders:[{athlete:'黒田 朝日',team:'青山学院大学',year:2024,edition:56}]}
+        {start:2018,end:2026,distance:'11.8km',course:'第50回以降の現行コース',time:'33:03',holders:[{athlete:'黒田 朝日',team:'青山学院大学',year:2024,edition:56}]}
       ],
       5:[
         {start:2007,end:2017,distance:'11.6km',course:'第49回までの旧コース',time:'33:22',holders:[{athlete:'横手 健',team:'明治大学',year:2014,edition:46}]},
-        {start:2018,end:2025,distance:'12.4km',course:'第50回以降の現行コース',time:'35:01',holders:[{athlete:'伊藤 蒼唯',team:'駒澤大学',year:2025,edition:57}]}
+        {start:2018,end:2026,distance:'12.4km',course:'第50回以降の現行コース',time:'34:31',holders:[{athlete:'鈴木 琉胤',team:'早稲田大学',year:2026,edition:58}]}
       ],
       6:[
         {start:2007,end:2017,distance:'12.3km',course:'第49回までの旧コース',time:'35:30',holders:[{athlete:'前田 悠貴',team:'早稲田大学',year:2012,edition:44}]},
-        {start:2018,end:2025,distance:'12.8km',course:'第50回以降の現行コース',time:'36:47',holders:[{athlete:'山本 歩夢',team:'國學院大學',year:2024,edition:56}]}
+        {start:2018,end:2026,distance:'12.8km',course:'第50回以降の現行コース',time:'36:41',holders:[{athlete:'吉田 蔵之介',team:'國學院大學',year:2026,edition:58}]}
       ],
       7:[
         {start:2007,end:2017,distance:'11.9km',course:'第49回までの旧コース',time:'34:08',holders:[{athlete:'阿部 弘輝',team:'明治大学',year:2017,edition:49}]},
-        {start:2018,end:2025,distance:'17.6km',course:'第50回以降の現行コース',time:'49:31',holders:[{athlete:'黒田 朝日',team:'青山学院大学',year:2025,edition:57}]}
+        {start:2018,end:2026,distance:'17.6km',course:'第50回以降の現行コース',time:'49:31',holders:[{athlete:'黒田 朝日',team:'青山学院大学',year:2025,edition:57}]}
       ],
-      8:[{start:2007,end:2025,distance:'19.7km',course:'第24回以降コース',time:'55:32',holders:[{athlete:'メクボ・ジョブ・モグス',team:'山梨学院大学',year:2007,edition:39}]}]
+      8:[{start:2007,end:2026,distance:'19.7km',course:'第24回以降コース',time:'55:32',holders:[{athlete:'メクボ・ジョブ・モグス',team:'山梨学院大学',year:2007,edition:39}]}]
     }
   };
 
@@ -84,7 +84,7 @@
     const r=recordFor(race,year,section);
     if(!r)return '';
     const holders=(r.holders||[]).map(h=>`${h.athlete}（${normalizeTeam(h.team)}・${h.year}年 第${h.edition}回）`).join(' ／ ');
-    return `<div class="notice section-record-note" style="margin:12px 0 14px"><strong>区間記録${race==='izumo'?'（2026年まで）':''}：</strong> <strong>${r.time}</strong>　${holders}<br><span class="muted">対象：${r.course}・${r.distance}。コース変更前の年度は、その当時のコース区間記録を表示しています。</span>${race==='izumo'?'<br><a href="https://www.izumo-ekiden.jp/record/index.html" target="_blank" rel="noopener noreferrer">公式区間記録・大会結果</a>':''}</div>`;
+    return `<div class="notice section-record-note" style="margin:12px 0 14px"><strong>区間記録（2026年まで）：</strong> <strong>${r.time}</strong>　${holders}<br><span class="muted">対象：${r.course}・${r.distance}。コース変更前の年度は、その当時のコース区間記録を表示しています。</span>${race==='izumo'?'<br><a href="https://www.izumo-ekiden.jp/record/index.html" target="_blank" rel="noopener noreferrer">公式区間記録・大会結果</a>':''}</div>`;
   }
 
 
@@ -134,7 +134,7 @@
     const rows=sectionRows(race,year,section);
     const passing=passingRanks(race,year,section);
     if(!rows.length)return `<div class="notice">${year}年 ${section}区の区間順位データは現在確認中です。</div>`;
-    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?'<div class="notice">速報・公式照合前。※は速報での区間新記録表記です。</div>':''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.openParticipation||r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${esc(passing.get(teamKey(r.team))??'—')}</td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${esc(r.athlete)}${r.grade?` <small>${esc(r.grade)}年</small>`:''}</td><td>${r.time}${r.record?' ※':r.recordTie?'（区間タイ）':''}</td></tr>`).join('')}</tbody></table></div><div class="notice"><strong>通過順位：</strong>1区から当該区間までの累計タイムによる順位です（公式通過順位の登録がある場合は公式値を優先）。繰り上げスタート後の実際の通過順とは異なります。累計同タイムは同順位、記録欠損は「—」、OPN・参考は通過順位の対象外です。※は区間新記録です。</div>`;
+    return `<div class="section-db-head" style="margin-top:16px"><div><h2>${labels[race]} ${year}年 ${section}区 区間順位</h2><p class="muted">大会記録をもとに、全出場選手の区間順位を掲載しています。</p></div></div>${yearData.provisional?`<div class="notice">速報・公式照合前。${esc(yearData.updated||'')}更新。※は速報での区間新記録表記です。<a href="${esc(yearData.source)}" target="_blank" rel="noopener">区間成績の出典</a></div>`:''}${recordHtml(race,year,section)}<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学・チーム</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.openParticipation||r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}${r.openParticipation?'（参考）':''}</strong></td><td>${esc(passing.get(teamKey(r.team))??'—')}</td><td><strong>${normalizeTeam(r.team)}</strong></td><td>${esc(r.athlete)}${r.grade?` <small>${esc(r.grade)}年</small>`:''}</td><td>${r.time}${r.record?' ※':r.recordTie?'（区間タイ）':''}</td></tr>`).join('')}</tbody></table></div><div class="notice"><strong>通過順位：</strong>${race==='zennihon'&&year===2026?'1〜6区は文化放送掲載の通過順位、7区は区間速報累計による暫定順位、8区は総合順位です。繰り上げ後の時計上の通過順ではありません。7区の累計同タイムは同順位。OPNは通過順位の対象外で、区間順位には参考成績を表示しています。':'1区から当該区間までの累計タイムによる順位です（公式通過順位の登録がある場合は公式値を優先）。繰り上げスタート後の実際の通過順とは異なります。累計同タイムは同順位、記録欠損は「—」、OPN・参考は通過順位の対象外です。'}※は区間新記録です。</div>`;
   }
 
 
@@ -196,3 +196,4 @@
   if(app)new MutationObserver(ensureAll).observe(app,{childList:true,subtree:true});
   ensureAll();
 })();
+

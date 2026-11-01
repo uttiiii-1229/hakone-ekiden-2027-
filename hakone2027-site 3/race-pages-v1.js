@@ -1,7 +1,7 @@
 // 過去大会を箱根専用にし、出雲・全日本を独立ページへ分離
 (() => {
   const hakoneOverallState={year:2026};
-  const raceState={izumo:{year:2026},zennihon:{year:2025}};
+  const raceState={izumo:{year:2026},zennihon:{year:2026}};
   const sectionCounts={hakone:10,izumo:6,zennihon:8};
   const raceMeta={izumo:{title:'出雲駅伝',subtitle:'出雲全日本大学選抜駅伝競走',icon:'⚡'},zennihon:{title:'全日本大学駅伝',subtitle:'秩父宮賜杯 全日本大学駅伝対校選手権大会',icon:'🏃'}};
 
@@ -16,7 +16,7 @@
   function cleanAthlete(name=''){const s=String(name).trim();return s.replace(/\s*\([1-5]\)\s*.*$/,'').trim()||s;}
   function rankLabel(v){return (v===null||v===undefined||v==='')?'—':v;}
   function hakoneOverallYears(){return Array.from({length:27},(_,i)=>2026-i);}
-  function years(race){const last=race==='izumo'?2026:2025;return Array.from({length:last-2007+1},(_,i)=>last-i);}
+  function years(race){const last=2026;return Array.from({length:last-2007+1},(_,i)=>last-i);}
   function edition(race,year){return race==='izumo'?year-1988:year-1968;}
   function hakoneOfficial(year){return window.hakoneOfficialOverallDB?.[year]||null;}
   function getData(race,year){return window.threeEkidenStandingsDB?.[race]?.[year]||null;}
@@ -68,12 +68,13 @@
   templates.history=historyTemplate;
 
 
+  function zennihon2026Note(d){return `<div class="notice"><strong>2026年 結果速報・公式照合前</strong><p>${esc(d.updated)} 更新。全27チーム・全8区間を掲載。日刊スポーツ掲載 ${esc(d.published)}。総合タイムは区間速報の合算で、1〜15位は月陸掲載順位、16位以下は累計タイムによる暫定順位です。中央・駒澤は同タイムですが掲載順位に従っています。日本学連選抜・東海学連選抜はOPNです。</p><a href="${esc(d.overallSource)}" target="_blank" rel="noopener">月陸・総合結果</a> ／ <a href="${esc(d.source)}" target="_blank" rel="noopener">日刊スポーツ・全区間速報</a></div><article class="data-card"><h2>大会の振り返り</h2><p>早稲田大学が5:03:31の大会新で16年ぶりに優勝し、出雲との2冠。2区・3区・5区・8区の4区間で区間賞を獲得しました。2区は増子陽太と帝京・楠岡由浩が同着区間賞。工藤慎作は8区56:20で日本人最高を更新。國學院大學が2位、創価大学は終盤に順位を上げ3位、大東文化大学は7位でシード権を獲得しました。</p></article>`;}
   function raceResult(race,year){
     const d=getData(race,year),m=raceMeta[race],ed=edition(race,year);
     if(!d)return `<div class="notice">${year}年のデータは登録されていません。</div>`;
     if(d.status!=='開催')return `<div class="notice"><strong>${m.title} 第${ed}回（${year}年）:</strong> ${d.status}</div>`;
     const rs=d.results||[];
-    const resultNote=race==='izumo'&&year===2026?`<div class="notice"><strong>${d.provisional?'速報（公式照合前）':'公式確定'}</strong><p>${esc(d.updated||'')} 更新。全22チーム・全6区を掲載。${d.provisional?'公式結果公開後に走者・順位・タイムを突合し、相違があれば修正します。':''} 中国四国学連選抜はオープン参加（OPN）。</p><a href="${esc(d.source)}" target="_blank" rel="noopener">総合成績の出典</a> ／ <a href="${esc(window.threeEkidenSectionsDB?.izumo?.[year]?.source||'https://www.izumo-ekiden.jp/record/index.html')}" target="_blank" rel="noopener">区間成績の出典</a></div><article class="data-card"><h2>大会の振り返り</h2><p>早稲田大学が2:05:56で優勝。2区・4区・5区・6区の4区間で区間賞を獲得し、國學院大學、アイビーリーグ選抜が続きました。</p></article>`:'';
+    const resultNote=race==='izumo'&&year===2026?`<div class="notice"><strong>${d.provisional?'速報（公式照合前）':'公式確定'}</strong><p>${esc(d.updated||'')} 更新。全22チーム・全6区を掲載。${d.provisional?'公式結果公開後に走者・順位・タイムを突合し、相違があれば修正します。':''} 中国四国学連選抜はオープン参加（OPN）。</p><a href="${esc(d.source)}" target="_blank" rel="noopener">総合成績の出典</a> ／ <a href="${esc(window.threeEkidenSectionsDB?.izumo?.[year]?.source||'https://www.izumo-ekiden.jp/record/index.html')}" target="_blank" rel="noopener">区間成績の出典</a></div><article class="data-card"><h2>大会の振り返り</h2><p>早稲田大学が2:05:56で優勝。2区・4区・5区・6区の4区間で区間賞を獲得し、國學院大學、アイビーリーグ選抜が続きました。</p></article>`:race==='zennihon'&&year===2026?zennihon2026Note(d):'';
     const rows=rs.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${teamButton(race,year,r.team)}</td><td>${r.time}</td></tr>${detailRow(race,year,r.team,3)}`).join('');
     return `${resultNote}<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。</div>`;
   }
@@ -118,3 +119,4 @@
   const current=location.hash.replace('#','')||'home';
   if(['history','izumo','zennihon'].includes(current) && typeof render==='function')render(current);
 })();
+

@@ -1,0 +1,6 @@
+.zennihon-review-page .izumo-review-team[open]{grid-column:1 / -1}
+.zennihon-review-page .izumo-review-team .forecast-section-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin:16px 0;min-width:0}
+.zennihon-review-page .zen-entry-comparison{min-width:0;padding:14px}
+.zennihon-review-page .zen-member-line>small{line-height:1.8}
+.zennihon-review-page .table-wrap{max-width:100%;overflow-x:auto}
+@media(max-width:600px){.zennihon-review-page .izumo-review-team .forecast-section-grid{grid-template-columns:1fr}.zennihon-review-page .izumo-review-team{padding:14px}}
