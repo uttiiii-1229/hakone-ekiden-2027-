@@ -3,7 +3,15 @@
   const races={hakone:'箱根駅伝',izumo:'出雲駅伝',zennihon:'全日本大学駅伝'};
   const state={query:'',team:'all',sort:'pb5000',page:1,pageSize:50};
   const norm=s=>String(s||'').normalize('NFKC').replace(/[\s　]+/g,'').trim();
-  const teamNorm=s=>String(s||'').normalize('NFKC').replace('國學院大学','國學院大學').replace('國學院大學學','國學院大學').replace(/大$/,'大学').trim();
+  const identity = window.athleteDirectoryIdentity;
+  const teamNorm = s => identity.school(String(s||'').replace('國學院大學學','國學院大學')).replace('國學院大学','國學院大學');
+  const seasonFor = (race, year) => Number(year) - (race==='hakone' ? 1 : 0);
+  const personKey = (name, team) => norm(name)+'|'+norm(team);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const rankLabel = v => /^\d+$/.test(String(v)) ? v+'位' : (!v || v==='—') ? '—' : String(v);
+  function aliasesFor(name, team, season){
+    return identity.resolve(name, team, season)?.names || [];
+  }
   const athleteNameFixes={
     '久 龍':'高久 龍','髙久 龍':'高久 龍',
     'Matt LＬano':'マット リャノ','Matt LLano':'マット リャノ'
@@ -13,12 +21,14 @@
     // Older Izumo result pages append grade + kana reading, e.g. "田子 康宏 (3) タゴ ヤスヒロ".
     // Strip that metadata so the same athlete is merged across every season.
     s=s.replace(/\s*[（(]\s*(?:[1-6]|M[12])\s*[）)](?:\s+[ァ-ヶー・\s]+)?$/u,'').trim();
+    const group=identity.resolve(s,context.team,context.season ?? seasonFor(context.race,context.year));
+    if(group) return group.canonical;
     if(athleteNameFixes[s]) return athleteNameFixes[s];
     if(typeof window.canonicalAthleteIdentity==='function'){
       const n=window.canonicalAthleteIdentity(s,context);
       if(n) return n;
     }
-    if(typeof window.normalizeForeignAthleteName==='function'){
+    else if(typeof window.normalizeForeignAthleteName==='function'){
       const n=window.normalizeForeignAthleteName(s);
       if(n&&n!==s) return n;
     }
@@ -42,25 +52,37 @@
   const toSec=v=>{
     const p=String(v||'').trim().split(':').map(Number);
     if(p.some(x=>!Number.isFinite(x)))return null;
+    if (!/^\d+:\d{2}(?::\d{2})?(?:\.\d+)?$/.test(String(v||'').trim())) return null;
     return p.length===3?p[0]*3600+p[1]*60+p[2]:p.length===2?p[0]*60+p[1]:null;
   };
 
   function raceRows(){
     const all={hakone:[],izumo:[],zennihon:[]};
-    const h=window.hakonePhase2StaticDB||{};
-    Object.entries(h).forEach(([year,sections])=>{
-      for(let sec=1;sec<=10;sec++) (sections?.[sec]||[]).forEach(r=>{
-        const seconds=toSec(r?.[4]); if(seconds===null)return;
-        all.hakone.push({race:'hakone',year:+year,section:sec,team:teamNorm(r?.[2]),athlete:athleteDisplayName(r?.[3]||'',{race:'hakone',year:+year,team:teamNorm(r?.[2])}),time:r?.[4],rank:r?.[0],seconds});
-      });
+    const seen=new Set();
+    function add(race,year,section,rawTeam,rawName,time,rank,reference,provisional=false){
+      const recordedTime=String(time||'').normalize('NFKC').replace(/\s*(?:NSR|\(区間新\))$/,'');
+      const seconds=toSec(recordedTime);
+      if(seconds===null||!rawName||!rawTeam) return;
+      const entryTeam=teamNorm(rawTeam);
+      const team=teamNorm(identity.affiliation(race,+year,entryTeam,rawName));
+      const athlete=athleteDisplayName(rawName,{race,year:+year,team:entryTeam});
+      const key=personKey(athlete,team);
+      const id=[race,year,section,entryTeam,key].join('|');
+      if(!athlete || seen.has(id))return;
+      seen.add(id);
+      all[race].push({race,year:+year,section:+section,team,entryTeam,athlete,rawName,time,rank,seconds,reference,provisional,key});
+    }
+    Object.entries(window.hakonePhase2StaticDB||{}).forEach(([year,sections])=>{
+      Object.entries(sections).forEach(([sec,rows])=>rows.forEach(r=>{
+        add('hakone',year,sec,r[2],r[3],r[4],r[0],r[0]==='参考');
+      }));
     });
     const db=window.threeEkidenSectionsDB||{};
     ['izumo','zennihon'].forEach(race=>{
-      Object.entries(db?.[race]||{}).forEach(([year,yd])=>{
+      Object.entries(db[race]||{}).forEach(([year,yd])=>{
         if(yd?.status!=='開催')return;
-        Object.entries(yd?.sections||{}).forEach(([sec,rows])=>(rows||[]).forEach(r=>{
-          const seconds=toSec(r?.time); if(seconds===null)return;
-          all[race].push({race,year:+year,section:+sec,team:teamNorm(r?.team),athlete:athleteDisplayName(r?.athlete||'',{race,year:+year,team:teamNorm(r?.team)}),time:r?.time,rank:r?.rank,seconds});
+        Object.entries(yd.sections||{}).forEach(([sec,rows])=>rows.forEach(r=>{
+          add(race,year,sec,r.team,r.athlete,r.time,r.rank,Boolean(r.openParticipation)||r.rank==='参考'||r.rank==='OPN',Boolean(yd.provisional));
         }));
       });
     });
@@ -76,7 +98,7 @@
       const vals=group.map(x=>x.seconds),mean=vals.reduce((a,b)=>a+b,0)/vals.length;
       const sd=Math.sqrt(vals.reduce((s,x)=>s+(x-mean)**2,0)/vals.length); if(!sd)return;
       group.forEach(r=>{
-        const key=norm(r.athlete)+'|'+norm(r.team);
+        const key=r.key;
         if(!out.has(key))out.set(key,[]);
         out.get(key).push(50+10*((mean-r.seconds)/sd));
       });
@@ -86,127 +108,86 @@
     return avg;
   }
 
-  function pbMap(){
-    const map=new Map();
-
-    // Full current rosters: [name, grade, 10000m PB, half PB]
-    if(window.fullRosterData){
-      Object.entries(window.fullRosterData).forEach(([team,rows])=>(rows||[]).forEach(r=>{
-        const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
-        map.set(key,{grade:r[1],pb5000:'—',pb10000:r[2]||'—',half:r[3]||'—'});
-      }));
+  // Current membership comes from the current roster, never from another school's PB.
+  function currentMembership(){
+    const current=new Map();
+    const supplied=window.currentAthletePbJson2026||{};
+    const official=window.currentRosterOfficial2026||{};
+    for (const [rawTeam, roster] of Object.entries({...official,...supplied})) {
+      const team=teamNorm(rawTeam);
+      for(const row of roster||[]){
+        const rawName=Array.isArray(row)?row[0]:row.name;
+        const name=athleteDisplayName(rawName,{team,season:2026,year:2026});
+        if(name) current.set(personKey(name,team),{name,team,rawName});
+      }
     }
-
-    // Ranking data additionally has 5000m PB.
-    if(window.expandedTopAthletes2027){
-      Object.entries(window.expandedTopAthletes2027).forEach(([team,rows])=>(rows||[]).forEach(r=>{
-        const key=norm(athleteDisplayName(r[0]))+'|'+norm(teamNorm(team));
-        const prev=map.get(key)||{};
-        map.set(key,{
-          grade:r[1]||prev.grade||'',
-          pb5000:r[2]||prev.pb5000||'—',
-          pb10000:r[3]||prev.pb10000||'—',
-          half:r[4]||prev.half||'—'
-        });
-      }));
-    }
-
-    // Officially verified PB overrides are intentionally university-agnostic.
-    // This lets schools outside the ranking dataset (Tokai, Toyo, Hosei, etc.)
-    // appear with current PBs as soon as verified data is added.
-    if(window.verifiedCurrentPb2026){
-      Object.entries(window.verifiedCurrentPb2026).forEach(([team,athletes])=>{
-        Object.entries(athletes||{}).forEach(([name,pb])=>{
-          const key=norm(athleteDisplayName(name))+'|'+norm(teamNorm(team));
-          const prev=map.get(key)||{};
-          map.set(key,{
-            grade:prev.grade||'',
-            pb5000:(pb?.[0]&&pb[0]!=='—')?pb[0]:(prev.pb5000||'—'),
-            pb10000:(pb?.[1]&&pb[1]!=='—')?pb[1]:(prev.pb10000||'—'),
-            half:(pb?.[2]&&pb[2]!=='—')?pb[2]:(prev.half||'—')
-          });
-        });
-      });
-    }
-    return map;
+    return current;
   }
 
-  function trackResultsFor(name,team){
-    const out=[];
-    const db=window.universityMeetResultsAutoDB?.meets||{};
-    Object.values(db).forEach(meet=>Object.entries(meet?.events||{}).forEach(([eventName,event])=>{
-      const rows=Array.isArray(event)?event:event?.rows||[];
-      rows.forEach(r=>{
-        if(norm(athleteDisplayName(r?.[1]))!==norm(name))return;
-        const rt=teamNorm(r?.[2]);
-        if(team&&rt&&norm(rt)!==norm(team))return;
-        out.push({year:meet.year,meet:meet.name,event:eventName,rank:r?.[0],time:r?.[4],note:r?.[5]||''});
-      });
-    }));
-    return out.sort((a,b)=>b.year-a.year).slice(0,12);
+  const current=currentMembership();
+  const currentPbs=new Map();
+  function pbFor(name,team){
+    const key=personKey(name,team);
+    if(!current.has(key))return null;
+    if(!currentPbs.has(team)){
+      const rows=window.currentAthletePbResolver?.currentRows(team)||[];
+      currentPbs.set(team,new Map(rows.map(row=>[
+        personKey(athleteDisplayName(row.name,{team,season:2026,year:2026}),team),row
+      ])));
+    }
+    return currentPbs.get(team).get(key)||null;
   }
 
   const rowsByRace=raceRows();
-  const deviations={
-    hakone:raceDeviation(rowsByRace.hakone),
-    izumo:raceDeviation(rowsByRace.izumo),
-    zennihon:raceDeviation(rowsByRace.zennihon)
-  };
-  const pbs=pbMap();
-  const pbsByName=new Map();
-  pbs.forEach((pb,key)=>{
-    const nameKey=key.split('|')[0];
-    if(!pbsByName.has(nameKey)) pbsByName.set(nameKey,[]);
-    pbsByName.get(nameKey).push(pb);
-  });
-  function pbFor(name,team){
-    if(window.currentAthletePbResolver?.currentRows){
-      const current=window.currentAthletePbResolver.currentRows(team)
-        .find(r=>norm(athleteDisplayName(r.name,{team}))===norm(name));
-      if(current) return {
-        grade:current.grade||'',
-        pb5000:current.pb5000||'—',
-        pb10000:current.pb10000||'—',
-        half:current.half||'—'
-      };
+  const deviations=Object.fromEntries(Object.entries(rowsByRace).map(([race,rows])=>[race,raceDeviation(rows)]));
+  const profiles=new Map();
+  function profile(key,name,team){
+    if(!profiles.has(key))profiles.set(key,{key,name,team,names:new Set([norm(name)]),runs:{hakone:[],izumo:[],zennihon:[]},seasons:new Set(),current2026:false,track:[]});
+    return profiles.get(key);
+  }
+  for(const [race,rows] of Object.entries(rowsByRace)) for(const row of rows){
+    const p=profile(row.key,row.athlete,row.team);
+    const season=seasonFor(race,row.year);
+    p.seasons.add(season);
+    p.names.add(norm(row.rawName));
+    aliasesFor(row.athlete,row.team,season).forEach(n=>p.names.add(norm(n)));
+    p.runs[race].push(row);
+  }
+  for(const [key,row] of current){
+    const p=profile(key,row.name,row.team);
+    p.current2026=true;
+    p.names.add(norm(row.rawName));
+    aliasesFor(row.name,row.team,2026).forEach(n=>p.names.add(norm(n)));
+  }
+
+  // Index meet rows once, requiring the same school and a season compatible with
+  // the person's documented history. Blank affiliations are not identity evidence.
+  const seenTrack=new Set();
+  for(const meet of Object.values(window.universityMeetResultsAutoDB?.meets||{})){
+    const year=Number(meet.year);
+    const date=String(meet.period||'').match(/(\d{4})[年/.-](\d{1,2})[月/.-](\d{1,2})/);
+    const order=date?+date[1]*10000+(+date[2])*100+(+date[3]):year*10000;
+    const season=date&&+date[2]<4?year-1:year;
+    for(const [eventName,event] of Object.entries(meet.events||{})){
+      const rows=Array.isArray(event)?event:event?.rows||[];
+      for(const r of rows){
+        if(!r[1]||!r[2])continue;
+        const team=teamNorm(r[2]);
+        const name=athleteDisplayName(r[1],{team,year,season});
+        const p=profiles.get(personKey(name,team));
+        if(!p)continue;
+        if(!p.seasons.has(season)&&!(p.current2026&&season===2026))continue;
+        const record=[p.key,meet.name,order,eventName,r[4],r[5]].join('|');
+        if(seenTrack.has(record))continue;
+        seenTrack.add(record);
+        p.track.push({year,order,meet:meet.name,event:eventName,rank:r[0],time:r[4],note:r[5]||''});
+      }
     }
-    const exact=pbs.get(norm(name)+'|'+norm(team));
-    if(exact) return exact;
-    const candidates=pbsByName.get(norm(name))||[];
-    if(candidates.length===1) return candidates[0];
-    return null;
   }
-
-  function players(){
-    const map=new Map();
-    Object.entries(rowsByRace).forEach(([race,rows])=>rows.forEach(r=>{
-      const key=norm(r.athlete)+'|'+norm(r.team); if(!norm(r.athlete))return;
-      if(!map.has(key))map.set(key,{key,name:r.athlete,team:r.team,current2026:false,runs:{hakone:[],izumo:[],zennihon:[]}});
-      map.get(key).runs[race].push(r);
-    }));
-
-    // Add every athlete in the supplied 2026 current-roster JSON, including athletes
-    // who have never appeared in Hakone / Izumo / Zennihon.
-    Object.entries(window.currentAthletePbJson2026||{}).forEach(([rawTeam,currentRows])=>{
-      const team=teamNorm(rawTeam);
-      (currentRows||[]).forEach(r=>{
-        const name=athleteDisplayName(r?.name||'',{team});
-        const key=norm(name)+'|'+norm(team); if(!norm(name))return;
-        if(!map.has(key)) map.set(key,{key,name,team,current2026:true,runs:{hakone:[],izumo:[],zennihon:[]}});
-        else map.get(key).current2026=true;
-      });
-    });
-
-    // Keep the historical 2007+ directory while guaranteeing every 2026 current
-    // athlete is present even without a three-ekiden appearance.
-    return [...map.values()]
-      .filter(p=>p.current2026||Object.values(p.runs).some(rows=>rows.some(r=>Number(r.year)>=2007)))
-      .map(p=>{
-        const pb=pbFor(p.name,p.team);
-        return {...p,pb,totalRuns:totalCareerAppearances(p)};
-      });
-  }
-  const allPlayers=players();
+  const allPlayers=[...profiles.values()].map(p=>{
+    p.track.sort((a,b)=>b.order-a.order||a.meet.localeCompare(b.meet,'ja'));
+    return {...p,pb:pbFor(p.name,p.team),totalRuns:totalCareerAppearances(p)};
+  });
 
   function careerAppearanceCount(p,race){
     const years=new Set((p.runs?.[race]||[]).map(r=>Number(r.year)).filter(Number.isFinite));
@@ -222,12 +203,12 @@
   function filtered(){
     const q=norm(state.query);
     return allPlayers.filter(p=>{
-      if(q&&!norm(p.name).includes(q)&&!norm(p.team).includes(q))return false;
+      if(q&&![...p.names,norm(p.team)].some(value=>value.includes(q)))return false;
       if(state.team!=='all'&&p.team!==state.team)return false;
       return true;
     }).sort((a,b)=>{
       if(state.sort==='runs')return b.totalRuns-a.totalRuns||a.name.localeCompare(b.name,'ja');
-      if(state.sort==='hakone')return b.runs.hakone.length-a.runs.hakone.length||b.totalRuns-a.totalRuns;
+      if(state.sort==='hakone')return careerAppearanceCount(b,'hakone')-careerAppearanceCount(a,'hakone')||b.totalRuns-a.totalRuns;
       if(state.sort==='pb5000'||state.sort==='pb10000'||state.sort==='half'){
         const field=state.sort==='pb5000'?'pb5000':state.sort==='pb10000'?'pb10000':'half';
         const av=toSec(a.pb?.[field]),bv=toSec(b.pb?.[field]);
@@ -239,8 +220,8 @@
 
   function runSummary(p,race){
     const rows=p.runs[race].slice().sort((a,b)=>a.year-b.year||a.section-b.section);
-    if(!rows.length)return '<span class="muted">出走なし</span>';
-    return rows.map(r=>`<div class="athlete-run-line"><span>${r.year}年</span><strong>${r.section}区</strong><span>${r.rank?r.rank+'位':'—'}</span><span>${r.time}</span></div>`).join('');
+    if(!rows.length)return '<span class="muted">収録データに出走記録なし</span>';
+    return rows.map(r=>`<div class="athlete-run-line"><span>${r.year}年</span><strong>${r.section}区</strong><span>${esc(r.reference?'参考':rankLabel(r.rank))}</span><span>${esc(r.time)}</span></div>${r.entryTeam!==p.team||r.provisional?`<small class="muted">${r.entryTeam!==p.team?esc(r.entryTeam)+'で出走':''}${r.provisional?'（速報）':''}</small>`:''}`).join('');
   }
   function pbCards(p){
     const pb=p.pb;
@@ -261,14 +242,16 @@
     }).join('')}</div>`;
   }
   function detail(p){
-    const track=trackResultsFor(p.name,p.team);
+    const track=p.track;
+    const renderTrack=t=>`<div class="athlete-track-line"><span>${t.year}</span><span class="athlete-track-meet">${esc(t.meet||'大会名未登録')}</span><strong>${esc(t.event)}</strong><span>${esc(t.time||'—')}</span><span>${esc(t.rank&&t.rank!=='—'?rankLabel(t.rank):t.note)}</span></div>`;
     return `<div class="all-athlete-detail">
       ${pbCards(p)}
       <div class="athlete-race-grid">
         ${Object.entries(races).map(([k,label])=>`<section><h4>${label} <span>${careerAppearanceCount(p,k)}回</span></h4>${runSummary(p,k)}</section>`).join('')}
       </div>
       <section class="athlete-track-results"><h4>トラック・ロード大会結果</h4>
-        ${track.length?track.map(t=>`<div class="athlete-track-line"><span>${t.year}</span><span class="athlete-track-meet">${t.meet||'大会名未登録'}</span><strong>${t.event}</strong><span>${t.time||'—'}</span><span>${t.rank?String(t.rank)+'位':''}</span></div>`).join(''):'<p class="muted">現在の大会DBでは該当結果を確認できていません。</p>'}
+        ${track.length?track.slice(0,12).map(renderTrack).join(''):'<p class="muted">現在の大会DBでは該当結果を確認できていません。</p>'}
+        ${track.length>12?`<details><summary>さらに ${track.length-12} 件の大会結果</summary>${track.slice(12).map(renderTrack).join('')}</details>`:''}
       </section>
       ${deviationCards(p)}
     </div>`;
@@ -276,8 +259,8 @@
 
   function controls(){
     return `<div class="directory-controls">
-      <div class="directory-search-wrap"><label>選手名・大学名で検索</label><input class="directory-search" type="search" value="${String(state.query).replace(/"/g,'&quot;')}" placeholder="例：山口竣平 / 早稲田大学" data-all-athlete-search></div>
-      <div><label>大学</label><select class="directory-select" data-all-athlete-team><option value="all">すべて</option>${teams().map(t=>`<option value="${t}" ${state.team===t?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="directory-search-wrap"><label>選手名・大学名で検索</label><input class="directory-search" type="search" value="${esc(state.query)}" placeholder="例：山口竣平 / 早稲田大学" data-all-athlete-search></div>
+      <div><label>大学</label><select class="directory-select" data-all-athlete-team><option value="all">すべて</option>${teams().map(t=>`<option value="${esc(t)}" ${state.team===t?'selected':''}>${esc(t)}</option>`).join('')}</select></div>
       <div><label>並び順</label><select class="directory-select" data-all-athlete-sort><option value="pb5000" ${state.sort==='pb5000'?'selected':''}>5000m PB</option><option value="pb10000" ${state.sort==='pb10000'?'selected':''}>10000m PB</option><option value="half" ${state.sort==='half'?'selected':''}>ハーフ PB</option><option value="name" ${state.sort==='name'?'selected':''}>選手名</option><option value="runs" ${state.sort==='runs'?'selected':''}>三大駅伝出走数</option><option value="hakone" ${state.sort==='hakone'?'selected':''}>箱根出走数</option></select></div>
     </div>`;
   }
@@ -288,17 +271,17 @@
     const slice=list.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
     return `<div class="directory-result-head"><strong>${list.length.toLocaleString()}名</strong><span>該当</span></div>
       <div class="table-wrap directory-table all-athlete-table"><table><thead><tr><th>選手</th><th>大学</th><th>箱根</th><th>出雲</th><th>全日本</th><th>5000m PB</th><th>10000m PB</th><th>ハーフ PB</th></tr></thead><tbody>
-      ${slice.map(p=>`<tr><td><button class="directory-player-name" data-all-athlete-player="${p.key}" aria-expanded="false">${p.name}</button></td><td>${p.team}</td><td>${careerAppearanceCount(p,'hakone')}回</td><td>${careerAppearanceCount(p,'izumo')}回</td><td>${careerAppearanceCount(p,'zennihon')}回</td><td>${p.pb?.pb5000||'—'}</td><td>${p.pb?.pb10000||'—'}</td><td>${p.pb?.half||'—'}</td></tr><tr class="topic-player-detail-row" data-all-athlete-detail="${p.key}" hidden><td colspan="8">${detail(p)}</td></tr>`).join('')}
+      ${slice.map(p=>`<tr><td><button class="directory-player-name" data-all-athlete-player="${esc(p.key)}" aria-expanded="false">${esc(p.name)}</button></td><td>${esc(p.team)}</td><td>${careerAppearanceCount(p,'hakone')}回</td><td>${careerAppearanceCount(p,'izumo')}回</td><td>${careerAppearanceCount(p,'zennihon')}回</td><td>${p.pb?.pb5000||'—'}</td><td>${p.pb?.pb10000||'—'}</td><td>${p.pb?.half||'—'}</td></tr><tr class="topic-player-detail-row" data-all-athlete-detail="${esc(p.key)}" hidden><td colspan="8"></td></tr>`).join('')}
       </tbody></table></div>
       <div class="directory-pagination"><button data-all-athlete-page="${state.page-1}" ${state.page<=1?'disabled':''}>‹ 前へ</button><span>${state.page} / ${pages} ページ</span><button data-all-athlete-page="${state.page+1}" ${state.page>=pages?'disabled':''}>次へ ›</button></div>`;
   }
 
   function template(){
     return `<section class="container page topics-page">
-      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>三大駅伝の大学在籍中の通算出走歴を選手ごとに統合し、PB・大会結果と一緒に確認できます。出場回数は表示中の年度範囲ではなく、選手の大学在籍期間全体を横断して同一大会・同一年を1回として集計します。2007年以降に登場する選手については2004年まで遡って補完しています。</p></div>
+      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>収録範囲：箱根2000〜2026年、出雲・全日本2004〜2026年（中止年を除く）。大学・学連選抜の区間記録を選手ごとに集計しています。0回はこの範囲で出走記録が確認できないことを示します。</p></div>
       <article class="data-card topic-feature directory-feature">
         <div class="topic-feature-head"><div><span class="topic-kicker">ATHLETE DATABASE</span><h2>大学長距離・全選手名鑑</h2></div><span class="topic-badge">三大駅伝 横断</span></div>
-        <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 箱根・出雲・全日本の成績、5000m/10000m/ハーフPB、収録済みトラック大会結果を優先して表示します。出場回数は各選手の大学在籍期間を通した通算回数です。2007年以降に登場する選手は2004年まで遡って照合し、同じ大会の同一年は1出場として数えます。駅伝偏差値は参考値として詳細下部に掲載します。</p>
+        <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 同じ大会・同じ年は1回として集計します。学連選抜の出走は、所属大学を確認できた場合にその大学の選手欄へまとめ、出走チームも記載します。学年とPBは現役選手の収録データから表示します。</p>
         ${controls()}<div id="allAthleteResults">${table()}</div>
       </article>
     </section>`;
@@ -307,7 +290,7 @@
   function refresh(){const h=document.querySelector('#allAthleteResults');if(h)h.innerHTML=table();}
   document.addEventListener('click',e=>{
     const b=e.target.closest('[data-all-athlete-player]');
-    if(b){const row=document.querySelector(`[data-all-athlete-detail="${CSS.escape(b.dataset.allAthletePlayer)}"]`);if(row){const open=row.hidden;row.hidden=!open;b.setAttribute('aria-expanded',String(open));}return;}
+    if(b){const row=document.querySelector(`[data-all-athlete-detail="${CSS.escape(b.dataset.allAthletePlayer)}"]`);if(row){const open=row.hidden;if(open&&!row.dataset.loaded){const p=profiles.get(b.dataset.allAthletePlayer);if(p)row.firstElementChild.innerHTML=detail({...p,pb:pbFor(p.name,p.team)});row.dataset.loaded='true';}row.hidden=!open;b.setAttribute('aria-expanded',String(open));}return;}
     const p=e.target.closest('[data-all-athlete-page]');
     if(p&&!p.disabled){state.page=Number(p.dataset.allAthletePage)||1;refresh();document.querySelector('.directory-feature')?.scrollIntoView({behavior:'smooth',block:'start'});}
   });
