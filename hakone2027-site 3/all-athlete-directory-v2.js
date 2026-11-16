@@ -65,7 +65,7 @@
       if(seconds===null||!rawName||!rawTeam) return;
       const entryTeam=teamNorm(rawTeam);
       const team=teamNorm(identity.affiliation(race,+year,entryTeam,rawName));
-      const athlete=athleteDisplayName(rawName,{race,year:+year,team:entryTeam});
+      const athlete=athleteDisplayName(rawName,{race,year:+year,team});
       const key=personKey(athlete,team);
       const id=[race,year,section,entryTeam,key].join('|');
       if(!athlete || seen.has(id))return;

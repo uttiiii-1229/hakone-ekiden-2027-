@@ -43,7 +43,50 @@ assert.equal(find('ライモイヴィンセント','国士舘大学').runs.hakon
 assert.equal(window.athleteDirectoryIdentity.resolve('館沢 亨次','東海大学',2026),null);
 assert.equal(window.athleteDirectoryIdentity.resolve('館沢 亨次','別大学',2016),null);
 assert.equal(directory.pbFor('館澤 亨次','他大学'),null);
+const hamaguchi=find('濵口大和','中央大学');
+assert.ok(hamaguchi.current2026);
+assert.equal(hamaguchi.pb.pb10000,'27:53.85');
+assert.deepEqual(counts(hamaguchi),[0,2,0]);
+assert.deepEqual(Array.from(hamaguchi.runs.izumo,r=>[r.year,r.section,r.rank,r.time]),[[2025,2,11,'17:13'],[2026,4,6,'17:29']]);
+assert.ok(hamaguchi.track.length>0);
+for(const [name,team,count] of [
+  ['山﨑草太','中央大学',[1,0,0]],
+  ['川﨑颯','筑波大学',[1,0,0]],
+  ['小山洋生','筑波大学',[1,0,0]],
+  ['𣘺本櫂知','日本大学',[0,1,1]],
+  ['榅山一颯','青山学院大学',[0,0,2]]
+]){
+  const p=find(name,team);
+  assert.ok(p.current2026,name);
+  assert.deepEqual(counts(p),count,name);
+}
+assert.deepEqual(counts(find('メクボジョブモグス','山梨学院大学')),[4,1,4]);
+assert.equal(find('増子陽季','早稲田大学').runs.zennihon.length,0);
+assert.equal(find('増子陽太','早稲田大学').runs.zennihon.length,1);
+
 const current=directory.allPlayers.filter(p=>p.current2026);
+// Discover current roster vs. race-only duplicates missed by production aliases.
+// These folded characters only generate audit candidates; the site uses explicit
+// aliases, so similar-looking names are not automatically merged.
+const comparable=new Map();
+for(const variants of '沢澤 崎﨑 高髙 辺邊邉 斉齊斎齋 浜濱濵 広廣 島嶋 国國 館舘 真眞 龍竜 桜櫻 吉𠮷 瀬瀨 橋𣘺 栄榮 祐祐 塚塚 徳德 縄繩 渕淵 増增 桑桒 塩鹽 豊豐 円圓 昂昻 凛凜 藏蔵'.split(' ')){
+  for (const variant of variants)comparable.set(variant,variants[0]);
+}
+const byCandidate=new Map();
+for(const p of directory.allPlayers){
+  const n=[...p.name.normalize('NFKC').replace(/[\s・]/g,'')].map(c=>comparable.get(c)||c).join('');
+  const key=p.team+'|'+n;
+  if(!byCandidate.has(key))byCandidate.set(key,[]);
+  byCandidate.get(key).push(p);
+}
+const rosterSplits=[...byCandidate.values()].filter(ps=>ps.length>1 && ps.some(p=>p.current2026) &&
+  ps.some(p=>!p.current2026 && Object.values(p.runs).flat().some(r=>r.year>=2023)));
+assert.deepEqual(rosterSplits.map(ps=>ps.map(p=>p.name)),[]);
+for(const name of ['濵口大和','濱口大和','浜口大和']){
+  handlers.input.at(-1)({target:{closest:()=>({value:name})}});
+  assert.match(host.innerHTML,/1名/);
+  assert.match(host.innerHTML,/濵口 大和[\s\S]*?中央大学<\/td><td>0回<\/td><td>2回<\/td><td>0回/);
+}
 assert.equal(current.length,directory.current.size);
 const uniq=new Set(directory.allPlayers.map(p=>p.key));
 assert.equal(uniq.size,directory.allPlayers.length);
