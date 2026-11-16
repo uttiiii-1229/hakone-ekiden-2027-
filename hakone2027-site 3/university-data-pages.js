@@ -161,7 +161,7 @@
     if(catalogIds.has(id)||!Object.values(meet.events||{}).some(e=>(e.rows||e).length))return;
     meetCatalog.push({id,autoId:id,year:Number(meet.year),name:meet.name,
       type:/対校選手権|インカレ/.test(meet.name)?'インカレ':'記録会・競技会',
-      period:meet.period||`${meet.year}年`,venue:meet.venue||'大会公式結果参照',status:'公式結果収録済み'});
+      period:meet.period||`${meet.year}年`,venue:meet.venue||'大会公式結果参照',status:Object.values(meet.events||{}).some(event=>event.officialResult===false)?'集計資料収録済み':'公式結果収録済み'});
     catalogIds.add(id);
   });
   meetCatalog.forEach(meta=>{
@@ -200,7 +200,8 @@
     if(!events.includes(activeMeetEvent)) activeMeetEvent=events[0];
     const official=autoDB[meet.autoId||meet.id];
     const sourceUrl=official?.events?.[activeMeetEvent]?.url;
-    const sourceItems=official?.events?.[activeMeetEvent]?.sourceUrls||(sourceUrl?[{label:'公式結果',url:sourceUrl}]:[]);
+    const eMeta=official?.events?.[activeMeetEvent];
+    const sourceItems=eMeta?.sourceUrls||(sourceUrl?[{label:eMeta?.officialResult===false?'集計資料':'公式結果',url:sourceUrl}]:[]);
     const sourceLink=sourceItems.filter(s=>/^https:\/\//.test(s.url)).map(s=>` · <a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.label)}</a>`).join('');
     const scope=official?.scope?`<p class="muted">収録範囲：${escapeHtml(official.scope)}</p>`:'';
     const note=official?.note?`<p class="notice">${escapeHtml(official.note)}${official.noteUrl?` <a href="${escapeHtml(official.noteUrl)}" target="_blank" rel="noopener noreferrer">主催者発表</a>`:''}</p>`:'';
