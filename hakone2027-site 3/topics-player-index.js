@@ -269,7 +269,7 @@
     return `<article class="data-card topic-feature directory-feature">
       <div class="topic-feature-head">
         <div><span class="topic-kicker">全選手名鑑</span><h2>${raceLabels[race]} 全選手名鑑</h2></div>
-        <span class="topic-badge">${race==='hakone'?'2000–2026':'収録済み全期間'} DATA</span>
+        <span class="topic-badge">${race==='hakone'?'1994–2026':'収録済み全期間'} DATA</span>
       </div>
       <p class="muted directory-intro">収録期間に出走した全選手を検索できます。選手名・大学名・出走回数で絞り込み、総合偏差値や区間別偏差値、出走履歴を確認できます。<strong>選手名をタップすると、その選手の詳細が開きます。</strong></p>
       ${directoryControls(race)}
@@ -296,7 +296,7 @@
             <span class="topic-kicker">選手偏差値名鑑</span>
             <h2>三大駅伝・選手偏差値 TOP20</h2>
           </div>
-          <span class="topic-badge">2000–2026 DATA</span>
+          <span class="topic-badge">1994–2026 DATA</span>
         </div>
         <div class="notice topic-method">
           各出走は、同じ年・同じ区間を走った選手のタイム分布から「偏差値 = 50 + 10 ×（区間平均タイム − 選手タイム）÷ 標準偏差」で標準化します。

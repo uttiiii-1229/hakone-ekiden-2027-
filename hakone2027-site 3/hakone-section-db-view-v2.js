@@ -1,7 +1,7 @@
 // Unified Hakone section DB viewer v4
-// 2000-2026: generated static DB with recalculated passing ranks
+// 1994-2026: generated static DB with recalculated passing ranks
 (() => {
-  const YEARS = new Set(Array.from({length:27},(_,i)=>2000+i));
+  const YEARS = new Set(Object.keys(window.hakonePhase2StaticDB||{}).map(Number));
   let currentYear = 2026;
 
   const sectionRecords = {
@@ -39,7 +39,7 @@
   }
   function renderSection(year, section){
     const rows=sortedRows(year,section);
-    return `<div class="section-results"><div class="section-db-head"><div><h2>第${edition(year)}回 ${year}年 箱根駅伝 ${section}区</h2><p class="muted">区間順位と、1区から当該区間までの累積タイムから再計算した通過順位を掲載しています。</p></div></div><div class="tabs section-tabs">${Array.from({length:10},(_,i)=>`<button class="tab ${i+1===section?'active':''}" data-hakone-unified-section="${i+1}">${i+1}区</button>`).join('')}</div>${recordCard(section)}${rows.length?`<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>{const ref=r[0]==='参考';return `<tr class="${ref?'reference-row':''}"><td><strong>${ref?'参考':r[0]}</strong></td><td>${ref?'参考':r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td><td>${r[4]}</td></tr>`;}).join('')}</tbody></table></div>`:`<div class="notice">この区間のデータが見つかりません。</div>`}<div class="notice"><strong>通過順位:</strong> 最終総合順位の流用ではなく、その区間までの区間タイム累積値で順位を再計算しています。順位対象外のチームは「参考」と表示します。</div></div>`;
+    return `<div class="section-results"><div class="section-db-head"><div><h2>第${edition(year)}回 ${year}年 箱根駅伝 ${section}区</h2><p class="muted">区間順位と、1区から当該区間までの累積タイムから再計算した通過順位を掲載しています。</p></div><a href="${officialSectionUrl(year,section)}" target="_blank" rel="noopener noreferrer">公式区間記録</a></div><div class="tabs section-tabs">${Array.from({length:10},(_,i)=>`<button class="tab ${i+1===section?'active':''}" data-hakone-unified-section="${i+1}">${i+1}区</button>`).join('')}</div>${recordCard(section)}${rows.length?`<div class="table-wrap"><table><thead><tr><th>区間順位</th><th>通過順位</th><th>大学</th><th>選手</th><th>区間タイム</th></tr></thead><tbody>${rows.map(r=>{const ref=r[0]==='参考';return `<tr class="${ref?'reference-row':''}"><td><strong>${ref?'参考':r[0]}</strong></td><td>${ref?'参考':r[1]}</td><td>${r[2]}</td><td><strong>${r[3]}</strong></td><td>${r[4]}</td></tr>`;}).join('')}</tbody></table></div>`:`<div class="notice">この区間のデータが見つかりません。</div>`}<div class="notice"><strong>通過順位:</strong> 最終総合順位の流用ではなく、その区間までの区間タイム累積値で順位を再計算しています。順位対象外のチームは「参考」と表示します。</div></div>`;
   }
 
   hakoneDetailedHistory=function(year){ year=Number(year); if(YEARS.has(year)){currentYear=year; return renderSection(year,1);} return ''; };

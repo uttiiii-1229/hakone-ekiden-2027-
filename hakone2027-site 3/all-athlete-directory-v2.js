@@ -62,7 +62,7 @@
     function add(race,year,section,rawTeam,rawName,time,rank,reference,provisional=false){
       const recordedTime=String(time||'').normalize('NFKC').replace(/\s*(?:NSR|\(区間新\))$/,'');
       const seconds=toSec(recordedTime);
-      if(seconds===null||!rawName||!rawTeam) return;
+      if((seconds===null && !(race==='hakone'&&rank==='棄権'))||!rawName||!rawTeam) return;
       const entryTeam=teamNorm(rawTeam);
       const team=teamNorm(identity.affiliation(race,+year,entryTeam,rawName));
       const athlete=athleteDisplayName(rawName,{race,year:+year,team});
@@ -91,7 +91,7 @@
 
   function raceDeviation(rows){
     const buckets=new Map();
-    rows.forEach(r=>{const k=r.year+'|'+r.section;if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push(r);});
+    rows.forEach(r=>{if(!Number.isFinite(r.seconds))return;const k=r.year+'|'+r.section;if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push(r);});
     const out=new Map();
     buckets.forEach(group=>{
       if(group.length<5)return;
@@ -278,7 +278,7 @@
 
   function template(){
     return `<section class="container page topics-page">
-      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>収録範囲：箱根2000〜2026年、出雲・全日本2004〜2026年（中止年を除く）。大学・学連選抜の区間記録を選手ごとに集計しています。0回はこの範囲で出走記録が確認できないことを示します。</p></div>
+      <div class="page-header"><div class="eyebrow">TOPICS / ALL ATHLETES</div><h1>全選手名鑑</h1><p>収録範囲：箱根1994〜2026年、出雲・全日本2004〜2026年（中止年を除く）。大学・学連選抜の区間記録を選手ごとに集計しています。0回はこの範囲で出走記録が確認できないことを示します。</p></div>
       <article class="data-card topic-feature directory-feature">
         <div class="topic-feature-head"><div><span class="topic-kicker">ATHLETE DATABASE</span><h2>大学長距離・全選手名鑑</h2></div><span class="topic-badge">三大駅伝 横断</span></div>
         <p class="muted directory-intro"><strong>選手名をタップすると詳細が開きます。</strong> 同じ大会・同じ年は1回として集計します。学連選抜の出走は、所属大学を確認できた場合にその大学の選手欄へまとめ、出走チームも記載します。学年とPBは現役選手の収録データから表示します。</p>

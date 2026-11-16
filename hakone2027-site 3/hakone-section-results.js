@@ -1,7 +1,7 @@
-// 箱根駅伝 2000〜2026 区間記録ナビゲーション
+// 箱根駅伝 1994〜2026 区間記録ナビゲーション
 // 年度は1つのプルダウンから直接選択する。
 const hakoneMeets = {};
-for(let year=2000; year<=2026; year++){
+for(let year=1994; year<=2026; year++){
   const edition = year - 1924;
   let tn = edition;
   if(year===2021) tn=99;
@@ -13,7 +13,7 @@ for(let year=2000; year<=2026; year++){
   hakoneMeets[year] = {edition:`第${edition}回`,tn};
 }
 let activeHakoneYear = 2026;
-const hakoneYears=Array.from({length:27},(_,i)=>2026-i);
+const hakoneYears=Array.from({length:33},(_,i)=>2026-i);
 
 function officialSectionUrl(year, section){
   const meet=hakoneMeets[year];
@@ -31,7 +31,7 @@ const originalHistoryTemplateForSections = historyTemplate;
 historyTemplate = function(){
   const base=originalHistoryTemplateForSections();
   return base + `<section class="container page" style="padding-top:0">
-    <div class="page-header"><h1>箱根駅伝・全選手区間成績</h1><p>2000〜2026年の27大会を収録。年度を選び、1〜10区の区間順位・通過順位・区間タイムを確認できます。</p></div>
+    <div class="page-header"><h1>箱根駅伝・全選手区間成績</h1><p>1994〜2026年の33大会を収録。年度を選び、1〜10区の区間順位・通過順位・区間タイムを確認できます。</p></div>
     ${hakoneYearSelect()}
     <div id="hakoneDetailedHistory">${hakoneDetailedHistory(activeHakoneYear)}</div>
   </section>`;

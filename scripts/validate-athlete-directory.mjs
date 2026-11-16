@@ -13,7 +13,7 @@ const document={
   querySelector:s=>s==='#allAthleteResults'?host:s.startsWith('[data-all-athlete-detail=')?detail:null,
 };
 const ctx=vm.createContext({window,document,CSS:{escape:x=>x},location:{hash:''}});
-for(const file of ['hakone-phase2-static-db','three-ekiden-sections-db','foreign-name-normalizer','current-roster-official-20260907','current-athlete-pb-json-20260908','university-meet-results-auto','university-meet-results-20261102','university-meet-results-20261116','current-athlete-pb-resolver','athlete-directory-identity']){
+for(const file of ['hakone-phase2-static-db','hakone-archive-1994-1999','three-ekiden-sections-db','foreign-name-normalizer','current-roster-official-20260907','current-athlete-pb-json-20260908','university-meet-results-auto','university-meet-results-20261102','university-meet-results-20261116','current-athlete-pb-resolver','athlete-directory-identity']){
   vm.runInContext(read(file+'.js'),ctx,{filename:file});
 }
 const code=read('all-athlete-directory-v2.js').replace('={template,refresh,pbFor};','={template,refresh,pbFor,allPlayers,rowsByRace,current};');

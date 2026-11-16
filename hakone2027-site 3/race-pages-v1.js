@@ -15,7 +15,7 @@
   function esc(v=''){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   function cleanAthlete(name=''){const s=String(name).trim();return s.replace(/\s*\([1-5]\)\s*.*$/,'').trim()||s;}
   function rankLabel(v){return (v===null||v===undefined||v==='')?'—':v;}
-  function hakoneOverallYears(){return Array.from({length:27},(_,i)=>2026-i);}
+  function hakoneOverallYears(){return Object.keys(window.hakoneOfficialOverallDB||{}).map(Number).sort((a,b)=>b-a);}
   function years(race){const last=2026;return Array.from({length:last-2007+1},(_,i)=>last-i);}
   function edition(race,year){return race==='izumo'?year-1988:year-1968;}
   function hakoneOfficial(year){return window.hakoneOfficialOverallDB?.[year]||null;}
@@ -55,7 +55,7 @@
     const rs=d.results||[];
     const winner=rs.find(r=>r.rank===1)||rs[0];
     const rows=rs.map(r=>{const ref=r.rank==='参考'||r.outwardRank==='参考'||r.returnRank==='参考';return `<tr class="${ref?'reference-row':''}"><td><strong>${rankLabel(r.rank)}</strong></td><td>${teamButton('hakone',year,r.team)}</td><td>${r.time||'—'}</td><td>${rankLabel(r.outwardRank)}</td><td>${r.outwardTime||'—'}</td><td>${rankLabel(r.returnRank)}</td><td>${r.returnTime||'—'}</td></tr>${detailRow('hakone',year,r.team,7)}`;}).join('');
-    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${d.edition}回・${year}年</strong></div><div class="race-summary-card"><small>総合優勝</small><strong>${normalizeTeam(winner?.team||'—')}</strong></div><div class="race-summary-card"><small>総合タイム</small><strong>${winner?.time||'—'}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th><th>往路順位</th><th>往路タイム</th><th>復路順位</th><th>復路タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。</div>`;
+    return `<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${d.edition}回・${year}年</strong></div><div class="race-summary-card"><small>総合優勝</small><strong>${normalizeTeam(winner?.team||'—')}</strong></div><div class="race-summary-card"><small>総合タイム</small><strong>${winner?.time||'—'}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>総合順位</th><th>大学・チーム</th><th>総合タイム</th><th>往路順位</th><th>往路タイム</th><th>復路順位</th><th>復路タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。${d.source?` <a href="${esc(d.source)}" target="_blank" rel="noopener noreferrer">公式大会記録</a>`:''}</div>`;
   }
   function hakoneOverallBlock(){
     const ys=hakoneOverallYears();
@@ -63,7 +63,7 @@
   }
 
   historyTemplate=function(){
-    return hakoneOverallBlock()+`<section class="container page" style="padding-top:0"><div class="page-header"><h1>箱根駅伝・全選手区間成績</h1><p>2000〜2026年の27大会を収録。年度と1〜10区を切り替えると、区間順位の直後にその区間の歴代BEST10も表示します。</p></div>${hakoneYearSelect()}<div id="hakoneDetailedHistory">${hakoneDetailedHistory(activeHakoneYear)}${renderHakoneAlltimeTop10(1)}</div></section>`;
+    return hakoneOverallBlock()+`<section class="container page" style="padding-top:0"><div class="page-header"><h1>箱根駅伝・全選手区間成績</h1><p>1994〜2026年の33大会を収録。年度と1〜10区を切り替えると、区間順位の直後にその区間の歴代BEST10も表示します。</p></div>${hakoneYearSelect()}<div id="hakoneDetailedHistory">${hakoneDetailedHistory(activeHakoneYear)}${renderHakoneAlltimeTop10(1)}</div></section>`;
   };
   templates.history=historyTemplate;
 
