@@ -179,7 +179,18 @@
     });
   });
 
+  const meetCategories={track:'トラック',half:'ハーフマラソン'};
+  let activeMeetCategory='track';
   let activeMeetYear=2026;
+
+  function meetEvents(meetId){
+    return Object.keys(meetResults[meetId]?.events||{}).filter(event=>{
+      const name=event.normalize('NFKC');
+      return activeMeetCategory==='half'
+        ? /ハーフ|half|21[.,]0975\s*km/i.test(name)
+        : /\d\s*m(?:\b|[^a-z])/i.test(name);
+    });
+  }
   let activeMeet='';
   let activeMeetEvent='男子10000m';
 
@@ -196,7 +207,7 @@
     if(!d){
       return `<article class="data-card meet-db-panel"><div class="meet-card-top"><span class="topic-badge">${meet.type}</span><span class="muted">${meet.period}</span></div><h2>${meet.name}</h2><p>${meet.venue}</p><div class="notice">${meet.status}。外部サイトへ移動せず、このページ内に確認済み結果を追加していきます。</div></article>`;
     }
-    const events=Object.keys(d.events);
+    const events=meetEvents(meetId);
     if(!events.includes(activeMeetEvent)) activeMeetEvent=events[0];
     const official=autoDB[meet.autoId||meet.id];
     const sourceUrl=official?.events?.[activeMeetEvent]?.url;
@@ -229,15 +240,16 @@
 
   function meetsTemplate(){
     const years=[2026,2025,2024,2023,2022];
-    const list=meetCatalog.filter(m=>m.year===activeMeetYear).sort(compareMeetDates);
+    const list=meetCatalog.filter(m=>m.year===activeMeetYear&&(meetEvents(m.id).length||(!meetResults[m.id]&&activeMeetCategory==='track'))).sort(compareMeetDates);
     if(!list.some(m=>m.id===activeMeet)) activeMeet=list[0]?.id||'';
     return `<section class="container page university-subpage">
       <div class="page-header"><div class="eyebrow">UNIVERSITY DATA / MEETS</div><h1>大会・記録会データベース</h1><p>2022〜2026の5年分を対象に、大学長距離の3000mより長いランニング種目をサイト内で確認できます。</p></div>
-      <div class="university-note"><strong>収録ルール:</strong> 5000m・10000m・ロード5km以上・ハーフ等を対象とし、3000m、3000mSC、競歩は除外します。公式結果が残っている大会から順次バックフィルします。</div>
+      <div class="university-note"><strong>収録ルール:</strong> トラックは主に5000m・10000m、ハーフマラソンは21.0975kmの結果を掲載します。</div>
+      <div class="tabs" role="group" aria-label="記録会の種別">${Object.entries(meetCategories).map(([id,label])=>`<button type="button" class="tab ${id===activeMeetCategory?'active':''}" data-meet-category="${id}" aria-pressed="${id===activeMeetCategory}">${label}</button>`).join('')}</div>
       <div class="year-select-control"><label for="meetYearSelect">年度</label><select id="meetYearSelect" class="year-select" data-meet-year>${years.map(y=>`<option value="${y}" ${y===activeMeetYear?'selected':''}>${y}年</option>`).join('')}</select></div>
       <p class="muted">開催日の新しい順（複数日開催は初日を基準）。日付未確認の大会は末尾に表示します。</p>\n      <div class="meet-db-layout">
         <aside class="meet-db-list" aria-label="開催日の新しい順">${list.map(m=>`<button class="meet-db-button ${m.id===activeMeet?'active':''}" data-meet-id="${m.id}"><strong>${m.name}</strong><span>${m.period} ・ ${m.status}</span></button>`).join('')}</aside>
-        <div id="meetDatabaseResult">${activeMeet?meetResultPanel(activeMeet):'<div class="notice">大会データを確認中です。</div>'}</div>
+        <div id="meetDatabaseResult">${activeMeet?meetResultPanel(activeMeet):'<div class="notice">選択した年度・種別の収録データはありません。</div>'}</div>
       </div>
     </section>`;
   }
@@ -268,14 +280,20 @@
     const year=e.target.closest('[data-meet-year]');
     if(!year)return;
     activeMeetYear=Number(year.value);
-    const first=meetCatalog.find(m=>m.year===activeMeetYear);
-    activeMeet=first?.id||'';
+    activeMeet='';
     if(typeof render==='function') render('meets');
   });
 
   document.addEventListener('click',e=>{
+    const category=e.target.closest('[data-meet-category]');
+    if(category){
+      activeMeetCategory=category.dataset.meetCategory;
+      if(typeof render==='function') render('meets');
+      document.querySelector('[data-meet-category][aria-pressed="true"]')?.focus();
+      return;
+    }
     const meetBtn=e.target.closest('[data-meet-id]');
-    if(meetBtn){activeMeet=meetBtn.dataset.meetId;const d=meetResults[activeMeet];if(d)activeMeetEvent=Object.keys(d.events)[0];const host=document.querySelector('#meetDatabaseResult');if(host)host.innerHTML=meetResultPanel(activeMeet);document.querySelectorAll('[data-meet-id]').forEach(b=>b.classList.toggle('active',b===meetBtn));return;}
+    if(meetBtn){activeMeet=meetBtn.dataset.meetId;activeMeetEvent=meetEvents(activeMeet)[0];const host=document.querySelector('#meetDatabaseResult');if(host)host.innerHTML=meetResultPanel(activeMeet);document.querySelectorAll('[data-meet-id]').forEach(b=>b.classList.toggle('active',b===meetBtn));return;}
     const eventBtn=e.target.closest('[data-meet-event]');
     if(eventBtn){activeMeetEvent=eventBtn.dataset.meetEvent;eventBtn.closest('.meet-db-panel').querySelectorAll('[data-meet-event]').forEach(b=>b.classList.toggle('active',b===eventBtn));const host=document.querySelector('#meetDatabaseResult');if(host)host.innerHTML=meetResultPanel(activeMeet);return;}
     const gradeBtn=e.target.closest('[data-grade-select]');

@@ -55,13 +55,13 @@
   if(typeof originalRender==='function'){
     window.render=function(route='home'){
       originalRender(route);
-      const raceRoutes=['history','qualifier','izumo','zennihon','meets','highschool'];
+      const raceRoutes=['history','qualifier','izumo','zennihon','newyear','meets','highschool'];
       dropdown.classList.toggle('active',raceRoutes.includes(route));
       dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
       closeMenu();
     };
     const route=location.hash.replace('#','')||'home';
-    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon','meets','highschool'].includes(route));
+    dropdown.classList.toggle('active',['history','qualifier','izumo','zennihon','newyear','meets','highschool'].includes(route));
     dropdown.querySelectorAll('.race-dropdown-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.route===route));
   }
 })();

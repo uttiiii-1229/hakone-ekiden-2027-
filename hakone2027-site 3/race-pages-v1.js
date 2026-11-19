@@ -1,9 +1,9 @@
 // 過去大会を箱根専用にし、出雲・全日本を独立ページへ分離
 (() => {
   const hakoneOverallState={year:2026};
-  const raceState={izumo:{year:2026},zennihon:{year:2026}};
-  const sectionCounts={hakone:10,izumo:6,zennihon:8};
-  const raceMeta={izumo:{title:'出雲駅伝',subtitle:'出雲全日本大学選抜駅伝競走',icon:'⚡'},zennihon:{title:'全日本大学駅伝',subtitle:'秩父宮賜杯 全日本大学駅伝対校選手権大会',icon:'🏃'}};
+  const raceState={izumo:{year:2026},zennihon:{year:2026},newyear:{year:2026,section:1}};
+  const sectionCounts={hakone:10,izumo:6,zennihon:8,newyear:7};
+  const raceMeta={izumo:{title:'出雲駅伝',subtitle:'出雲全日本大学選抜駅伝競走',icon:'⚡'},zennihon:{title:'全日本大学駅伝',subtitle:'秩父宮賜杯 全日本大学駅伝対校選手権大会',icon:'🏃'},newyear:{title:'ニューイヤー駅伝',subtitle:'全日本実業団対抗駅伝競走大会',icon:'🏃'}};
 
   function normalizeTeam(name=''){
     const n=String(name).trim();
@@ -16,10 +16,10 @@
   function cleanAthlete(name=''){const s=String(name).trim();return s.replace(/\s*\([1-5]\)\s*.*$/,'').trim()||s;}
   function rankLabel(v){return (v===null||v===undefined||v==='')?'—':v;}
   function hakoneOverallYears(){return Object.keys(window.hakoneOfficialOverallDB||{}).map(Number).sort((a,b)=>b-a);}
-  function years(race){const last=2026;return Array.from({length:last-2007+1},(_,i)=>last-i);}
-  function edition(race,year){return race==='izumo'?year-1988:year-1968;}
+  function years(race){if(race==='newyear')return Object.keys(window.newyearEkidenDB).map(Number).sort((a,b)=>b-a);const last=2026;return Array.from({length:last-2007+1},(_,i)=>last-i);}
+  function edition(race,year){return year-({izumo:1988,zennihon:1968,newyear:1956}[race]);}
   function hakoneOfficial(year){return window.hakoneOfficialOverallDB?.[year]||null;}
-  function getData(race,year){return window.threeEkidenStandingsDB?.[race]?.[year]||null;}
+  function getData(race,year){return (race==='newyear'?window.newyearEkidenDB:window.threeEkidenStandingsDB?.[race])?.[year]||null;}
 
   function sectionRows(race,year,team){
     const key=teamKey(team),out=[];
@@ -31,7 +31,7 @@
       }
       return out;
     }
-    const db=window.threeEkidenSectionsDB?.[race]?.[year];
+    const db=race==='newyear'?getData(race,year):window.threeEkidenSectionsDB?.[race]?.[year];
     if(!db||db.status!=='開催') return out;
     for(let sec=1;sec<=sectionCounts[race];sec++){
       const hit=(db?.sections?.[sec]||[]).find(r=>teamKey(r?.team)===key);
@@ -69,6 +69,13 @@
 
 
   function zennihon2026Note(d){return `<div class="notice"><strong>2026年 結果速報・公式照合前</strong><p>${esc(d.updated)} 更新。全27チーム・全8区間を掲載。日刊スポーツ掲載 ${esc(d.published)}。総合タイムは区間速報の合算で、1〜15位は月陸掲載順位、16位以下は累計タイムによる暫定順位です。中央・駒澤は同タイムですが掲載順位に従っています。日本学連選抜・東海学連選抜はOPNです。</p><a href="${esc(d.overallSource)}" target="_blank" rel="noopener">月陸・総合結果</a> ／ <a href="${esc(d.source)}" target="_blank" rel="noopener">日刊スポーツ・全区間速報</a></div><article class="data-card"><h2>大会の振り返り</h2><p>早稲田大学が5:03:31の大会新で16年ぶりに優勝し、出雲との2冠。2区・3区・5区・8区の4区間で区間賞を獲得しました。2区は増子陽太と帝京・楠岡由浩が同着区間賞。工藤慎作は8区56:20で日本人最高を更新。國學院大學が2位、創価大学は終盤に順位を上げ3位、大東文化大学は7位でシード権を獲得しました。</p></article>`;}
+  function newyearSectionResults(d){
+    const selected=raceState.newyear.section;
+    const buttons=Object.keys(d.sections).map(n=>`<button type="button" class="tab ${Number(n)===selected?'active':''}" data-newyear-section="${n}" aria-pressed="${Number(n)===selected}">${n}区</button>`).join('');
+    const rows=d.sections[selected].map(r=>`<tr><td>${esc(r.rank)}</td><td>${esc(r.athlete)}</td><td>${esc(r.team)}</td><td>${esc(r.time)}</td></tr>`).join('');
+    return `<section class="data-card"><h2>全選手区間成績</h2><div class="tabs" role="group" aria-label="区間">${buttons}</div><div class="table-wrap"><table><thead><tr><th>区間順位</th><th>選手</th><th>チーム</th><th>タイム</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  }
+
   function raceResult(race,year){
     const d=getData(race,year),m=raceMeta[race],ed=edition(race,year);
     if(!d)return `<div class="notice">${year}年のデータは登録されていません。</div>`;
@@ -76,7 +83,10 @@
     const rs=d.results||[];
     const resultNote=race==='zennihon'&&year===2009?`<div class="notice"><strong>2009年・第41回 公式記録照合済み</strong><p>総合25大学と東海学連選抜（OPN）、全8区間を掲載。通過順位は日本学連の公式掲載値です。区間順位は同公式HTMLの掲載値（OPNを含む参考順位）に従っています。</p><a href="https://www.iuau.jp/ev2009/41zennichi/skh.htm" target="_blank" rel="noopener">日本学生陸上競技連合・公式結果</a></div>`:race==='izumo'&&year===2026?`<div class="notice"><strong>${d.provisional?'速報（公式照合前）':'公式確定'}</strong><p>${esc(d.updated||'')} 更新。全22チーム・全6区を掲載。${d.provisional?'公式結果公開後に走者・順位・タイムを突合し、相違があれば修正します。':''} 中国四国学連選抜はオープン参加（OPN）。</p><a href="${esc(d.source)}" target="_blank" rel="noopener">総合成績の出典</a> ／ <a href="${esc(window.threeEkidenSectionsDB?.izumo?.[year]?.source||'https://www.izumo-ekiden.jp/record/index.html')}" target="_blank" rel="noopener">区間成績の出典</a></div><article class="data-card"><h2>大会の振り返り</h2><p>早稲田大学が2:05:56で優勝。2区・4区・5区・6区の4区間で区間賞を獲得し、國學院大學、アイビーリーグ選抜が続きました。</p></article>`:race==='zennihon'&&year===2026?zennihon2026Note(d):'';
     const rows=rs.map(r=>`<tr class="${r.rank==='OPN'||r.rank==='参考'?'reference-row':''}"><td><strong>${r.rank}</strong></td><td>${teamButton(race,year,r.team)}</td><td>${r.time}</td></tr>${detailRow(race,year,r.team,3)}`).join('');
-    return `${resultNote}<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div><div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>順位</th><th>大学・チーム</th><th>総合タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">大学名をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。</div>`;
+    const isNewyear=race==='newyear';
+    const winnerTime=isNewyear?`<div class="race-summary-card"><small>総合タイム</small><strong>${esc(rs[0]?.time||'—')}</strong></div>`:'';
+    const source=isNewyear?` <a href="${esc(d.source)}" target="_blank" rel="noopener noreferrer">公式大会記録</a>`:'';
+    return `${resultNote}<div class="race-page-summary"><div class="race-summary-card"><small>大会</small><strong>第${ed}回・${year}年</strong></div><div class="race-summary-card"><small>優勝</small><strong>${normalizeTeam(rs[0]?.team||'—')}</strong></div>${winnerTime}<div class="race-summary-card"><small>出場チーム</small><strong>${rs.length}チーム</strong></div></div><div class="table-wrap"><table><thead><tr><th>総合順位</th><th>${isNewyear?'チーム':'大学・チーム'}</th><th>総合タイム</th></tr></thead><tbody>${rows}</tbody></table></div><div class="notice">${isNewyear?'チーム名':'大学名'}をタップすると、その大会の各区間の選手・区間順位・タイムを表示します。${source}</div>${isNewyear?newyearSectionResults(d):''}`;
   }
   function racePage(race){
     const st=raceState[race],m=raceMeta[race],ys=years(race);
@@ -84,12 +94,21 @@
   }
   templates.izumo=()=>racePage('izumo');
   templates.zennihon=()=>racePage('zennihon');
+  templates.newyear=()=>racePage('newyear');
 
   function rerenderRace(race){const host=document.querySelector(`#race-page-${race}`);if(!host)return;const wrap=document.createElement('div');wrap.innerHTML=racePage(race);host.replaceWith(wrap.firstElementChild);}
   function rerenderHakoneOverall(){const host=document.querySelector('#hakone-overall-result');if(host)host.innerHTML=hakoneOverallResult(hakoneOverallState.year);}
   function appendAlltime(section){const host=document.querySelector('#hakoneDetailedHistory');if(!host)return;host.querySelector('.alltime-top10')?.remove();host.insertAdjacentHTML('beforeend',renderHakoneAlltimeTop10(section));}
 
   document.addEventListener('click',e=>{
+    const newyearSection=e.target.closest('[data-newyear-section]');
+    if(newyearSection){
+      const state=raceState.newyear;
+      state.section=Number(newyearSection.dataset.newyearSection);
+      newyearSection.closest('section').outerHTML=newyearSectionResults(getData('newyear',state.year));
+      document.querySelector('[data-newyear-section][aria-pressed="true"]')?.focus();
+      return;
+    }
     const btn=e.target.closest('[data-race-team-detail]');
     if(btn){
       const table=btn.closest('table');
@@ -117,6 +136,6 @@
   }
 
   const current=location.hash.replace('#','')||'home';
-  if(['history','izumo','zennihon'].includes(current) && typeof render==='function')render(current);
+  if(['history','izumo','zennihon','newyear'].includes(current) && typeof render==='function')render(current);
 })();
 
